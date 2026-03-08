@@ -1,0 +1,1 @@
+export const ASSET_REPOSITORY = Symbol('ASSET_REPOSITORY');

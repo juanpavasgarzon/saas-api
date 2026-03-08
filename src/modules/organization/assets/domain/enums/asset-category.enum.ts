@@ -1,0 +1,7 @@
+export enum AssetCategory {
+  EQUIPMENT = 'EQUIPMENT',
+  FURNITURE = 'FURNITURE',
+  VEHICLE = 'VEHICLE',
+  SOFTWARE = 'SOFTWARE',
+  OTHER = 'OTHER',
+}

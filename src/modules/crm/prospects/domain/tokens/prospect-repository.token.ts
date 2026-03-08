@@ -1,0 +1,1 @@
+export const PROSPECT_REPOSITORY = Symbol('PROSPECT_REPOSITORY');

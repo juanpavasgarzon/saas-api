@@ -1,0 +1,1 @@
+export const MOVEMENT_REPOSITORY = Symbol('MOVEMENT_REPOSITORY');

@@ -1,0 +1,8 @@
+export enum ProspectSource {
+  WEBSITE = 'WEBSITE',
+  REFERRAL = 'REFERRAL',
+  SOCIAL_MEDIA = 'SOCIAL_MEDIA',
+  COLD_OUTREACH = 'COLD_OUTREACH',
+  EVENT = 'EVENT',
+  OTHER = 'OTHER',
+}

@@ -1,0 +1,13 @@
+import { type ICommand } from '@nestjs/cqrs';
+
+export class UpdateCustomerCommand implements ICommand {
+  constructor(
+    public readonly tenantId: string,
+    public readonly customerId: string,
+    public readonly name: string,
+    public readonly email: string,
+    public readonly phone: string,
+    public readonly address: string,
+    public readonly contactPerson: string,
+  ) {}
+}

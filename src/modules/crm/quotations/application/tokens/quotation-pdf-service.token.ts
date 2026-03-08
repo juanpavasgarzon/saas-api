@@ -1,0 +1,1 @@
+export const QUOTATION_PDF_SERVICE = Symbol('QUOTATION_PDF_SERVICE');

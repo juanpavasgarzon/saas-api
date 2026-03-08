@@ -1,0 +1,1 @@
+export const INVOICE_PDF_SERVICE = Symbol('INVOICE_PDF_SERVICE');

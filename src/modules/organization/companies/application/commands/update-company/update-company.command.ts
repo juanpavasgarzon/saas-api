@@ -1,0 +1,7 @@
+export class UpdateCompanyCommand {
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+    public readonly logo: string | null,
+  ) {}
+}

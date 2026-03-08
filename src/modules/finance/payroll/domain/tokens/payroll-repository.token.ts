@@ -1,0 +1,1 @@
+export const PAYROLL_REPOSITORY = Symbol('PAYROLL_REPOSITORY');

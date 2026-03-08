@@ -1,0 +1,1 @@
+export const PAYROLL_PDF_SERVICE = Symbol('PAYROLL_PDF_SERVICE');
