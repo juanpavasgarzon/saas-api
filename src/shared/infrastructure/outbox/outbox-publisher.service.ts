@@ -2,9 +2,9 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
 import { type IMessageBus } from '../../application/contracts/message-bus.contract';
+import { type IOutboxMessageRepository } from '../../application/contracts/outbox-repository.contract';
 import { MESSAGE_BUS } from '../../application/tokens/message-bus.token';
 import { OUTBOX_REPOSITORY } from '../../application/tokens/outbox-repository.token';
-import { type IOutboxMessageRepository } from '../../application/contracts/outbox-repository.contract';
 
 @Injectable()
 export class OutboxPublisherService {

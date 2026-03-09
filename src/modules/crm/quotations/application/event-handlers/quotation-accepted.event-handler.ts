@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
 import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
+import { type IOutboxMessageRepository } from '@shared/application/contracts/outbox-repository.contract';
 import { QuotationAcceptedIntegrationEvent } from '@shared/application/events/quotation-accepted.integration-event';
 import { OUTBOX_REPOSITORY } from '@shared/application/tokens/outbox-repository.token';
-import { type IOutboxMessageRepository } from '@shared/application/contracts/outbox-repository.contract';
 import { type IProspectToCustomerService } from '@modules/crm/shared/contracts/prospect-to-customer.contract';
 import { PROSPECT_TO_CUSTOMER_SERVICE } from '@modules/crm/shared/tokens/prospect-to-customer.token';
 
