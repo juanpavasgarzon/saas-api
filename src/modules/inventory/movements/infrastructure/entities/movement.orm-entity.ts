@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn } from 'typeorm';
 
+import { MovementSource } from '../../domain/enums/movement-source.enum';
 import { MovementType } from '../../domain/enums/movement-type.enum';
 
 @Entity('inventory_movements')
@@ -18,6 +19,9 @@ export class MovementOrmEntity {
   @Column({ type: 'uuid', nullable: true })
   warehouseId!: string | null;
 
+  @Column({ type: 'uuid', nullable: true })
+  toWarehouseId!: string | null;
+
   @Column({
     type: 'enum',
     enum: MovementType,
@@ -27,6 +31,14 @@ export class MovementOrmEntity {
 
   @Column({ type: 'decimal', precision: 12, scale: 4 })
   quantity!: number;
+
+  @Column({
+    type: 'enum',
+    enum: MovementSource,
+    enumName: 'inventory_movement_source_enum',
+    default: MovementSource.MANUAL,
+  })
+  source!: MovementSource;
 
   @Column({ type: 'varchar', nullable: true })
   referenceId!: string | null;

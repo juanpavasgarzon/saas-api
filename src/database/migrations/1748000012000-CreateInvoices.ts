@@ -35,33 +35,12 @@ export class CreateInvoices1748000012000 implements MigrationInterface {
     await queryRunner.query(
       `CREATE INDEX "IDX_invoices_tenant_status" ON "invoices" ("tenantId", "status")`,
     );
-
-    await queryRunner.query(`
-      CREATE TABLE "invoice_items" (
-        "id"          uuid          NOT NULL,
-        "invoiceId"   uuid          NOT NULL,
-        "description" varchar       NOT NULL,
-        "quantity"    numeric(12,2) NOT NULL,
-        "unit"        "public"."unit_of_measure_enum" NOT NULL DEFAULT 'UNIT',
-        "unitPrice"   numeric(12,2) NOT NULL,
-        "lineTotal"   numeric(12,2) NOT NULL,
-        CONSTRAINT "PK_invoice_items"          PRIMARY KEY ("id"),
-        CONSTRAINT "FK_invoice_items_invoice"  FOREIGN KEY ("invoiceId")
-          REFERENCES "invoices"("id") ON DELETE CASCADE
-      )
-    `);
-
-    await queryRunner.query(
-      `CREATE INDEX "IDX_invoice_items_invoice" ON "invoice_items" ("invoiceId")`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "IDX_invoice_items_invoice"`);
-    await queryRunner.query(`DROP TABLE "invoice_items"`);
-    await queryRunner.query(`DROP INDEX "IDX_invoices_tenant_status"`);
-    await queryRunner.query(`DROP INDEX "IDX_invoices_tenant"`);
-    await queryRunner.query(`DROP TABLE "invoices"`);
-    await queryRunner.query(`DROP TYPE "public"."invoice_status_enum"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_invoices_tenant_status"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_invoices_tenant"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "invoices"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."invoice_status_enum"`);
   }
 }

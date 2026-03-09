@@ -1,12 +1,10 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventPublisher, type ICommandHandler } from '@nestjs/cqrs';
 
+import { ValidationError } from '@shared/domain/errors/validation.error';
 import { type IProductRepository } from '@modules/inventory/products/domain/contracts/product-repository.contract';
 import { ProductNotFoundError } from '@modules/inventory/products/domain/errors/product-not-found.error';
 import { PRODUCT_REPOSITORY } from '@modules/inventory/products/domain/tokens/product-repository.token';
-import { type IStockRepository } from '@modules/inventory/stock/domain/contracts/stock-repository.contract';
-import { Stock } from '@modules/inventory/stock/domain/entities/stock.entity';
-import { STOCK_REPOSITORY } from '@modules/inventory/stock/domain/tokens/stock-repository.token';
 import { type IWarehouseRepository } from '@modules/inventory/warehouses/domain/contracts/warehouse-repository.contract';
 import { WarehouseNotFoundError } from '@modules/inventory/warehouses/domain/errors/warehouse-not-found.error';
 import { WAREHOUSE_REPOSITORY } from '@modules/inventory/warehouses/domain/tokens/warehouse-repository.token';
@@ -26,8 +24,7 @@ export class RegisterMovementHandler implements ICommandHandler<RegisterMovement
     private readonly productRepository: IProductRepository,
     @Inject(WAREHOUSE_REPOSITORY)
     private readonly warehouseRepository: IWarehouseRepository,
-    @Inject(STOCK_REPOSITORY)
-    private readonly stockRepository: IStockRepository,
+    private readonly publisher: EventPublisher,
   ) {}
 
   async execute(command: RegisterMovementCommand): Promise<string> {
@@ -46,37 +43,33 @@ export class RegisterMovementHandler implements ICommandHandler<RegisterMovement
       }
     }
 
+    if (command.type === MovementType.TRANSFER) {
+      if (!command.warehouseId || !command.toWarehouseId) {
+        throw new ValidationError('TRANSFER requires both warehouseId and toWarehouseId');
+      }
+      const toWarehouse = await this.warehouseRepository.findById(
+        command.toWarehouseId,
+        command.tenantId,
+      );
+      if (!toWarehouse) {
+        throw new WarehouseNotFoundError(command.toWarehouseId);
+      }
+    }
+
     const movement = Movement.create(
       command.tenantId,
       command.productId,
       command.warehouseId,
+      command.toWarehouseId,
       command.type,
       command.quantity,
+      command.source,
       command.referenceId,
       command.notes,
     );
-
+    this.publisher.mergeObjectContext(movement);
     await this.movementRepository.save(movement);
-
-    if (command.warehouseId) {
-      let stock = await this.stockRepository.findByProductAndWarehouse(
-        command.productId,
-        command.warehouseId,
-        command.tenantId,
-      );
-
-      if (!stock) {
-        stock = Stock.create(command.tenantId, command.productId, command.warehouseId);
-      }
-
-      if (command.type === MovementType.ENTRY) {
-        stock.addQuantity(command.quantity);
-      } else if (command.type === MovementType.EXIT) {
-        stock.subtractQuantity(command.quantity);
-      }
-
-      await this.stockRepository.save(stock);
-    }
+    movement.commit();
 
     return movement.id;
   }

@@ -7,6 +7,7 @@ import { StockModule } from '@modules/inventory/stock/stock.module';
 import { WarehousesModule } from '@modules/inventory/warehouses/warehouses.module';
 
 import { RegisterMovementHandler } from './application/commands/register-movement/register-movement.handler';
+import { MovementRegisteredEventHandler } from './application/event-handlers/movement-registered.event-handler';
 import { PurchaseOrderReceivedIntegrationEventHandler } from './application/event-handlers/purchase-order-received.integration-event-handler';
 import { SaleApprovedIntegrationEventHandler } from './application/event-handlers/sale-approved.integration-event-handler';
 import { GetMovementHandler } from './application/queries/get-movement/get-movement.handler';
@@ -27,6 +28,7 @@ import { MovementsController } from './presentation/controllers/movements.contro
   controllers: [MovementsController],
   providers: [
     RegisterMovementHandler,
+    MovementRegisteredEventHandler,
     SaleApprovedIntegrationEventHandler,
     PurchaseOrderReceivedIntegrationEventHandler,
     GetMovementHandler,

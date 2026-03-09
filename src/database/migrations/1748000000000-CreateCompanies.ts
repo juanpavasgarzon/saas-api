@@ -25,7 +25,7 @@ export class CreateCompanies1748000000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "companies"`);
-    await queryRunner.query(`DROP TYPE "public"."companies_plan_enum"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "companies"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."companies_plan_enum"`);
   }
 }

@@ -21,6 +21,15 @@ export class RegisterMovementDto {
   @Min(0.001)
   quantity!: number;
 
+  @ApiPropertyOptional({
+    example: '019542ab-1234-7abc-8def-000000000004',
+    nullable: true,
+    description: 'Destination warehouse UUID (required for TRANSFER)',
+  })
+  @IsOptional()
+  @IsUUID()
+  toWarehouseId?: string;
+
   @ApiPropertyOptional({ example: 'PO-001', nullable: true, description: 'Reference ID (sale/PO)' })
   @IsOptional()
   @IsString()

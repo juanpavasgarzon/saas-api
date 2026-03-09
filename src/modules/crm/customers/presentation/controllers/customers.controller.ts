@@ -16,6 +16,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -141,6 +142,7 @@ export class CustomersController {
   @ApiParam({ name: 'id', description: 'Customer UUID' })
   @ApiNoContentResponse({ description: 'Customer reactivated' })
   @ApiNotFoundResponse({ description: 'Customer not found' })
+  @ApiConflictResponse({ description: 'Customer is already active' })
   async reactivateCustomer(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -156,6 +158,7 @@ export class CustomersController {
   @ApiParam({ name: 'id', description: 'Customer UUID' })
   @ApiNoContentResponse({ description: 'Customer deactivated' })
   @ApiNotFoundResponse({ description: 'Customer not found' })
+  @ApiConflictResponse({ description: 'Customer is already inactive' })
   async deactivateCustomer(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,

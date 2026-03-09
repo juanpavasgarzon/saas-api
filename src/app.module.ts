@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { ConfigModule } from './config/config.module';
@@ -30,6 +30,16 @@ import { PermissionsGuard } from './shared/presentation/guards/permissions.guard
     SalesModule,
     ProcurementModule,
     InventoryModule,
+    RouterModule.register([
+      { path: 'identity', module: IdentityModule },
+      { path: 'organization', module: OrganizationModule },
+      { path: 'crm', module: CrmModule },
+      { path: 'projects', module: ProjectsModule },
+      { path: 'finance', module: FinanceModule },
+      { path: 'sales', module: SalesModule },
+      { path: 'procurement', module: ProcurementModule },
+      { path: 'inventory', module: InventoryModule },
+    ]),
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

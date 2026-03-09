@@ -41,6 +41,7 @@ import { ListAssetsQuery } from '../../application/queries/list-assets/list-asse
 import { type Asset } from '../../domain/entities/asset.entity';
 import { AssetCategory } from '../../domain/enums/asset-category.enum';
 import { AssetStatus } from '../../domain/enums/asset-status.enum';
+import { AssetListResponseDto } from '../dtos/asset-list-response.dto';
 import { AssetResponseDto } from '../dtos/asset-response.dto';
 import { AssignAssetDto } from '../dtos/assign-asset.dto';
 import { CreateAssetDto } from '../dtos/create-asset.dto';
@@ -79,7 +80,7 @@ export class AssetsController {
   @Get()
   @RequirePermission(Permission.OrganizationAssetsRead)
   @ApiOperation({ summary: 'List assets', description: 'Returns assets with pagination.' })
-  @ApiOkResponse({ description: 'Paginated list of assets' })
+  @ApiOkResponse({ description: 'Paginated list of assets (without assignments)' })
   @ApiQuery({ name: 'status', required: false, enum: AssetStatus })
   @ApiQuery({ name: 'category', required: false, enum: AssetCategory })
   @ApiQuery({ name: 'search', required: false })
@@ -92,11 +93,11 @@ export class AssetsController {
     @Query('search') search?: string,
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
-  ): Promise<PaginatedResult<AssetResponseDto>> {
+  ): Promise<PaginatedResult<AssetListResponseDto>> {
     const result = await this.queryBus.execute<ListAssetsQuery, PaginatedResult<Asset>>(
       new ListAssetsQuery(tenantId, { status, category, search }, page, limit),
     );
-    return { ...result, items: result.items.map((a) => new AssetResponseDto(a)) };
+    return { ...result, items: result.items.map((a) => new AssetListResponseDto(a)) };
   }
 
   @Get(':id')

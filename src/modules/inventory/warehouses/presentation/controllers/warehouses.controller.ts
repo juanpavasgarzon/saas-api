@@ -17,6 +17,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -129,6 +130,7 @@ export class WarehousesController {
   @ApiParam({ name: 'id', description: 'Warehouse UUID' })
   @ApiNoContentResponse({ description: 'Warehouse reactivated' })
   @ApiNotFoundResponse({ description: 'Warehouse not found' })
+  @ApiConflictResponse({ description: 'Warehouse is already active' })
   async reactivateWarehouse(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
@@ -147,6 +149,7 @@ export class WarehousesController {
   @ApiParam({ name: 'id', description: 'Warehouse UUID' })
   @ApiNoContentResponse({ description: 'Warehouse deactivated' })
   @ApiNotFoundResponse({ description: 'Warehouse not found' })
+  @ApiConflictResponse({ description: 'Warehouse is already inactive' })
   async deactivateWarehouse(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,

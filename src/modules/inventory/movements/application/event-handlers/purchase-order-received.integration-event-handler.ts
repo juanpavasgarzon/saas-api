@@ -2,6 +2,7 @@ import { CommandBus, EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
 import { PurchaseOrderReceivedIntegrationEvent } from '@shared/application/events/purchase-order-received.integration-event';
 
+import { MovementSource } from '../../domain/enums/movement-source.enum';
 import { MovementType } from '../../domain/enums/movement-type.enum';
 import { RegisterMovementCommand } from '../commands/register-movement/register-movement.command';
 
@@ -19,8 +20,10 @@ export class PurchaseOrderReceivedIntegrationEventHandler implements IEventHandl
         event.tenantId,
         item.productId,
         null,
+        null,
         MovementType.ENTRY,
         item.quantity,
+        MovementSource.PURCHASE,
         event.purchaseOrderId,
         'Auto: purchase order received',
       );

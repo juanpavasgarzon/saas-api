@@ -8,7 +8,7 @@ import { RequirePermission } from '@shared/presentation/decorators/require-permi
 import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
 
 import { CreateProspectCommand } from '../../application/commands/create-prospect/create-prospect.command';
-import { CreateProspectDto } from '../dtos/create-prospect.dto';
+import { CreateVendorProspectDto } from '../dtos/create-prospect.dto';
 
 @ApiTags('Procurement')
 @ApiBearerAuth('JWT')
@@ -26,7 +26,7 @@ export class ProspectsController {
   @ApiCreatedResponse({ type: CreatedResponseDto })
   async createProspect(
     @CurrentTenant() tenantId: string,
-    @Body() dto: CreateProspectDto,
+    @Body() dto: CreateVendorProspectDto,
   ): Promise<CreatedResponseDto> {
     const command = new CreateProspectCommand(
       tenantId,

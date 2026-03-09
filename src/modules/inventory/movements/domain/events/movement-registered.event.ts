@@ -1,8 +1,9 @@
-import { type MovementSource } from '../../../domain/enums/movement-source.enum';
-import { type MovementType } from '../../../domain/enums/movement-type.enum';
+import { type MovementSource } from '../enums/movement-source.enum';
+import { type MovementType } from '../enums/movement-type.enum';
 
-export class RegisterMovementCommand {
+export class MovementRegisteredEvent {
   constructor(
+    public readonly movementId: string,
     public readonly tenantId: string,
     public readonly productId: string,
     public readonly warehouseId: string | null,
@@ -11,6 +12,5 @@ export class RegisterMovementCommand {
     public readonly quantity: number,
     public readonly source: MovementSource,
     public readonly referenceId: string | null,
-    public readonly notes: string | null,
   ) {}
 }

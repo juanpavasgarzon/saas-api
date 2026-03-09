@@ -69,8 +69,10 @@ export class MovementTypeOrmRepository implements IMovementRepository {
       tenantId: orm.tenantId,
       productId: orm.productId,
       warehouseId: orm.warehouseId,
+      toWarehouseId: orm.toWarehouseId,
       type: orm.type,
       quantity: Number(orm.quantity),
+      source: orm.source,
       referenceId: orm.referenceId,
       notes: orm.notes,
       createdAt: orm.createdAt,
@@ -84,8 +86,10 @@ export class MovementTypeOrmRepository implements IMovementRepository {
     orm.tenantId = movement.tenantId;
     orm.productId = movement.productId;
     orm.warehouseId = movement.warehouseId;
+    orm.toWarehouseId = movement.toWarehouseId;
     orm.type = movement.type;
     orm.quantity = movement.quantity;
+    orm.source = movement.source;
     orm.referenceId = movement.referenceId;
     orm.notes = movement.notes;
     return orm;

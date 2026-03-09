@@ -32,7 +32,8 @@ import { RegisterMovementCommand } from '../../application/commands/register-mov
 import { GetMovementQuery } from '../../application/queries/get-movement/get-movement.query';
 import { ListMovementsQuery } from '../../application/queries/list-movements/list-movements.query';
 import { type Movement } from '../../domain/entities/movement.entity';
-import { type MovementType } from '../../domain/enums/movement-type.enum';
+import { MovementSource } from '../../domain/enums/movement-source.enum';
+import { MovementType } from '../../domain/enums/movement-type.enum';
 import { MovementResponseDto } from '../dtos/movement-response.dto';
 import { RegisterMovementDto } from '../dtos/register-movement.dto';
 
@@ -61,8 +62,10 @@ export class MovementsController {
       tenantId,
       dto.productId,
       dto.warehouseId,
+      dto.toWarehouseId ?? null,
       dto.type,
       dto.quantity,
+      MovementSource.MANUAL,
       dto.referenceId ?? null,
       dto.notes ?? null,
     );
@@ -79,7 +82,7 @@ export class MovementsController {
   @ApiOkResponse({ description: 'Paginated list of movements' })
   @ApiQuery({ name: 'productId', required: false })
   @ApiQuery({ name: 'warehouseId', required: false })
-  @ApiQuery({ name: 'type', required: false })
+  @ApiQuery({ name: 'type', required: false, enum: MovementType })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listMovements(

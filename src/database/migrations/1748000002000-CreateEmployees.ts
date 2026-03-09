@@ -11,17 +11,18 @@ export class CreateEmployees1748000002000 implements MigrationInterface {
     // email unique per tenant — two tenants may share the same employee email.
     await queryRunner.query(`
       CREATE TABLE "employees" (
-        "id"         uuid      NOT NULL,
-        "tenantId"   uuid      NOT NULL,
-        "firstName"  varchar   NOT NULL,
-        "lastName"   varchar   NOT NULL,
-        "email"      varchar   NOT NULL,
-        "position"   varchar   NOT NULL,
-        "department" varchar   NOT NULL,
-        "status"     "public"."employees_status_enum" NOT NULL DEFAULT 'ACTIVE',
-        "hiredAt"    date      NOT NULL,
-        "createdAt"  TIMESTAMP NOT NULL DEFAULT now(),
-        "updatedAt"  TIMESTAMP NOT NULL DEFAULT now(),
+        "id"          uuid          NOT NULL,
+        "tenantId"    uuid          NOT NULL,
+        "firstName"   varchar       NOT NULL,
+        "lastName"    varchar       NOT NULL,
+        "email"       varchar       NOT NULL,
+        "position"    varchar       NOT NULL,
+        "department"  varchar       NOT NULL,
+        "status"      "public"."employees_status_enum" NOT NULL DEFAULT 'ACTIVE',
+        "hiredAt"     date          NOT NULL,
+        "basicSalary" decimal(12,2) NOT NULL DEFAULT 0,
+        "createdAt"   TIMESTAMP     NOT NULL DEFAULT now(),
+        "updatedAt"   TIMESTAMP     NOT NULL DEFAULT now(),
         CONSTRAINT "UQ_employees_tenant_email" UNIQUE ("tenantId", "email"),
         CONSTRAINT "PK_employees"              PRIMARY KEY ("id"),
         CONSTRAINT "FK_employees_tenant"       FOREIGN KEY ("tenantId")
@@ -41,10 +42,10 @@ export class CreateEmployees1748000002000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "IDX_employees_tenant_status"`);
-    await queryRunner.query(`DROP INDEX "IDX_employees_tenant_department"`);
-    await queryRunner.query(`DROP INDEX "IDX_employees_tenant"`);
-    await queryRunner.query(`DROP TABLE "employees"`);
-    await queryRunner.query(`DROP TYPE "public"."employees_status_enum"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_employees_tenant_status"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_employees_tenant_department"`);
+    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_employees_tenant"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "employees"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."employees_status_enum"`);
   }
 }
