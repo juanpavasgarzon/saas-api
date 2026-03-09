@@ -2,47 +2,63 @@ import { Injectable } from '@nestjs/common';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import PDFKit = require('pdfkit');
 
-import { type IPayrollPdfService } from '@modules/finance/shared/contracts/payroll-pdf-service.contract';
-
+import { IPayrollPdfService } from '../../application/contracts/payroll-pdf-service.contract';
 import { type PayrollEntry } from '../../domain/entities/payroll-entry.entity';
+
+const MARGIN = 50;
+const RIGHT_EDGE = 545;
+const LOGO_X = MARGIN;
+const LOGO_Y = 45;
+const LOGO_MAX_W = 120;
+const LOGO_MAX_H = 70;
+const TEXT_X = 180;
+const DIVIDER_1_Y = 125;
+const CONTENT_Y = 150;
 
 @Injectable()
 export class PayrollPdfService implements IPayrollPdfService {
-  generate(entry: PayrollEntry, companyName: string): Promise<Buffer> {
+  generate(entry: PayrollEntry, companyName: string, companyLogo: string | null): Promise<Buffer> {
     return new Promise((resolve) => {
       const chunks: Buffer[] = [];
-      const doc = new PDFKit({ margin: 50, size: 'A4' });
+      const doc = new PDFKit({ margin: MARGIN, size: 'A4' });
 
       doc.on('data', (chunk: Buffer) => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
 
-      this.renderHeader(doc, companyName, entry);
+      this.renderHeader(doc, companyName, companyLogo);
       this.renderDetails(doc, entry);
 
       doc.end();
     });
   }
 
-  private renderHeader(doc: PDFKit.PDFDocument, companyName: string, _entry: PayrollEntry): void {
-    doc
-      .fontSize(20)
-      .font('Helvetica-Bold')
-      .text(companyName, 50, 45)
-      .fontSize(10)
-      .font('Helvetica')
-      .moveDown();
+  private renderHeader(
+    doc: PDFKit.PDFDocument,
+    companyName: string,
+    companyLogo: string | null,
+  ): void {
+    if (companyLogo) {
+      const match = companyLogo.match(/^data:image\/png;base64,(.+)$/);
+      if (match) {
+        doc.image(Buffer.from(match[1], 'base64'), LOGO_X, LOGO_Y, {
+          fit: [LOGO_MAX_W, LOGO_MAX_H],
+        });
+      }
+    }
 
     doc
-      .fontSize(24)
+      .fontSize(16)
       .font('Helvetica-Bold')
-      .text('PAY STUB', 50, 100)
-      .fontSize(10)
-      .font('Helvetica')
-      .moveDown(2);
+      .text(companyName, TEXT_X, LOGO_Y, { width: RIGHT_EDGE - TEXT_X })
+      .fontSize(22)
+      .text('PAY STUB', TEXT_X, LOGO_Y + 26, { width: RIGHT_EDGE - TEXT_X });
+
+    doc.moveTo(MARGIN, DIVIDER_1_Y).lineTo(RIGHT_EDGE, DIVIDER_1_Y).stroke();
+    doc.y = CONTENT_Y;
   }
 
   private renderDetails(doc: PDFKit.PDFDocument, entry: PayrollEntry): void {
-    const labelX = 50;
+    const labelX = MARGIN;
     const valueX = 250;
     let y = doc.y;
 
@@ -56,11 +72,6 @@ export class PayrollPdfService implements IPayrollPdfService {
       { label: 'Deductions:', value: `$${entry.deductions.toFixed(2)}` },
     ];
 
-    doc
-      .moveTo(50, y - 5)
-      .lineTo(545, y - 5)
-      .stroke();
-
     for (const row of rows) {
       doc
         .fontSize(10)
@@ -72,11 +83,10 @@ export class PayrollPdfService implements IPayrollPdfService {
     }
 
     doc
-      .moveTo(50, y + 5)
-      .lineTo(545, y + 5)
+      .moveTo(MARGIN, y + 5)
+      .lineTo(RIGHT_EDGE, y + 5)
       .stroke();
-
-    y += 15;
+    y += 20;
 
     doc
       .fontSize(12)

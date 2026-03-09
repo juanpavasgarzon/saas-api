@@ -98,7 +98,10 @@ export class ProspectsController {
     const result = await this.queryBus.execute<ListProspectsQuery, PaginatedResult<Prospect>>(
       listProspectsQuery,
     );
-    return { ...result, items: result.items.map((p) => new ProspectResponseDto(p)) };
+    return {
+      ...result,
+      items: result.items.map((p) => new ProspectResponseDto(p)),
+    };
   }
 
   @Get(':id')

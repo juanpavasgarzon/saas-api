@@ -9,6 +9,7 @@ export function setUpSwagger(app: INestApplication): void {
     .addTag('CRM', 'Customer relationship management')
     .addTag('Finance', 'Financial management and accounting')
     .addTag('Identity', 'User and access management')
+    .addTag('Inventory', 'Inventory and warehouse management')
     .addTag('Organization', 'Organization and team management')
     .addTag('Procurement', 'Procurement and vendor management')
     .addTag('Projects', 'Project management and collaboration')

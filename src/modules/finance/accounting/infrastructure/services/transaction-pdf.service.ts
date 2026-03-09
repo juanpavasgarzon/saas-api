@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import PDFKit = require('pdfkit');
 
-import { type ITransactionPdfService } from '@modules/finance/shared/contracts/transaction-pdf-service.contract';
-
+import { type ITransactionPdfService } from '../../application/contracts/transaction-pdf-service.contract';
 import { type AccountingTransaction } from '../../domain/entities/accounting-transaction.entity';
 
 @Injectable()

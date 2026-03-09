@@ -93,7 +93,10 @@ export class EmployeesController {
     const result = await this.queryBus.execute<ListEmployeesQuery, PaginatedResult<Employee>>(
       listEmployeesQuery,
     );
-    return { ...result, items: result.items.map((e) => new EmployeeResponseDto(e)) };
+    return {
+      ...result,
+      items: result.items.map((e) => new EmployeeResponseDto(e)),
+    };
   }
 
   @Get(':id')

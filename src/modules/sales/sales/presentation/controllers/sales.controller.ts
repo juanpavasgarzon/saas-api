@@ -35,8 +35,8 @@ import { Permission } from '@shared/domain/enums/permission.enum';
 import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
 import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
-import { type ISalePdfService } from '@modules/sales/shared/contracts/sale-pdf-service.contract';
-import { SALE_PDF_SERVICE } from '@modules/sales/shared/tokens/sale-pdf-service.token';
+import { type ISalePdfService } from '@modules/sales/sales/application/contracts/sale-pdf-service.contract';
+import { SALE_PDF_SERVICE } from '@modules/sales/sales/application/tokens/sale-pdf-service.token';
 
 import { ApproveSaleCommand } from '../../application/commands/approve-sale/approve-sale.command';
 import { CancelSaleCommand } from '../../application/commands/cancel-sale/cancel-sale.command';
@@ -97,7 +97,10 @@ export class SalesController {
   ): Promise<PaginatedResult<SaleListResponseDto>> {
     const listQuery = new ListSalesQuery(tenantId, { customerId, status }, page, limit);
     const result = await this.queryBus.execute<ListSalesQuery, PaginatedResult<Sale>>(listQuery);
-    return { ...result, items: result.items.map((s) => new SaleListResponseDto(s)) };
+    return {
+      ...result,
+      items: result.items.map((s) => new SaleListResponseDto(s)),
+    };
   }
 
   @Get(':id')

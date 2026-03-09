@@ -96,7 +96,10 @@ export class PurchaseRequestsController {
       ListPurchaseRequestsQuery,
       PaginatedResult<PurchaseRequest>
     >(query);
-    return { ...result, items: result.items.map((pr) => new PurchaseRequestResponseDto(pr)) };
+    return {
+      ...result,
+      items: result.items.map((pr) => new PurchaseRequestResponseDto(pr)),
+    };
   }
 
   @Get(':id')

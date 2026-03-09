@@ -6,11 +6,9 @@ import { UsersModule } from '@modules/identity/users/users.module';
 
 import { AcceptInvitationHandler } from './application/commands/accept-invitation/accept-invitation.handler';
 import { SendInvitationHandler } from './application/commands/send-invitation/send-invitation.handler';
-import { EMAIL_SERVICE } from './application/tokens/email-service.token';
 import { INVITATION_REPOSITORY } from './domain/tokens/invitation-repository.token';
 import { InvitationOrmEntity } from './infrastructure/entities/invitation.orm-entity';
 import { InvitationTypeOrmRepository } from './infrastructure/repositories/invitation.typeorm-repository';
-import { NodemailerEmailService } from './infrastructure/services/nodemailer-email.service';
 import { InvitationsController } from './presentation/controllers/invitations.controller';
 
 @Module({
@@ -20,7 +18,6 @@ import { InvitationsController } from './presentation/controllers/invitations.co
     SendInvitationHandler,
     AcceptInvitationHandler,
     { provide: INVITATION_REPOSITORY, useClass: InvitationTypeOrmRepository },
-    { provide: EMAIL_SERVICE, useClass: NodemailerEmailService },
   ],
 })
 export class InvitationsModule {}

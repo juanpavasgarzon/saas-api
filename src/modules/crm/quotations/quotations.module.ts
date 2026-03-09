@@ -16,13 +16,11 @@ import { UpdateQuotationHandler } from './application/commands/update-quotation/
 import { QuotationAcceptedEventHandler } from './application/event-handlers/quotation-accepted.event-handler';
 import { GetQuotationHandler } from './application/queries/get-quotation/get-quotation.handler';
 import { ListQuotationsHandler } from './application/queries/list-quotations/list-quotations.handler';
-import { QUOTATION_EMAIL_SERVICE } from './application/tokens/quotation-email-service.token';
 import { QUOTATION_PDF_SERVICE } from './application/tokens/quotation-pdf-service.token';
 import { QUOTATION_REPOSITORY } from './domain/tokens/quotation-repository.token';
 import { QuotationOrmEntity } from './infrastructure/entities/quotation.orm-entity';
 import { QuotationItemOrmEntity } from './infrastructure/entities/quotation-item.orm-entity';
 import { QuotationTypeOrmRepository } from './infrastructure/repositories/quotation.typeorm-repository';
-import { NodemailerQuotationEmailService } from './infrastructure/services/nodemailer-quotation-email.service';
 import { QuotationPdfService } from './infrastructure/services/quotation-pdf.service';
 import { QuotationsController } from './presentation/controllers/quotations.controller';
 
@@ -47,7 +45,6 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
     ListQuotationsHandler,
     QuotationAcceptedEventHandler,
     { provide: QUOTATION_PDF_SERVICE, useClass: QuotationPdfService },
-    { provide: QUOTATION_EMAIL_SERVICE, useClass: NodemailerQuotationEmailService },
     { provide: QUOTATION_REPOSITORY, useClass: QuotationTypeOrmRepository },
   ],
 })

@@ -19,11 +19,7 @@ export class ListPurchaseRequestsHandler implements IQueryHandler<
   ) {}
 
   async execute(query: ListPurchaseRequestsQuery): Promise<PaginatedResult<PurchaseRequest>> {
-    return this.purchaseRequestRepository.findAll(
-      query.tenantId,
-      { status: query.status, vendorId: query.vendorId },
-      query.page,
-      query.limit,
-    );
+    const filters = { status: query.status, vendorId: query.vendorId };
+    return this.purchaseRequestRepository.findAll(query.tenantId, filters, query.page, query.limit);
   }
 }

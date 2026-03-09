@@ -18,7 +18,6 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -39,10 +38,6 @@ import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.de
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
 import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
 
-import { GetCustomerQuery } from '../../../customers/application/queries/get-customer/get-customer.query';
-import { type Customer } from '../../../customers/domain/entities/customer.entity';
-import { GetProspectQuery } from '../../../prospects/application/queries/get-prospect/get-prospect.query';
-import { type Prospect } from '../../../prospects/domain/entities/prospect.entity';
 import { AcceptQuotationCommand } from '../../application/commands/accept-quotation/accept-quotation.command';
 import { CreateQuotationCommand } from '../../application/commands/create-quotation/create-quotation.command';
 import { DeleteQuotationCommand } from '../../application/commands/delete-quotation/delete-quotation.command';
@@ -50,18 +45,15 @@ import { ExpireQuotationCommand } from '../../application/commands/expire-quotat
 import { RejectQuotationCommand } from '../../application/commands/reject-quotation/reject-quotation.command';
 import { SendQuotationCommand } from '../../application/commands/send-quotation/send-quotation.command';
 import { UpdateQuotationCommand } from '../../application/commands/update-quotation/update-quotation.command';
-import { type IQuotationEmailService } from '../../application/contracts/quotation-email-service.contract';
 import { type IQuotationPdfService } from '../../application/contracts/quotation-pdf-service.contract';
 import { GetQuotationQuery } from '../../application/queries/get-quotation/get-quotation.query';
 import { ListQuotationsQuery } from '../../application/queries/list-quotations/list-quotations.query';
-import { QUOTATION_EMAIL_SERVICE } from '../../application/tokens/quotation-email-service.token';
 import { QUOTATION_PDF_SERVICE } from '../../application/tokens/quotation-pdf-service.token';
 import { type Quotation } from '../../domain/entities/quotation.entity';
 import { QuotationStatus } from '../../domain/enums/quotation-status.enum';
 import { CreateQuotationDto } from '../dtos/create-quotation.dto';
 import { QuotationListResponseDto } from '../dtos/quotation-list-response.dto';
 import { QuotationResponseDto } from '../dtos/quotation-response.dto';
-import { SendQuotationDto } from '../dtos/send-quotation.dto';
 import { UpdateQuotationDto } from '../dtos/update-quotation.dto';
 
 @ApiTags('CRM')
@@ -75,8 +67,6 @@ export class QuotationsController {
     private readonly pdfService: IQuotationPdfService,
     @Inject(COMPANY_PROFILE_SERVICE)
     private readonly companyProfileService: ICompanyProfileService,
-    @Inject(QUOTATION_EMAIL_SERVICE)
-    private readonly emailService: IQuotationEmailService,
   ) {}
 
   @Post()
@@ -117,16 +107,15 @@ export class QuotationsController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<QuotationListResponseDto>> {
-    const query = new ListQuotationsQuery(
-      tenantId,
-      { status, customerId, prospectId },
-      page,
-      limit,
-    );
+    const filters = { status, customerId, prospectId };
+    const query = new ListQuotationsQuery(tenantId, filters, page, limit);
     const result = await this.queryBus.execute<ListQuotationsQuery, PaginatedResult<Quotation>>(
       query,
     );
-    return { ...result, items: result.items.map((q) => new QuotationListResponseDto(q)) };
+    return {
+      ...result,
+      items: result.items.map((q) => new QuotationListResponseDto(q)),
+    };
   }
 
   @Get(':id')
@@ -139,9 +128,8 @@ export class QuotationsController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<QuotationResponseDto> {
-    const quotation = await this.queryBus.execute<GetQuotationQuery, Quotation>(
-      new GetQuotationQuery(id, tenantId),
-    );
+    const getQuotationQuery = new GetQuotationQuery(id, tenantId);
+    const quotation = await this.queryBus.execute<GetQuotationQuery, Quotation>(getQuotationQuery);
     return new QuotationResponseDto(quotation);
   }
 
@@ -209,43 +197,14 @@ export class QuotationsController {
       'Transitions quotation from DRAFT to SENT. Optionally sends the PDF by email to the customer or prospect.',
   })
   @ApiParam({ name: 'id', description: 'Quotation UUID' })
-  @ApiBody({ type: SendQuotationDto, required: false })
   @ApiNoContentResponse({ description: 'Quotation sent' })
   @ApiNotFoundResponse({ description: 'Quotation not found' })
   async sendQuotation(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: SendQuotationDto,
   ): Promise<void> {
     const command = new SendQuotationCommand(id, tenantId);
     await this.commandBus.execute(command);
-
-    if (dto.sendEmail) {
-      const getEmailQuery = new GetQuotationQuery(id, tenantId);
-      const [quotation, company] = await Promise.all([
-        this.queryBus.execute<GetQuotationQuery, Quotation>(getEmailQuery),
-        this.companyProfileService.getProfile(tenantId),
-      ]);
-
-      let recipientEmail: string | null = null;
-
-      if (quotation.customerId) {
-        const getCustomerQuery = new GetCustomerQuery(quotation.customerId, tenantId);
-        const customer = await this.queryBus.execute<GetCustomerQuery, Customer>(getCustomerQuery);
-        recipientEmail = customer.email;
-      } else if (quotation.prospectId) {
-        const getProspectQuery = new GetProspectQuery(quotation.prospectId, tenantId);
-        const prospect = await this.queryBus.execute<GetProspectQuery, Prospect>(getProspectQuery);
-        recipientEmail = prospect.email;
-      }
-
-      if (recipientEmail) {
-        const quotationNumber = String(quotation.number).padStart(4, '0');
-        const filename = `quotation-${quotationNumber}.pdf`;
-        const pdf = await this.pdfService.generate(quotation, company.name, company.logo);
-        await this.emailService.sendWithPdf(recipientEmail, quotationNumber, pdf, filename);
-      }
-    }
   }
 
   @Patch(':id/accept')

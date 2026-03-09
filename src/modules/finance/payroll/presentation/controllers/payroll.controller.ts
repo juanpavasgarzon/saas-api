@@ -35,13 +35,13 @@ import { Permission } from '@shared/domain/enums/permission.enum';
 import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
 import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
-import { type IPayrollPdfService } from '@modules/finance/shared/contracts/payroll-pdf-service.contract';
-import { PAYROLL_PDF_SERVICE } from '@modules/finance/shared/tokens/payroll-pdf-service.token';
 
 import { CreatePayrollEntryCommand } from '../../application/commands/create-payroll-entry/create-payroll-entry.command';
 import { MarkAsPaidCommand } from '../../application/commands/mark-as-paid/mark-as-paid.command';
+import { type IPayrollPdfService } from '../../application/contracts/payroll-pdf-service.contract';
 import { GetPayrollEntryQuery } from '../../application/queries/get-payroll-entry/get-payroll-entry.query';
 import { ListPayrollQuery } from '../../application/queries/list-payroll/list-payroll.query';
+import { PAYROLL_PDF_SERVICE } from '../../application/tokens/payroll-pdf-service.token';
 import { type PayrollEntry } from '../../domain/entities/payroll-entry.entity';
 import { CreatePayrollEntryDto } from '../dtos/create-payroll-entry.dto';
 import { PayrollEntryResponseDto } from '../dtos/payroll-entry-response.dto';
@@ -99,16 +99,15 @@ export class PayrollController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<PayrollEntryResponseDto>> {
-    const listPayrollQuery = new ListPayrollQuery(
-      tenantId,
-      { employeeId, period, status },
-      page,
-      limit,
-    );
+    const filters = { employeeId, period, status };
+    const listPayrollQuery = new ListPayrollQuery(tenantId, filters, page, limit);
     const result = await this.queryBus.execute<ListPayrollQuery, PaginatedResult<PayrollEntry>>(
       listPayrollQuery,
     );
-    return { ...result, items: result.items.map((e) => new PayrollEntryResponseDto(e)) };
+    return {
+      ...result,
+      items: result.items.map((e) => new PayrollEntryResponseDto(e)),
+    };
   }
 
   @Get(':id/pdf')
@@ -126,14 +125,13 @@ export class PayrollController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ): Promise<void> {
+    const getPayrollEntryQuery = new GetPayrollEntryQuery(id, tenantId);
     const [entry, company] = await Promise.all([
-      this.queryBus.execute<GetPayrollEntryQuery, PayrollEntry>(
-        new GetPayrollEntryQuery(id, tenantId),
-      ),
+      this.queryBus.execute<GetPayrollEntryQuery, PayrollEntry>(getPayrollEntryQuery),
       this.companyProfileService.getProfile(tenantId),
     ]);
 
-    const pdf = await this.payrollPdfService.generate(entry, company.name);
+    const pdf = await this.payrollPdfService.generate(entry, company.name, company.logo);
     const filename = `payroll-${entry.period}-${id.slice(0, 8)}.pdf`;
 
     res.set({

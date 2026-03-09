@@ -4,7 +4,7 @@ import { type INotificationService } from '@shared/application/contracts/notific
 import { type NotificationEventType } from '@shared/domain/enums/notification-event-type.enum';
 
 import { type NotificationPayload } from '../../domain/contracts/notification-payload.contract';
-import { NotificationGateway } from '../../infrastructure/gateways/notification.gateway';
+import { NotificationGateway } from './notification.gateway';
 
 @Injectable()
 export class NotificationService implements INotificationService {

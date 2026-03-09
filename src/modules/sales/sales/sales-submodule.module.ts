@@ -3,7 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CompaniesModule } from '@modules/organization/companies/companies.module';
-import { SALE_PDF_SERVICE } from '@modules/sales/shared/tokens/sale-pdf-service.token';
 
 import { ApproveSaleHandler } from './application/commands/approve-sale/approve-sale.handler';
 import { CancelSaleHandler } from './application/commands/cancel-sale/cancel-sale.handler';
@@ -12,6 +11,7 @@ import { CreateSaleFromQuotationHandler } from './application/commands/create-sa
 import { SaleApprovedEventHandler } from './application/event-handlers/sale-approved.event-handler';
 import { GetSaleHandler } from './application/queries/get-sale/get-sale.handler';
 import { ListSalesHandler } from './application/queries/list-sales/list-sales.handler';
+import { SALE_PDF_SERVICE } from './application/tokens/sale-pdf-service.token';
 import { SALE_REPOSITORY } from './domain/tokens/sale-repository.token';
 import { SaleOrmEntity } from './infrastructure/entities/sale.orm-entity';
 import { SaleItemOrmEntity } from './infrastructure/entities/sale-item.orm-entity';

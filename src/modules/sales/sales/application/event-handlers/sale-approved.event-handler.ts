@@ -3,7 +3,7 @@ import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
 import { SaleApprovedIntegrationEvent } from '@shared/application/events/sale-approved.integration-event';
 import { OUTBOX_REPOSITORY } from '@shared/application/tokens/outbox-repository.token';
-import { type IOutboxMessageRepository } from '@shared/domain/contracts/outbox-repository.contract';
+import { type IOutboxMessageRepository } from '@shared/application/contracts/outbox-repository.contract';
 
 import { SaleApprovedEvent } from '../../domain/events/sale-approved.event';
 

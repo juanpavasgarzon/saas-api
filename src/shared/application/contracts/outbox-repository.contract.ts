@@ -1,4 +1,4 @@
-import { type IntegrationEvent } from './integration-event.contract';
+import { type IntegrationEvent } from '../../domain/contracts/integration-event.contract';
 
 export interface OutboxMessage {
   id: string;

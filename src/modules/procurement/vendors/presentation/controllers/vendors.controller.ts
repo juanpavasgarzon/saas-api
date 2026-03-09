@@ -77,7 +77,10 @@ export class VendorsController {
   ): Promise<PaginatedResult<VendorResponseDto>> {
     const query = new ListVendorsQuery(tenantId, search, page, limit);
     const result = await this.queryBus.execute<ListVendorsQuery, PaginatedResult<Vendor>>(query);
-    return { ...result, items: result.items.map((v) => new VendorResponseDto(v)) };
+    return {
+      ...result,
+      items: result.items.map((v) => new VendorResponseDto(v)),
+    };
   }
 
   @Get(':id')

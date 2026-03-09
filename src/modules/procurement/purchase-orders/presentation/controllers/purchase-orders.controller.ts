@@ -66,7 +66,10 @@ export class PurchaseOrdersController {
       ListPurchaseOrdersQuery,
       PaginatedResult<PurchaseOrder>
     >(query);
-    return { ...result, items: result.items.map((po) => new PurchaseOrderResponseDto(po)) };
+    return {
+      ...result,
+      items: result.items.map((po) => new PurchaseOrderResponseDto(po)),
+    };
   }
 
   @Get(':id')

@@ -61,7 +61,10 @@ export class UsersController {
   ): Promise<PaginatedResult<UserResponseDto>> {
     const query = new ListUsersQuery(tenantId, page, limit);
     const result = await this.queryBus.execute<ListUsersQuery, PaginatedResult<User>>(query);
-    return { ...result, items: result.items.map((u) => new UserResponseDto(u)) };
+    return {
+      ...result,
+      items: result.items.map((u) => new UserResponseDto(u)),
+    };
   }
 
   @Get(':id')

@@ -19,11 +19,7 @@ export class ListVendorsHandler implements IQueryHandler<
   ) {}
 
   async execute(query: ListVendorsQuery): Promise<PaginatedResult<Vendor>> {
-    return this.vendorRepository.findAll(
-      query.tenantId,
-      { search: query.search },
-      query.page,
-      query.limit,
-    );
+    const filters = { search: query.search };
+    return this.vendorRepository.findAll(query.tenantId, filters, query.page, query.limit);
   }
 }

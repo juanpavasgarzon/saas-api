@@ -1,0 +1,1 @@
+export const COMPANY_LOGO_SERVICE = Symbol('COMPANY_LOGO_SERVICE');

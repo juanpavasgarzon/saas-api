@@ -31,8 +31,8 @@ import { Permission } from '@shared/domain/enums/permission.enum';
 import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
 import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
-import { type ITransactionPdfService } from '@modules/finance/shared/contracts/transaction-pdf-service.contract';
-import { TRANSACTION_PDF_SERVICE } from '@modules/finance/shared/tokens/transaction-pdf-service.token';
+import { type ITransactionPdfService } from '@modules/finance/accounting/application/contracts/transaction-pdf-service.contract';
+import { TRANSACTION_PDF_SERVICE } from '@modules/finance/accounting/application/tokens/transaction-pdf-service.token';
 
 import { CreateTransactionCommand } from '../../application/commands/create-transaction/create-transaction.command';
 import { GetTransactionQuery } from '../../application/queries/get-transaction/get-transaction.query';
@@ -93,17 +93,16 @@ export class AccountingController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<TransactionResponseDto>> {
-    const listTransactionsQuery = new ListTransactionsQuery(
-      tenantId,
-      { type, dateFrom, dateTo },
-      page,
-      limit,
-    );
+    const filters = { type, dateFrom, dateTo };
+    const listTransactionsQuery = new ListTransactionsQuery(tenantId, filters, page, limit);
     const result = await this.queryBus.execute<
       ListTransactionsQuery,
       PaginatedResult<AccountingTransaction>
     >(listTransactionsQuery);
-    return { ...result, items: result.items.map((t) => new TransactionResponseDto(t)) };
+    return {
+      ...result,
+      items: result.items.map((t) => new TransactionResponseDto(t)),
+    };
   }
 
   @Get('transactions/:id/pdf')

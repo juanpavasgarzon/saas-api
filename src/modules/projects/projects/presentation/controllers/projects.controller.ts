@@ -96,16 +96,15 @@ export class ProjectsController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<ProjectResponseDto>> {
-    const listProjectsQuery = new ListProjectsQuery(
-      tenantId,
-      { customerId, status, search },
-      page,
-      limit,
-    );
+    const filters = { customerId, status, search };
+    const listProjectsQuery = new ListProjectsQuery(tenantId, filters, page, limit);
     const result = await this.queryBus.execute<ListProjectsQuery, PaginatedResult<Project>>(
       listProjectsQuery,
     );
-    return { ...result, items: result.items.map((p) => new ProjectResponseDto(p)) };
+    return {
+      ...result,
+      items: result.items.map((p) => new ProjectResponseDto(p)),
+    };
   }
 
   @Get(':id')

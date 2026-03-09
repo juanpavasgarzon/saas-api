@@ -31,8 +31,8 @@ import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.
 import { Permission } from '@shared/domain/enums/permission.enum';
 import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { type IInvoicePdfService } from '@modules/sales/shared/contracts/invoice-pdf-service.contract';
-import { INVOICE_PDF_SERVICE } from '@modules/sales/shared/tokens/invoice-pdf-service.token';
+import { type IInvoicePdfService } from '@modules/sales/invoices/application/contracts/invoice-pdf-service.contract';
+import { INVOICE_PDF_SERVICE } from '@modules/sales/invoices/application/tokens/invoice-pdf-service.token';
 
 import { CancelInvoiceCommand } from '../../application/commands/cancel-invoice/cancel-invoice.command';
 import { PayInvoiceCommand } from '../../application/commands/pay-invoice/pay-invoice.command';
@@ -78,7 +78,10 @@ export class InvoicesController {
     const result = await this.queryBus.execute<ListInvoicesQuery, PaginatedResult<Invoice>>(
       listQuery,
     );
-    return { ...result, items: result.items.map((i) => new InvoiceListResponseDto(i)) };
+    return {
+      ...result,
+      items: result.items.map((i) => new InvoiceListResponseDto(i)),
+    };
   }
 
   @Get(':id')

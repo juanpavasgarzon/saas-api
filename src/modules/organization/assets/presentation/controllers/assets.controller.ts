@@ -95,7 +95,10 @@ export class AssetsController {
   ): Promise<PaginatedResult<AssetListResponseDto>> {
     const query = new ListAssetsQuery(tenantId, { status, category, search }, page, limit);
     const result = await this.queryBus.execute<ListAssetsQuery, PaginatedResult<Asset>>(query);
-    return { ...result, items: result.items.map((a) => new AssetListResponseDto(a)) };
+    return {
+      ...result,
+      items: result.items.map((a) => new AssetListResponseDto(a)),
+    };
   }
 
   @Get(':id')

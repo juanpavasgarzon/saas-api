@@ -3,7 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CompaniesModule } from '@modules/organization/companies/companies.module';
-import { INVOICE_PDF_SERVICE } from '@modules/sales/shared/tokens/invoice-pdf-service.token';
 
 import { CancelInvoiceHandler } from './application/commands/cancel-invoice/cancel-invoice.handler';
 import { CreateInvoiceFromSaleHandler } from './application/commands/create-invoice-from-sale/create-invoice-from-sale.handler';
@@ -11,6 +10,7 @@ import { PayInvoiceHandler } from './application/commands/pay-invoice/pay-invoic
 import { SendInvoiceHandler } from './application/commands/send-invoice/send-invoice.handler';
 import { GetInvoiceHandler } from './application/queries/get-invoice/get-invoice.handler';
 import { ListInvoicesHandler } from './application/queries/list-invoices/list-invoices.handler';
+import { INVOICE_PDF_SERVICE } from './application/tokens/invoice-pdf-service.token';
 import { INVOICE_REPOSITORY } from './domain/tokens/invoice-repository.token';
 import { InvoiceOrmEntity } from './infrastructure/entities/invoice.orm-entity';
 import { InvoiceItemOrmEntity } from './infrastructure/entities/invoice-item.orm-entity';

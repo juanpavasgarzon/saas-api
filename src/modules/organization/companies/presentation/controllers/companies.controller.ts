@@ -1,10 +1,10 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Patch,
   Post,
   UploadedFile,
@@ -27,15 +27,14 @@ import { memoryStorage } from 'multer';
 import { Permission } from '@shared/domain/enums/permission.enum';
 import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
+import { ICompanyLogoService } from '@modules/organization/companies/application/contracts/company-logo-service.contract';
+import { COMPANY_LOGO_SERVICE } from '@modules/organization/companies/application/tokens/company-logo-service.token';
 
 import { UpdateCompanyCommand } from '../../application/commands/update-company/update-company.command';
 import { GetCompanyQuery } from '../../application/queries/get-company/get-company.query';
 import { type Company } from '../../domain/entities/company.entity';
 import { CompanyResponseDto } from '../dtos/company-response.dto';
 import { UpdateCompanyDto } from '../dtos/update-company.dto';
-
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
-const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
 
 @ApiTags('Organization')
 @ApiBearerAuth('JWT')
@@ -44,6 +43,8 @@ export class CompaniesController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    @Inject(COMPANY_LOGO_SERVICE)
+    private readonly companyLogoService: ICompanyLogoService,
   ) {}
 
   @Get()
@@ -90,23 +91,18 @@ export class CompaniesController {
   })
   @ApiOperation({
     summary: 'Upload company logo',
-    description: 'Uploads a logo (PNG, JPG, SVG, WebP — max 2 MB). Stored as base64.',
+    description: 'Uploads a logo (PNG, JPG, WebP — max 2 MB). Normalized and stored as PNG.',
   })
   @ApiNoContentResponse({ description: 'Logo uploaded' })
   async uploadLogo(
     @CurrentTenant() tenantId: string,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      throw new BadRequestException('Only PNG, JPG, SVG and WebP images are allowed');
-    }
-    if (file.size > MAX_SIZE_BYTES) {
-      throw new BadRequestException('Logo file must be smaller than 2 MB');
-    }
+    const base64 = await this.companyLogoService.prepareLogoBase64(file);
 
-    const base64 = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
     const getCompanyQuery = new GetCompanyQuery(tenantId);
     const company = await this.queryBus.execute<GetCompanyQuery, Company>(getCompanyQuery);
+
     const updateCompanyCommand = new UpdateCompanyCommand(tenantId, company.name, base64);
     await this.commandBus.execute(updateCompanyCommand);
   }
