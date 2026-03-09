@@ -13,6 +13,7 @@ import { OrganizationModule } from './modules/organization/organization.module';
 import { ProcurementModule } from './modules/procurement/procurement.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { SalesModule } from './modules/sales/sales.module';
+import { OutboxModule } from './shared/infrastructure/outbox/outbox.module';
 import { JwtAuthGuard } from './shared/presentation/guards/jwt-auth.guard';
 import { PermissionsGuard } from './shared/presentation/guards/permissions.guard';
 
@@ -21,6 +22,7 @@ import { PermissionsGuard } from './shared/presentation/guards/permissions.guard
     CqrsModule.forRoot(),
     ConfigModule,
     DatabaseModule,
+    OutboxModule,
     IdentityModule,
     OrganizationModule,
     CrmModule,

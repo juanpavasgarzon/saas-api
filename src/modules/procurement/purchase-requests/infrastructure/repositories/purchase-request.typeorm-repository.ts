@@ -57,6 +57,17 @@ export class PurchaseRequestTypeOrmRepository implements IPurchaseRequestReposit
   }
 
   private toDomain(orm: PurchaseRequestOrmEntity): PurchaseRequest {
+    const items = (orm.items ?? []).map(
+      (i): PurchaseRequestItemProps => ({
+        id: i.id,
+        purchaseRequestId: i.purchaseRequestId,
+        description: i.description,
+        quantity: Number(i.quantity),
+        unitPrice: Number(i.unitPrice),
+        lineTotal: Number(i.lineTotal),
+      }),
+    );
+
     const props: PurchaseRequestProps = {
       id: orm.id,
       tenantId: orm.tenantId,
@@ -67,16 +78,7 @@ export class PurchaseRequestTypeOrmRepository implements IPurchaseRequestReposit
       notes: orm.notes,
       subtotal: Number(orm.subtotal),
       total: Number(orm.total),
-      items: (orm.items ?? []).map(
-        (i): PurchaseRequestItemProps => ({
-          id: i.id,
-          purchaseRequestId: i.purchaseRequestId,
-          description: i.description,
-          quantity: Number(i.quantity),
-          unitPrice: Number(i.unitPrice),
-          lineTotal: Number(i.lineTotal),
-        }),
-      ),
+      items,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };

@@ -56,6 +56,7 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
       .select('MAX(inv.number)', 'max')
       .where('inv.tenantId = :tenantId', { tenantId })
       .getRawOne<{ max: number | null }>();
+
     return (result?.max ?? 0) + 1;
   }
 
@@ -64,6 +65,18 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
   }
 
   private toDomain(orm: InvoiceOrmEntity): Invoice {
+    const items = (orm.items ?? []).map(
+      (i): InvoiceItemProps => ({
+        id: i.id,
+        invoiceId: i.invoiceId,
+        description: i.description,
+        quantity: Number(i.quantity),
+        unit: i.unit,
+        unitPrice: Number(i.unitPrice),
+        lineTotal: Number(i.lineTotal),
+      }),
+    );
+
     const props: InvoiceProps = {
       id: orm.id,
       tenantId: orm.tenantId,
@@ -76,17 +89,7 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
       total: Number(orm.total),
       sentAt: orm.sentAt,
       paidAt: orm.paidAt,
-      items: (orm.items ?? []).map(
-        (i): InvoiceItemProps => ({
-          id: i.id,
-          invoiceId: i.invoiceId,
-          description: i.description,
-          quantity: Number(i.quantity),
-          unit: i.unit,
-          unitPrice: Number(i.unitPrice),
-          lineTotal: Number(i.lineTotal),
-        }),
-      ),
+      items,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };

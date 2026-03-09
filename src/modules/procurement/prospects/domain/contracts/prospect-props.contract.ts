@@ -1,3 +1,5 @@
+import { type VendorProspectStatus } from '../enums/prospect-status.enum';
+
 export interface IProspectProps {
   id: string;
   tenantId: string;
@@ -6,6 +8,7 @@ export interface IProspectProps {
   phone: string | null;
   company: string | null;
   notes: string | null;
+  status: VendorProspectStatus;
   createdAt: Date;
   updatedAt: Date;
 }

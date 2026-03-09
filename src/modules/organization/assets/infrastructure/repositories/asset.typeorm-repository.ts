@@ -56,6 +56,7 @@ export class AssetTypeOrmRepository implements IAssetRepository {
       .select('MAX(a.number)', 'max')
       .where('a.tenantId = :tenantId', { tenantId })
       .getRawOne<{ max: number | null }>();
+
     return (result?.max ?? 0) + 1;
   }
 
@@ -64,6 +65,17 @@ export class AssetTypeOrmRepository implements IAssetRepository {
   }
 
   private toDomain(orm: AssetOrmEntity): Asset {
+    const assignments = (orm.assignments ?? []).map(
+      (a): AssetAssignmentProps => ({
+        id: a.id,
+        assetId: a.assetId,
+        projectId: a.projectId,
+        employeeId: a.employeeId,
+        assignedAt: a.assignedAt,
+        returnedAt: a.returnedAt,
+      }),
+    );
+
     const props: AssetProps = {
       id: orm.id,
       tenantId: orm.tenantId,
@@ -75,16 +87,7 @@ export class AssetTypeOrmRepository implements IAssetRepository {
       status: orm.status,
       purchaseDate: orm.purchaseDate,
       purchaseValue: orm.purchaseValue !== null ? Number(orm.purchaseValue) : null,
-      assignments: (orm.assignments ?? []).map(
-        (a): AssetAssignmentProps => ({
-          id: a.id,
-          assetId: a.assetId,
-          projectId: a.projectId,
-          employeeId: a.employeeId,
-          assignedAt: a.assignedAt,
-          returnedAt: a.returnedAt,
-        }),
-      ),
+      assignments,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };

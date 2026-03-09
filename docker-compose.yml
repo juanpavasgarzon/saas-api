@@ -30,9 +30,6 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       SMTP_FROM: ${SMTP_FROM}
       APP_URL: ${APP_URL}
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - app-network
     healthcheck:
@@ -41,32 +38,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-
-  # ─── PostgreSQL ──────────────────────────────────────────────────────────────
-  postgres:
-    image: postgres:17-alpine
-    container_name: saas-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
-volumes:
-  postgres_data:
-    driver: local
 
 networks:
   app-network:

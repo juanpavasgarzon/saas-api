@@ -53,6 +53,7 @@ export class SaleTypeOrmRepository implements ISaleRepository {
       .select('MAX(s.number)', 'max')
       .where('s.tenantId = :tenantId', { tenantId })
       .getRawOne<{ max: number | null }>();
+
     return (result?.max ?? 0) + 1;
   }
 
@@ -61,6 +62,18 @@ export class SaleTypeOrmRepository implements ISaleRepository {
   }
 
   private toDomain(orm: SaleOrmEntity): Sale {
+    const items = (orm.items ?? []).map(
+      (i): SaleItemProps => ({
+        id: i.id,
+        saleId: i.saleId,
+        description: i.description,
+        quantity: Number(i.quantity),
+        unit: i.unit,
+        unitPrice: Number(i.unitPrice),
+        lineTotal: Number(i.lineTotal),
+      }),
+    );
+
     const props: SaleProps = {
       id: orm.id,
       tenantId: orm.tenantId,
@@ -71,17 +84,7 @@ export class SaleTypeOrmRepository implements ISaleRepository {
       notes: orm.notes,
       subtotal: Number(orm.subtotal),
       total: Number(orm.total),
-      items: (orm.items ?? []).map(
-        (i): SaleItemProps => ({
-          id: i.id,
-          saleId: i.saleId,
-          description: i.description,
-          quantity: Number(i.quantity),
-          unit: i.unit,
-          unitPrice: Number(i.unitPrice),
-          lineTotal: Number(i.lineTotal),
-        }),
-      ),
+      items,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };

@@ -1,16 +1,25 @@
-import { EventBus, EventsHandler, type IEventHandler } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
+import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
 import { PurchaseOrderReceivedIntegrationEvent } from '@shared/application/events/purchase-order-received.integration-event';
+import { OUTBOX_REPOSITORY } from '@shared/application/tokens/outbox-repository.token';
+import { type IOutboxMessageRepository } from '@shared/domain/contracts/outbox-repository.contract';
 
 import { PurchaseOrderReceivedEvent } from '../../domain/events/purchase-order-received.event';
 
 @EventsHandler(PurchaseOrderReceivedEvent)
 export class PurchaseOrderReceivedEventHandler implements IEventHandler<PurchaseOrderReceivedEvent> {
-  constructor(private readonly eventBus: EventBus) {}
+  constructor(
+    @Inject(OUTBOX_REPOSITORY)
+    private readonly outbox: IOutboxMessageRepository,
+  ) {}
 
-  handle(event: PurchaseOrderReceivedEvent): void {
-    this.eventBus.publish(
-      new PurchaseOrderReceivedIntegrationEvent(event.purchaseOrderId, event.tenantId, event.items),
+  async handle(event: PurchaseOrderReceivedEvent): Promise<void> {
+    const integrationEvent = new PurchaseOrderReceivedIntegrationEvent(
+      event.purchaseOrderId,
+      event.tenantId,
+      event.items,
     );
+    await this.outbox.save(integrationEvent);
   }
 }

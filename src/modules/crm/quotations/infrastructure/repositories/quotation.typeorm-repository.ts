@@ -85,6 +85,18 @@ export class QuotationTypeOrmRepository implements IQuotationRepository {
   }
 
   private toDomain(orm: QuotationOrmEntity): Quotation {
+    const items = (orm.items ?? []).map(
+      (i): QuotationItemProps => ({
+        id: i.id,
+        quotationId: i.quotationId,
+        description: i.description,
+        quantity: Number(i.quantity),
+        unit: i.unit,
+        unitPrice: Number(i.unitPrice),
+        lineTotal: Number(i.lineTotal),
+      }),
+    );
+
     const props: QuotationProps = {
       id: orm.id,
       tenantId: orm.tenantId,
@@ -97,17 +109,7 @@ export class QuotationTypeOrmRepository implements IQuotationRepository {
       validUntil: orm.validUntil,
       subtotal: Number(orm.subtotal),
       total: Number(orm.total),
-      items: (orm.items ?? []).map(
-        (i): QuotationItemProps => ({
-          id: i.id,
-          quotationId: i.quotationId,
-          description: i.description,
-          quantity: Number(i.quantity),
-          unit: i.unit,
-          unitPrice: Number(i.unitPrice),
-          lineTotal: Number(i.lineTotal),
-        }),
-      ),
+      items,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };

@@ -8,8 +8,6 @@ import { WarehousesModule } from '@modules/inventory/warehouses/warehouses.modul
 
 import { RegisterMovementHandler } from './application/commands/register-movement/register-movement.handler';
 import { MovementRegisteredEventHandler } from './application/event-handlers/movement-registered.event-handler';
-import { PurchaseOrderReceivedIntegrationEventHandler } from './application/event-handlers/purchase-order-received.integration-event-handler';
-import { SaleApprovedIntegrationEventHandler } from './application/event-handlers/sale-approved.integration-event-handler';
 import { GetMovementHandler } from './application/queries/get-movement/get-movement.handler';
 import { ListMovementsHandler } from './application/queries/list-movements/list-movements.handler';
 import { MOVEMENT_REPOSITORY } from './domain/tokens/movement-repository.token';
@@ -29,8 +27,6 @@ import { MovementsController } from './presentation/controllers/movements.contro
   providers: [
     RegisterMovementHandler,
     MovementRegisteredEventHandler,
-    SaleApprovedIntegrationEventHandler,
-    PurchaseOrderReceivedIntegrationEventHandler,
     GetMovementHandler,
     ListMovementsHandler,
     { provide: MOVEMENT_REPOSITORY, useClass: MovementTypeOrmRepository },

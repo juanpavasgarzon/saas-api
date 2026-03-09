@@ -5,7 +5,7 @@ export class CreateCustomerProspects1748000005000 implements MigrationInterface 
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "public"."customer_prospects_status_enum" AS ENUM('NEW', 'CONTACTED', 'QUALIFIED', 'DISQUALIFIED')`,
+      `CREATE TYPE "public"."customer_prospects_status_enum" AS ENUM('NEW', 'QUALIFIED', 'DISQUALIFIED', 'CONVERTED')`,
     );
     await queryRunner.query(
       `CREATE TYPE "public"."customer_prospects_source_enum" AS ENUM('WEBSITE', 'REFERRAL', 'SOCIAL_MEDIA', 'COLD_OUTREACH', 'EVENT', 'OTHER')`,

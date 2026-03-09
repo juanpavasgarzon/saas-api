@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type IProspectRepository } from '@modules/procurement/prospects/domain/contracts/prospect-repository.contract';
+import { VendorProspectStatus } from '@modules/procurement/prospects/domain/enums/prospect-status.enum';
 import { PROSPECT_REPOSITORY } from '@modules/procurement/prospects/domain/tokens/prospect-repository.token';
 import { type IProspectToVendorService } from '@modules/procurement/shared/contracts/prospect-to-vendor.contract';
 import { type IVendorRepository } from '@modules/procurement/vendors/domain/contracts/vendor-repository.contract';
@@ -27,6 +28,8 @@ export class ProspectToVendorAdapter implements IProspectToVendorService {
 
     const existing = await this.vendorRepository.findByEmail(email, tenantId);
     if (existing) {
+      prospect.updateStatus(VendorProspectStatus.CONVERTED);
+      await this.prospectRepository.save(prospect);
       return existing.id;
     }
 
@@ -39,6 +42,9 @@ export class ProspectToVendorAdapter implements IProspectToVendorService {
       prospect.name,
     );
     await this.vendorRepository.save(vendor);
+
+    prospect.updateStatus(VendorProspectStatus.CONVERTED);
+    await this.prospectRepository.save(prospect);
     return vendor.id;
   }
 }

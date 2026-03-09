@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dev
-    container_name: saas-api-dev
+    container_name: api
     restart: unless-stopped
     ports:
       - "${APP_PORT:-3000}:${APP_PORT:-3000}"
@@ -31,19 +31,41 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       SMTP_FROM: ${SMTP_FROM}
       APP_URL: ${APP_URL}
+      RABBITMQ_URL: ${RABBITMQ_URL}
     volumes:
       - ./src:/app/src                  # Live-reload source changes
       - /app/node_modules               # Preserve container node_modules
     depends_on:
       postgres:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - app-network-dev
+
+  # ─── RabbitMQ ────────────────────────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    networks:
+      - app-network-dev
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ─── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
     image: postgres:17-alpine
-    container_name: saas-postgres-dev
+    container_name: postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}

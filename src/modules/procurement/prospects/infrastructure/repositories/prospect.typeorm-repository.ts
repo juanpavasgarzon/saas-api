@@ -33,6 +33,7 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
       phone: orm.phone,
       company: orm.company,
       notes: orm.notes,
+      status: orm.status,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };
@@ -48,6 +49,7 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
     orm.phone = prospect.phone;
     orm.company = prospect.company;
     orm.notes = prospect.notes;
+    orm.status = prospect.status;
     return orm;
   }
 }

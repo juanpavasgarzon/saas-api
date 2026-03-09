@@ -1,6 +1,10 @@
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
+import { type IntegrationEvent } from '../../domain/contracts/integration-event.contract';
+import { type UnitOfMeasure } from '../../domain/enums/unit-of-measure.enum';
 
-export class QuotationAcceptedIntegrationEvent {
+export class QuotationAcceptedIntegrationEvent implements IntegrationEvent {
+  static readonly eventName = 'quotation.accepted';
+  readonly eventName = QuotationAcceptedIntegrationEvent.eventName;
+
   constructor(
     public readonly quotationId: string,
     public readonly tenantId: string,

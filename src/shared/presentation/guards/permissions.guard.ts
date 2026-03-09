@@ -2,11 +2,10 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
-import { type AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { ROLE_PERMISSIONS } from '@shared/domain/enums/role-permissions';
-import { UserRole } from '@shared/domain/enums/user-role.enum';
-
+import { type AuthUserData } from '../../application/contracts/auth-user-data.contract';
+import { Permission } from '../../domain/enums/permission.enum';
+import { ROLE_PERMISSIONS } from '../../domain/enums/role-permissions';
+import { UserRole } from '../../domain/enums/user-role.enum';
 import { REQUIRE_PERMISSION_KEY } from '../decorators/require-permission.decorator';
 
 @Injectable()

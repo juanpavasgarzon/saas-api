@@ -28,4 +28,7 @@ export const configValidationSchema = Joi.object({
   SMTP_PASS: Joi.string().required(),
   SMTP_FROM: Joi.string().required(),
   APP_URL: Joi.string().uri().required(),
+
+  // RabbitMQ
+  RABBITMQ_URL: Joi.string().uri().optional().default('amqp://guest:guest@localhost:5672'),
 });

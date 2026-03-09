@@ -53,6 +53,7 @@ export class UserTypeOrmRepository implements UserRepository {
       take: limit,
       order: { createdAt: 'DESC' },
     });
+
     return { items: items.map((orm) => this.toDomain(orm)), total, page, limit };
   }
 

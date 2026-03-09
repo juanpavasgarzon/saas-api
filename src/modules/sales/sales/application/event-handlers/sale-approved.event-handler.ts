@@ -1,36 +1,33 @@
-import { CommandBus, EventBus, EventsHandler, type IEventHandler } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
+import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
 import { SaleApprovedIntegrationEvent } from '@shared/application/events/sale-approved.integration-event';
+import { OUTBOX_REPOSITORY } from '@shared/application/tokens/outbox-repository.token';
+import { type IOutboxMessageRepository } from '@shared/domain/contracts/outbox-repository.contract';
 
-import { CreateInvoiceFromSaleCommand } from '../../../invoices/application/commands/create-invoice-from-sale/create-invoice-from-sale.command';
 import { SaleApprovedEvent } from '../../domain/events/sale-approved.event';
 
 @EventsHandler(SaleApprovedEvent)
 export class SaleApprovedEventHandler implements IEventHandler<SaleApprovedEvent> {
   constructor(
-    private readonly commandBus: CommandBus,
-    private readonly eventBus: EventBus,
+    @Inject(OUTBOX_REPOSITORY)
+    private readonly outbox: IOutboxMessageRepository,
   ) {}
 
   async handle(event: SaleApprovedEvent): Promise<void> {
-    const createInvoiceCommand = new CreateInvoiceFromSaleCommand(
-      event.tenantId,
+    const integrationEvent = new SaleApprovedIntegrationEvent(
       event.saleId,
+      event.tenantId,
       event.customerId,
-      event.items,
+      event.items.map((i) => ({
+        productId: null,
+        description: i.description,
+        quantity: i.quantity,
+        unit: i.unit,
+        unitPrice: i.unitPrice,
+        lineTotal: i.lineTotal,
+      })),
     );
-    await this.commandBus.execute(createInvoiceCommand);
-
-    this.eventBus.publish(
-      new SaleApprovedIntegrationEvent(
-        event.saleId,
-        event.tenantId,
-        event.items.map((i) => ({
-          productId: null,
-          description: i.description,
-          quantity: i.quantity,
-        })),
-      ),
-    );
+    await this.outbox.save(integrationEvent);
   }
 }

@@ -1,5 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
+import { VendorProspectStatus } from '../../domain/enums/prospect-status.enum';
+
 @Entity('vendor_prospects')
 export class ProspectOrmEntity {
   @PrimaryColumn('uuid')
@@ -23,6 +25,14 @@ export class ProspectOrmEntity {
 
   @Column({ type: 'text', nullable: true, default: null })
   notes!: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: VendorProspectStatus,
+    enumName: 'vendor_prospect_status_enum',
+    default: VendorProspectStatus.NEW,
+  })
+  status!: VendorProspectStatus;
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-import { type Permission } from '@shared/domain/enums/permission.enum';
+import { type Permission } from '../../domain/enums/permission.enum';
 
 export const REQUIRE_PERMISSION_KEY = 'require_permission';
 

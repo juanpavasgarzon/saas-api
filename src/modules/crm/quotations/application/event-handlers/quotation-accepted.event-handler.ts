@@ -1,7 +1,9 @@
 import { Inject } from '@nestjs/common';
-import { EventBus, EventsHandler, type IEventHandler } from '@nestjs/cqrs';
+import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
 import { QuotationAcceptedIntegrationEvent } from '@shared/application/events/quotation-accepted.integration-event';
+import { OUTBOX_REPOSITORY } from '@shared/application/tokens/outbox-repository.token';
+import { type IOutboxMessageRepository } from '@shared/domain/contracts/outbox-repository.contract';
 import { type IProspectToCustomerService } from '@modules/crm/shared/contracts/prospect-to-customer.contract';
 import { PROSPECT_TO_CUSTOMER_SERVICE } from '@modules/crm/shared/tokens/prospect-to-customer.token';
 
@@ -12,7 +14,8 @@ import { QUOTATION_REPOSITORY } from '../../domain/tokens/quotation-repository.t
 @EventsHandler(QuotationAcceptedEvent)
 export class QuotationAcceptedEventHandler implements IEventHandler<QuotationAcceptedEvent> {
   constructor(
-    private readonly eventBus: EventBus,
+    @Inject(OUTBOX_REPOSITORY)
+    private readonly outbox: IOutboxMessageRepository,
     @Inject(PROSPECT_TO_CUSTOMER_SERVICE)
     private readonly prospectToCustomer: IProspectToCustomerService,
     @Inject(QUOTATION_REPOSITORY)
@@ -44,13 +47,12 @@ export class QuotationAcceptedEventHandler implements IEventHandler<QuotationAcc
       return;
     }
 
-    this.eventBus.publish(
-      new QuotationAcceptedIntegrationEvent(
-        event.quotationId,
-        event.tenantId,
-        customerId,
-        event.items,
-      ),
+    const integrationEvent = new QuotationAcceptedIntegrationEvent(
+      event.quotationId,
+      event.tenantId,
+      customerId,
+      event.items,
     );
+    await this.outbox.save(integrationEvent);
   }
 }

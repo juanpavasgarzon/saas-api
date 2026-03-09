@@ -48,7 +48,6 @@ export class ProjectTypeOrmRepository implements ProjectRepository {
 
     const [items, total] = await this.repository.findAndCount({
       where,
-      relations: ['members'],
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },

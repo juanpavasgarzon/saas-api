@@ -2,6 +2,7 @@ import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
 import { generateId } from '@shared/utils/uuid.util';
 
 import { type IProspectProps } from '../contracts/prospect-props.contract';
+import { VendorProspectStatus } from '../enums/prospect-status.enum';
 
 export class Prospect extends AggregateRootBase {
   private _name: string;
@@ -9,6 +10,7 @@ export class Prospect extends AggregateRootBase {
   private _phone: string | null;
   private _company: string | null;
   private _notes: string | null;
+  private _status: VendorProspectStatus;
 
   private constructor(props: IProspectProps) {
     super(props.id, props.tenantId);
@@ -17,6 +19,7 @@ export class Prospect extends AggregateRootBase {
     this._phone = props.phone;
     this._company = props.company;
     this._notes = props.notes;
+    this._status = props.status;
   }
 
   static create(
@@ -35,6 +38,7 @@ export class Prospect extends AggregateRootBase {
       phone,
       company,
       notes,
+      status: VendorProspectStatus.NEW,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -62,5 +66,14 @@ export class Prospect extends AggregateRootBase {
 
   get notes(): string | null {
     return this._notes;
+  }
+
+  get status(): VendorProspectStatus {
+    return this._status;
+  }
+
+  updateStatus(status: VendorProspectStatus): void {
+    this._status = status;
+    this.touch();
   }
 }

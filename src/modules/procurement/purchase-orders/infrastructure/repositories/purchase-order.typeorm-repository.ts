@@ -53,6 +53,17 @@ export class PurchaseOrderTypeOrmRepository implements IPurchaseOrderRepository 
   }
 
   private toDomain(orm: PurchaseOrderOrmEntity): PurchaseOrder {
+    const items = (orm.items ?? []).map(
+      (i): PurchaseOrderItemProps => ({
+        id: i.id,
+        purchaseOrderId: i.purchaseOrderId,
+        description: i.description,
+        quantity: Number(i.quantity),
+        unitPrice: Number(i.unitPrice),
+        lineTotal: Number(i.lineTotal),
+      }),
+    );
+
     const props: PurchaseOrderProps = {
       id: orm.id,
       tenantId: orm.tenantId,
@@ -61,16 +72,7 @@ export class PurchaseOrderTypeOrmRepository implements IPurchaseOrderRepository 
       status: orm.status,
       subtotal: Number(orm.subtotal),
       total: Number(orm.total),
-      items: (orm.items ?? []).map(
-        (i): PurchaseOrderItemProps => ({
-          id: i.id,
-          purchaseOrderId: i.purchaseOrderId,
-          description: i.description,
-          quantity: Number(i.quantity),
-          unitPrice: Number(i.unitPrice),
-          lineTotal: Number(i.lineTotal),
-        }),
-      ),
+      items,
       createdAt: orm.createdAt,
       updatedAt: orm.updatedAt,
     };
