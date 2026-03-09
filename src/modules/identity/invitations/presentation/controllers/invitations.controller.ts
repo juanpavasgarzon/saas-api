@@ -22,12 +22,12 @@ import { InvitationTokenResponseDto } from '../dtos/invitation-token-response.dt
 import { SendInvitationDto } from '../dtos/send-invitation.dto';
 
 @ApiTags('Identity')
+@ApiBearerAuth('JWT')
 @Controller('identity/invitations')
 export class InvitationsController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post()
-  @ApiBearerAuth('JWT')
   @RequirePermission(Permission.IdentityAccountsCreate)
   @ApiOperation({ summary: 'Send invitation', description: 'Sends an invitation.' })
   @ApiCreatedResponse({ type: InvitationTokenResponseDto })

@@ -74,8 +74,9 @@ export class InvoicesController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<InvoiceListResponseDto>> {
+    const listQuery = new ListInvoicesQuery(tenantId, { customerId, saleId, status }, page, limit);
     const result = await this.queryBus.execute<ListInvoicesQuery, PaginatedResult<Invoice>>(
-      new ListInvoicesQuery(tenantId, { customerId, saleId, status }, page, limit),
+      listQuery,
     );
     return { ...result, items: result.items.map((i) => new InvoiceListResponseDto(i)) };
   }
@@ -90,9 +91,8 @@ export class InvoicesController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<InvoiceResponseDto> {
-    const invoice = await this.queryBus.execute<GetInvoiceQuery, Invoice>(
-      new GetInvoiceQuery(id, tenantId),
-    );
+    const getInvoiceQuery = new GetInvoiceQuery(id, tenantId);
+    const invoice = await this.queryBus.execute<GetInvoiceQuery, Invoice>(getInvoiceQuery);
     return new InvoiceResponseDto(invoice);
   }
 
@@ -111,8 +111,9 @@ export class InvoicesController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ): Promise<void> {
+    const getInvoicePdfQuery = new GetInvoiceQuery(id, tenantId);
     const [invoice, company] = await Promise.all([
-      this.queryBus.execute<GetInvoiceQuery, Invoice>(new GetInvoiceQuery(id, tenantId)),
+      this.queryBus.execute<GetInvoiceQuery, Invoice>(getInvoicePdfQuery),
       this.companyProfileService.getProfile(tenantId),
     ]);
 
@@ -133,11 +134,13 @@ export class InvoicesController {
   @ApiOperation({ summary: 'Send invoice', description: 'Transitions invoice from DRAFT to SENT.' })
   @ApiParam({ name: 'id', description: 'Invoice UUID' })
   @ApiNoContentResponse({ description: 'Invoice sent' })
+  @ApiNotFoundResponse({ description: 'Invoice not found' })
   async sendInvoice(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new SendInvoiceCommand(id, tenantId));
+    const command = new SendInvoiceCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/pay')
@@ -146,11 +149,13 @@ export class InvoicesController {
   @ApiOperation({ summary: 'Pay invoice', description: 'Transitions invoice from SENT to PAID.' })
   @ApiParam({ name: 'id', description: 'Invoice UUID' })
   @ApiNoContentResponse({ description: 'Invoice paid' })
+  @ApiNotFoundResponse({ description: 'Invoice not found' })
   async payInvoice(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new PayInvoiceCommand(id, tenantId));
+    const command = new PayInvoiceCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/cancel')
@@ -159,10 +164,12 @@ export class InvoicesController {
   @ApiOperation({ summary: 'Cancel invoice', description: 'Cancels a DRAFT or SENT invoice.' })
   @ApiParam({ name: 'id', description: 'Invoice UUID' })
   @ApiNoContentResponse({ description: 'Invoice cancelled' })
+  @ApiNotFoundResponse({ description: 'Invoice not found' })
   async cancelInvoice(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new CancelInvoiceCommand(id, tenantId));
+    const command = new CancelInvoiceCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 }

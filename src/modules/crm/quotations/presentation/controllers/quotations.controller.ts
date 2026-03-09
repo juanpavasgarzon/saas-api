@@ -160,8 +160,9 @@ export class QuotationsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ): Promise<void> {
+    const getPdfQuery = new GetQuotationQuery(id, tenantId);
     const [quotation, company] = await Promise.all([
-      this.queryBus.execute<GetQuotationQuery, Quotation>(new GetQuotationQuery(id, tenantId)),
+      this.queryBus.execute<GetQuotationQuery, Quotation>(getPdfQuery),
       this.companyProfileService.getProfile(tenantId),
     ]);
 
@@ -220,22 +221,21 @@ export class QuotationsController {
     await this.commandBus.execute(command);
 
     if (dto.sendEmail) {
+      const getEmailQuery = new GetQuotationQuery(id, tenantId);
       const [quotation, company] = await Promise.all([
-        this.queryBus.execute<GetQuotationQuery, Quotation>(new GetQuotationQuery(id, tenantId)),
+        this.queryBus.execute<GetQuotationQuery, Quotation>(getEmailQuery),
         this.companyProfileService.getProfile(tenantId),
       ]);
 
       let recipientEmail: string | null = null;
 
       if (quotation.customerId) {
-        const customer = await this.queryBus.execute<GetCustomerQuery, Customer>(
-          new GetCustomerQuery(quotation.customerId, tenantId),
-        );
+        const getCustomerQuery = new GetCustomerQuery(quotation.customerId, tenantId);
+        const customer = await this.queryBus.execute<GetCustomerQuery, Customer>(getCustomerQuery);
         recipientEmail = customer.email;
       } else if (quotation.prospectId) {
-        const prospect = await this.queryBus.execute<GetProspectQuery, Prospect>(
-          new GetProspectQuery(quotation.prospectId, tenantId),
-        );
+        const getProspectQuery = new GetProspectQuery(quotation.prospectId, tenantId);
+        const prospect = await this.queryBus.execute<GetProspectQuery, Prospect>(getProspectQuery);
         recipientEmail = prospect.email;
       }
 
@@ -261,7 +261,8 @@ export class QuotationsController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new AcceptQuotationCommand(id, tenantId));
+    const command = new AcceptQuotationCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/reject')
@@ -277,7 +278,8 @@ export class QuotationsController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new RejectQuotationCommand(id, tenantId));
+    const command = new RejectQuotationCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/expire')
@@ -290,7 +292,8 @@ export class QuotationsController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new ExpireQuotationCommand(id, tenantId));
+    const command = new ExpireQuotationCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Delete(':id')
@@ -304,6 +307,7 @@ export class QuotationsController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new DeleteQuotationCommand(id, tenantId));
+    const command = new DeleteQuotationCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 }

@@ -28,7 +28,6 @@ import { TokenResponseDto } from '../dtos/token-response.dto';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 
 @ApiTags('Identity')
-@ApiBearerAuth('JWT')
 @Controller('identity/auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}

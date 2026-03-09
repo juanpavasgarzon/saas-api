@@ -63,17 +63,16 @@ export class AssetsController {
     @CurrentTenant() tenantId: string,
     @Body() dto: CreateAssetDto,
   ): Promise<CreatedResponseDto> {
-    const id = await this.commandBus.execute<CreateAssetCommand, string>(
-      new CreateAssetCommand(
-        tenantId,
-        dto.name,
-        dto.category,
-        dto.serialNumber ?? null,
-        dto.description ?? null,
-        dto.purchaseDate ? new Date(dto.purchaseDate) : null,
-        dto.purchaseValue ?? null,
-      ),
+    const command = new CreateAssetCommand(
+      tenantId,
+      dto.name,
+      dto.category,
+      dto.serialNumber ?? null,
+      dto.description ?? null,
+      dto.purchaseDate ? new Date(dto.purchaseDate) : null,
+      dto.purchaseValue ?? null,
     );
+    const id = await this.commandBus.execute<CreateAssetCommand, string>(command);
     return new CreatedResponseDto(id);
   }
 
@@ -94,9 +93,8 @@ export class AssetsController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<AssetListResponseDto>> {
-    const result = await this.queryBus.execute<ListAssetsQuery, PaginatedResult<Asset>>(
-      new ListAssetsQuery(tenantId, { status, category, search }, page, limit),
-    );
+    const query = new ListAssetsQuery(tenantId, { status, category, search }, page, limit);
+    const result = await this.queryBus.execute<ListAssetsQuery, PaginatedResult<Asset>>(query);
     return { ...result, items: result.items.map((a) => new AssetListResponseDto(a)) };
   }
 
@@ -110,9 +108,8 @@ export class AssetsController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AssetResponseDto> {
-    const asset = await this.queryBus.execute<GetAssetQuery, Asset>(
-      new GetAssetQuery(id, tenantId),
-    );
+    const query = new GetAssetQuery(id, tenantId);
+    const asset = await this.queryBus.execute<GetAssetQuery, Asset>(query);
     return new AssetResponseDto(asset);
   }
 
@@ -122,23 +119,23 @@ export class AssetsController {
   @ApiOperation({ summary: 'Update asset', description: 'Updates asset details.' })
   @ApiParam({ name: 'id', description: 'Asset UUID' })
   @ApiNoContentResponse({ description: 'Asset updated' })
+  @ApiNotFoundResponse({ description: 'Asset not found' })
   async updateAsset(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CreateAssetDto,
   ): Promise<void> {
-    await this.commandBus.execute(
-      new UpdateAssetCommand(
-        id,
-        tenantId,
-        dto.name,
-        dto.category,
-        dto.serialNumber ?? null,
-        dto.description ?? null,
-        dto.purchaseDate ? new Date(dto.purchaseDate) : null,
-        dto.purchaseValue ?? null,
-      ),
+    const command = new UpdateAssetCommand(
+      id,
+      tenantId,
+      dto.name,
+      dto.category,
+      dto.serialNumber ?? null,
+      dto.description ?? null,
+      dto.purchaseDate ? new Date(dto.purchaseDate) : null,
+      dto.purchaseValue ?? null,
     );
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/assign')
@@ -147,14 +144,19 @@ export class AssetsController {
   @ApiOperation({ summary: 'Assign asset', description: 'Assigns asset to a project or employee.' })
   @ApiParam({ name: 'id', description: 'Asset UUID' })
   @ApiNoContentResponse({ description: 'Asset assigned' })
+  @ApiNotFoundResponse({ description: 'Asset not found' })
   async assignAsset(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: AssignAssetDto,
   ): Promise<void> {
-    await this.commandBus.execute(
-      new AssignAssetCommand(id, tenantId, dto.projectId ?? null, dto.employeeId ?? null),
+    const command = new AssignAssetCommand(
+      id,
+      tenantId,
+      dto.projectId ?? null,
+      dto.employeeId ?? null,
     );
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/return')
@@ -163,11 +165,13 @@ export class AssetsController {
   @ApiOperation({ summary: 'Return asset', description: 'Returns an assigned asset.' })
   @ApiParam({ name: 'id', description: 'Asset UUID' })
   @ApiNoContentResponse({ description: 'Asset returned' })
+  @ApiNotFoundResponse({ description: 'Asset not found' })
   async returnAsset(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new ReturnAssetCommand(id, tenantId));
+    const command = new ReturnAssetCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/retire')
@@ -176,10 +180,12 @@ export class AssetsController {
   @ApiOperation({ summary: 'Retire asset', description: 'Retires an active asset.' })
   @ApiParam({ name: 'id', description: 'Asset UUID' })
   @ApiNoContentResponse({ description: 'Asset retired' })
+  @ApiNotFoundResponse({ description: 'Asset not found' })
   async retireAsset(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new RetireAssetCommand(id, tenantId));
+    const command = new RetireAssetCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 }

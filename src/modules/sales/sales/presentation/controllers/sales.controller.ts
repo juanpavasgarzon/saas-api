@@ -70,9 +70,13 @@ export class SalesController {
     @CurrentTenant() tenantId: string,
     @Body() dto: CreateSaleDto,
   ): Promise<CreatedResponseDto> {
-    const id = await this.commandBus.execute<CreateSaleCommand, string>(
-      new CreateSaleCommand(tenantId, dto.customerId, dto.notes ?? null, dto.items),
+    const createSaleCommand = new CreateSaleCommand(
+      tenantId,
+      dto.customerId,
+      dto.notes ?? null,
+      dto.items,
     );
+    const id = await this.commandBus.execute<CreateSaleCommand, string>(createSaleCommand);
     return new CreatedResponseDto(id);
   }
 
@@ -91,9 +95,8 @@ export class SalesController {
     @Query('page', ParseIntPipe) page = 1,
     @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<SaleListResponseDto>> {
-    const result = await this.queryBus.execute<ListSalesQuery, PaginatedResult<Sale>>(
-      new ListSalesQuery(tenantId, { customerId, status }, page, limit),
-    );
+    const listQuery = new ListSalesQuery(tenantId, { customerId, status }, page, limit);
+    const result = await this.queryBus.execute<ListSalesQuery, PaginatedResult<Sale>>(listQuery);
     return { ...result, items: result.items.map((s) => new SaleListResponseDto(s)) };
   }
 
@@ -107,7 +110,8 @@ export class SalesController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<SaleResponseDto> {
-    const sale = await this.queryBus.execute<GetSaleQuery, Sale>(new GetSaleQuery(id, tenantId));
+    const getSaleQuery = new GetSaleQuery(id, tenantId);
+    const sale = await this.queryBus.execute<GetSaleQuery, Sale>(getSaleQuery);
     return new SaleResponseDto(sale);
   }
 
@@ -126,8 +130,9 @@ export class SalesController {
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ): Promise<void> {
+    const getSalePdfQuery = new GetSaleQuery(id, tenantId);
     const [sale, company] = await Promise.all([
-      this.queryBus.execute<GetSaleQuery, Sale>(new GetSaleQuery(id, tenantId)),
+      this.queryBus.execute<GetSaleQuery, Sale>(getSalePdfQuery),
       this.companyProfileService.getProfile(tenantId),
     ]);
 
@@ -156,7 +161,8 @@ export class SalesController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new ApproveSaleCommand(id, tenantId));
+    const command = new ApproveSaleCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 
   @Patch(':id/cancel')
@@ -170,6 +176,7 @@ export class SalesController {
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    await this.commandBus.execute(new CancelSaleCommand(id, tenantId));
+    const command = new CancelSaleCommand(id, tenantId);
+    await this.commandBus.execute(command);
   }
 }
