@@ -29,11 +29,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
+import { CreatedResponseDto } from '@core/presentation/dtos/created-response.dto';
 
 import { CreateProductCommand } from '../../application/commands/create-product/create-product.command';
 import { DeactivateProductCommand } from '../../application/commands/deactivate-product/deactivate-product.command';

@@ -1,4 +1,4 @@
-import { generateId } from '@shared/utils/uuid.util';
+import { generateId } from '@utils/uuid.util';
 
 import { type AssetAssignmentProps } from '../contracts/asset-assignment-props.contract';
 

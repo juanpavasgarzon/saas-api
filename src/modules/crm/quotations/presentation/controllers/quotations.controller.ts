@@ -31,13 +31,13 @@ import {
 } from '@nestjs/swagger';
 import { type Response } from 'express';
 
-import { type ICompanyProfileService } from '@shared/application/contracts/company-profile.contract';
-import { COMPANY_PROFILE_SERVICE } from '@shared/application/tokens/company-profile.token';
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
+import { type ICompanyProfileService } from '@core/application/contracts/company-profile.contract';
+import { COMPANY_PROFILE_SERVICE } from '@core/application/tokens/company-profile.token';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
+import { CreatedResponseDto } from '@core/presentation/dtos/created-response.dto';
 
 import { AcceptQuotationCommand } from '../../application/commands/accept-quotation/accept-quotation.command';
 import { CreateQuotationCommand } from '../../application/commands/create-quotation/create-quotation.command';
@@ -85,7 +85,7 @@ export class QuotationsController {
       dto.prospectId ?? null,
       dto.notes ?? null,
       dto.validUntil ? new Date(dto.validUntil) : null,
-      dto.items,
+      dto.items.map((i) => ({ ...i, itemType: i.itemType, itemId: i.itemId })),
     );
     const id = await this.commandBus.execute<CreateQuotationCommand, string>(command);
     return new CreatedResponseDto(id);
@@ -184,7 +184,7 @@ export class QuotationsController {
       dto.title,
       dto.notes ?? null,
       dto.validUntil ? new Date(dto.validUntil) : null,
-      dto.items,
+      dto.items.map((i) => ({ ...i, itemType: i.itemType, itemId: i.itemId })),
     );
     await this.commandBus.execute(command);
   }

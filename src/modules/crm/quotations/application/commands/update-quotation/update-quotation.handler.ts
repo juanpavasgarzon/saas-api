@@ -16,7 +16,7 @@ export class UpdateQuotationHandler implements ICommandHandler<UpdateQuotationCo
   async execute(command: UpdateQuotationCommand): Promise<void> {
     const quotation = await this.quotationRepository.findById(command.id, command.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(command.id);
     }
 
     quotation.update(command.title, command.notes, command.validUntil, command.items);

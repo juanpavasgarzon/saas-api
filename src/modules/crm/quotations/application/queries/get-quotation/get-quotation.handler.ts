@@ -17,7 +17,7 @@ export class GetQuotationHandler implements IQueryHandler<GetQuotationQuery, Quo
   async execute(query: GetQuotationQuery): Promise<Quotation> {
     const quotation = await this.quotationRepository.findById(query.id, query.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(query.id);
     }
     return quotation;
   }

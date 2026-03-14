@@ -19,7 +19,7 @@ export class UpdateProspectStatusHandler implements ICommandHandler<
   async execute(command: UpdateProspectStatusCommand): Promise<void> {
     const prospect = await this.prospectRepository.findById(command.id, command.tenantId);
     if (!prospect) {
-      throw new ProspectNotFoundError();
+      throw new ProspectNotFoundError(command.id);
     }
 
     prospect.updateStatus(command.status);

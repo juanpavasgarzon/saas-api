@@ -1,4 +1,4 @@
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type Employee } from '../entities/employee.entity';
 import { type EmployeeFilters } from './employee-filters.contract';

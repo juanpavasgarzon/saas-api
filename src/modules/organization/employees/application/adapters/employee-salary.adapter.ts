@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type IEmployeeSalaryService } from '@shared/application/contracts/employee-salary.contract';
+import { type IEmployeeSalaryService } from '@core/application/contracts/employee-salary.contract';
 
 import { type IEmployeeRepository } from '../../domain/contracts/employee-repository.contract';
 import { EMPLOYEE_REPOSITORY } from '../../domain/tokens/employee-repository.token';

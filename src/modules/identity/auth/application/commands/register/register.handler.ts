@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { type ICompanyCreationService } from '@shared/application/contracts/company-creation.contract';
-import { COMPANY_CREATION_SERVICE } from '@shared/application/tokens/company-creation.token';
-import { UserRole } from '@shared/domain/enums/user-role.enum';
-import { type IAuthUserService } from '@modules/identity/shared/contracts/auth-user-service.contract';
-import { AUTH_USER_SERVICE } from '@modules/identity/shared/tokens/auth-user-service.token';
+import { type ICompanyCreationService } from '@core/application/contracts/company-creation.contract';
+import { COMPANY_CREATION_SERVICE } from '@core/application/tokens/company-creation.token';
+import { UserRole } from '@core/domain/enums/user-role.enum';
+import { type IAuthUserService } from '@modules/identity/users/application/contracts/auth-user-service.contract';
+import { AUTH_USER_SERVICE } from '@modules/identity/users/application/tokens/auth-user-service.token';
 
 import { type RegisterResult } from '../../contracts/register.contract';
 import { RegisterCommand } from './register.command';

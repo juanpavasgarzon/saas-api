@@ -16,7 +16,7 @@ export class InvoiceOrmEntity {
   number!: number;
 
   @Column({ type: 'uuid' })
-  saleId!: string;
+  dealId!: string;
 
   @Column({ type: 'uuid' })
   customerId!: string;

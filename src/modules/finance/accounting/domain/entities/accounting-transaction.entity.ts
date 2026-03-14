@@ -1,4 +1,4 @@
-import { generateId } from '@shared/utils/uuid.util';
+import { generateId } from '@utils/uuid.util';
 
 import { type AccountingTransactionProps } from '../contracts/accounting-transaction-props.contract';
 import { type TransactionType } from '../enums/transaction-type.enum';

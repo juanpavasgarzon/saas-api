@@ -1,5 +1,5 @@
 export interface InvoiceFilters {
   customerId?: string;
-  saleId?: string;
+  dealId?: string;
   status?: string;
 }

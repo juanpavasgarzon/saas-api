@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { NotFoundError } from '@shared/domain/errors/not-found.error';
+import { NotFoundError } from '@core/domain/errors/not-found.error';
 
 import { type IStockRepository } from '../../../domain/contracts/stock-repository.contract';
 import { type Stock } from '../../../domain/entities/stock.entity';

@@ -17,8 +17,9 @@ export class GetAssetHandler implements IQueryHandler<GetAssetQuery, Asset> {
   async execute(query: GetAssetQuery): Promise<Asset> {
     const asset = await this.assetRepository.findById(query.id, query.tenantId);
     if (!asset) {
-      throw new AssetNotFoundError();
+      throw new AssetNotFoundError(query.id);
     }
+
     return asset;
   }
 }

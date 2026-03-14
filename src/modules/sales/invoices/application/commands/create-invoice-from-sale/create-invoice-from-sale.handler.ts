@@ -21,7 +21,7 @@ export class CreateInvoiceFromSaleHandler implements ICommandHandler<
     const invoice = Invoice.createFromSale(
       command.tenantId,
       number,
-      command.saleId,
+      command.dealId,
       command.customerId,
       command.items,
     );

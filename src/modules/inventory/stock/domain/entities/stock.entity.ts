@@ -1,5 +1,5 @@
-import { ConflictError } from '@shared/domain/errors/conflict.error';
-import { generateId } from '@shared/utils/uuid.util';
+import { ConflictError } from '@core/domain/errors/conflict.error';
+import { generateId } from '@utils/uuid.util';
 
 import { type StockProps } from '../contracts/stock-props.contract';
 
@@ -89,6 +89,21 @@ export class Stock {
       );
     }
     this._quantity -= qty;
+    this._updatedAt = new Date();
+  }
+
+  reserve(qty: number): void {
+    if (this.availableQuantity < qty) {
+      throw new ConflictError(
+        `Insufficient available stock to reserve. Available: ${this.availableQuantity}, requested: ${qty}`,
+      );
+    }
+    this._reservedQuantity += qty;
+    this._updatedAt = new Date();
+  }
+
+  releaseReservation(qty: number): void {
+    this._reservedQuantity = Math.max(0, this._reservedQuantity - qty);
     this._updatedAt = new Date();
   }
 }

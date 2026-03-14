@@ -33,12 +33,12 @@ dev-logs: ## Tail development logs
 # ─── Database ─────────────────────────────────────────────────────────────────
 migrate: ## Run pending migrations inside running app container
 	docker compose exec app node -e \
-		"const {AppDataSource}=require('./dist/database/data-source'); \
+		"const {AppDataSource}=require('./dist/core/infrastructure/database/data-source'); \
 		 AppDataSource.initialize().then(()=>AppDataSource.runMigrations()).then(()=>process.exit(0))"
 
 migrate-revert: ## Revert last migration
 	docker compose exec app node -e \
-		"const {AppDataSource}=require('./dist/database/data-source'); \
+		"const {AppDataSource}=require('./dist/core/infrastructure/database/data-source'); \
 		 AppDataSource.initialize().then(()=>AppDataSource.undoLastMigration()).then(()=>process.exit(0))"
 
 shell: ## Open shell inside running app container

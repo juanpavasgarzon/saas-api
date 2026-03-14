@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type QuotationFilters } from '../../domain/contracts/quotation-filters.contract';
 import { type QuotationItemProps } from '../../domain/contracts/quotation-item-props.contract';
@@ -94,6 +94,8 @@ export class QuotationTypeOrmRepository implements IQuotationRepository {
         unit: i.unit,
         unitPrice: Number(i.unitPrice),
         lineTotal: Number(i.lineTotal),
+        itemType: i.itemType,
+        itemId: i.itemId,
       }),
     );
 

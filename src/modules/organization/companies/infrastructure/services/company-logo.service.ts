@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import sharp from 'sharp';
 
-import { type ICompanyLogoService } from '@modules/organization/companies/application/contracts/company-logo-service.contract';
+import { type ICompanyLogoService } from '../../application/contracts/company-logo-service.contract';
 
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 const LOGO_RESIZE_OPTS = { width: 400, height: 160, fit: 'inside' as const };

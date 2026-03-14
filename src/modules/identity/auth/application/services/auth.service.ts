@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
-import { IAuthUserService } from '@modules/identity/shared/contracts/auth-user-service.contract';
-import { AUTH_USER_SERVICE } from '@modules/identity/shared/tokens/auth-user-service.token';
+import { AuthUserData } from '@core/application/contracts/auth-user-data.contract';
+import { IAuthUserService } from '@modules/identity/users/application/contracts/auth-user-service.contract';
+import { AUTH_USER_SERVICE } from '@modules/identity/users/application/tokens/auth-user-service.token';
 
 import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials.error';
 import { UserInactiveError } from '../../domain/errors/user-inactive.error';

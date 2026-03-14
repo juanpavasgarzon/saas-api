@@ -11,7 +11,7 @@ export function setUpSwagger(app: INestApplication): void {
     .addTag('Identity', 'User and access management')
     .addTag('Inventory', 'Inventory and warehouse management')
     .addTag('Organization', 'Organization and team management')
-    .addTag('Procurement', 'Procurement and vendor management')
+    .addTag('Procurement', 'Procurement and supplier management')
     .addTag('Projects', 'Project management and collaboration')
     .addTag('Sales', 'Sales and order management')
     .build();

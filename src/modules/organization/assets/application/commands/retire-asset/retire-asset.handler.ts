@@ -16,7 +16,7 @@ export class RetireAssetHandler implements ICommandHandler<RetireAssetCommand, v
   async execute(command: RetireAssetCommand): Promise<void> {
     const asset = await this.assetRepository.findById(command.id, command.tenantId);
     if (!asset) {
-      throw new AssetNotFoundError();
+      throw new AssetNotFoundError(command.id);
     }
     asset.retire();
     await this.assetRepository.save(asset);

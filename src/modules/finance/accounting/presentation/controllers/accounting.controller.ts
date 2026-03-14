@@ -25,19 +25,19 @@ import {
 } from '@nestjs/swagger';
 import { type Response } from 'express';
 
-import { type ICompanyProfileService } from '@shared/application/contracts/company-profile.contract';
-import { COMPANY_PROFILE_SERVICE } from '@shared/application/tokens/company-profile.token';
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
-import { type ITransactionPdfService } from '@modules/finance/accounting/application/contracts/transaction-pdf-service.contract';
-import { TRANSACTION_PDF_SERVICE } from '@modules/finance/accounting/application/tokens/transaction-pdf-service.token';
+import { type ICompanyProfileService } from '@core/application/contracts/company-profile.contract';
+import { COMPANY_PROFILE_SERVICE } from '@core/application/tokens/company-profile.token';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
+import { CreatedResponseDto } from '@core/presentation/dtos/created-response.dto';
 
 import { CreateTransactionCommand } from '../../application/commands/create-transaction/create-transaction.command';
+import { type ITransactionPdfService } from '../../application/contracts/transaction-pdf-service.contract';
 import { GetTransactionQuery } from '../../application/queries/get-transaction/get-transaction.query';
 import { ListTransactionsQuery } from '../../application/queries/list-transactions/list-transactions.query';
+import { TRANSACTION_PDF_SERVICE } from '../../application/tokens/transaction-pdf-service.token';
 import { type AccountingTransaction } from '../../domain/entities/accounting-transaction.entity';
 import { CreateTransactionDto } from '../dtos/create-transaction.dto';
 import { TransactionResponseDto } from '../dtos/transaction-response.dto';

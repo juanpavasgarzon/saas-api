@@ -6,5 +6,6 @@ import { EmployeesModule } from './employees/employees.module';
 
 @Module({
   imports: [CompaniesModule, EmployeesModule, AssetsModule],
+  exports: [CompaniesModule],
 })
 export class OrganizationModule {}

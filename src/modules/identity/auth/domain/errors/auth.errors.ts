@@ -1,4 +1,4 @@
-import { UnauthorizedError } from '@shared/index';
+import { UnauthorizedError } from '@core/index';
 
 export class InvalidCredentialsError extends UnauthorizedError {
   constructor() {

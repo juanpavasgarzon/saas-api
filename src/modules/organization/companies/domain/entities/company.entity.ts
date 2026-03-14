@@ -1,4 +1,4 @@
-import { generateId } from '@shared/utils/uuid.util';
+import { generateId } from '@utils/uuid.util';
 
 import { type CompanyProps } from '../contracts/company-props.contract';
 import { CompanyPlan } from '../enums/company-plan.enum';

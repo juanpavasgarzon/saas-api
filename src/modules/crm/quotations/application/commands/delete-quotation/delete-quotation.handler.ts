@@ -16,7 +16,7 @@ export class DeleteQuotationHandler implements ICommandHandler<DeleteQuotationCo
   async execute(command: DeleteQuotationCommand): Promise<void> {
     const quotation = await this.quotationRepository.findById(command.id, command.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(command.id);
     }
 
     quotation.canBeDeleted();

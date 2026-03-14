@@ -18,10 +18,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
 
 import { GetStockQuery } from '../../application/queries/get-stock/get-stock.query';
 import { ListStockQuery } from '../../application/queries/list-stock/list-stock.query';

@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 
-import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { type IProspectProps } from '@modules/procurement/prospects/domain/contracts/prospect-props.contract';
-import { type IProspectRepository } from '@modules/procurement/prospects/domain/contracts/prospect-repository.contract';
-import { Prospect } from '@modules/procurement/prospects/domain/entities/prospect.entity';
-import { VendorProspectStatus } from '@modules/procurement/prospects/domain/enums/prospect-status.enum';
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
+import { type IProspectProps } from '../../domain/contracts/prospect-props.contract';
+import { type IProspectRepository } from '../../domain/contracts/prospect-repository.contract';
+import { Prospect } from '../../domain/entities/prospect.entity';
+import { SupplierProspectStatus } from '../../domain/enums/prospect-status.enum';
 import { ProspectOrmEntity } from '../entities/prospect.orm-entity';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
 
   async findAll(
     tenantId: string,
-    filters: { status?: VendorProspectStatus; search?: string },
+    filters: { status?: SupplierProspectStatus; search?: string },
     page: number,
     limit: number,
   ): Promise<PaginatedResult<Prospect>> {

@@ -1,26 +1,49 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { type Invoice } from '../../domain/entities/invoice.entity';
-import { type InvoiceStatus } from '../../domain/enums/invoice-status.enum';
+import { InvoiceStatus } from '../../domain/enums/invoice-status.enum';
 
 export class InvoiceListResponseDto {
-  @ApiProperty() id: string;
-  @ApiProperty() number: number;
-  @ApiProperty() saleId: string;
-  @ApiProperty() customerId: string;
-  @ApiProperty() status: InvoiceStatus;
-  @ApiProperty() notes: string | null;
-  @ApiProperty() subtotal: number;
-  @ApiProperty() total: number;
-  @ApiProperty() sentAt: Date | null;
-  @ApiProperty() paidAt: Date | null;
-  @ApiProperty() createdAt: Date;
-  @ApiProperty() updatedAt: Date;
+  @ApiProperty({ example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  id: string;
+
+  @ApiProperty({ example: 2001 })
+  number: number;
+
+  @ApiProperty({ example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  dealId: string;
+
+  @ApiProperty({ example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  customerId: string;
+
+  @ApiProperty({ enum: InvoiceStatus, example: InvoiceStatus.DRAFT })
+  status: InvoiceStatus;
+
+  @ApiProperty({ example: 'Net 30 payment terms', nullable: true })
+  notes: string | null;
+
+  @ApiProperty({ example: 1500.0 })
+  subtotal: number;
+
+  @ApiProperty({ example: 1500.0 })
+  total: number;
+
+  @ApiProperty({ example: '2024-01-20T10:00:00.000Z', nullable: true })
+  sentAt: Date | null;
+
+  @ApiProperty({ example: '2024-02-20T10:00:00.000Z', nullable: true })
+  paidAt: Date | null;
+
+  @ApiProperty({ example: '2024-01-15T10:00:00.000Z' })
+  createdAt: Date;
+
+  @ApiProperty({ example: '2024-01-15T10:00:00.000Z' })
+  updatedAt: Date;
 
   constructor(invoice: Invoice) {
     this.id = invoice.id;
     this.number = invoice.number;
-    this.saleId = invoice.saleId;
+    this.dealId = invoice.dealId;
     this.customerId = invoice.customerId;
     this.status = invoice.status;
     this.notes = invoice.notes;

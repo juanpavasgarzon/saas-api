@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IEmailService } from '@shared/application/contracts/email-service.contract';
-import { EMAIL_SERVICE } from '@shared/application/tokens/email-service.token';
+import { IEmailService } from '@core/application/contracts/email-service.contract';
+import { EMAIL_SERVICE } from '@core/application/tokens/email-service.token';
 
 import { IInvitationRepository } from '../../../domain/contracts/invitation-repository.contract';
 import { Invitation } from '../../../domain/entities/invitation.entity';

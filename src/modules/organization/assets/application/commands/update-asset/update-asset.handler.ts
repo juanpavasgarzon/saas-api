@@ -16,8 +16,9 @@ export class UpdateAssetHandler implements ICommandHandler<UpdateAssetCommand, v
   async execute(command: UpdateAssetCommand): Promise<void> {
     const asset = await this.assetRepository.findById(command.id, command.tenantId);
     if (!asset) {
-      throw new AssetNotFoundError();
+      throw new AssetNotFoundError(command.id);
     }
+
     asset.update(
       command.name,
       command.category,

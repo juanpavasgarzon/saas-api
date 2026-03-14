@@ -57,7 +57,7 @@ export default tseslint.config(
       // ─── Ordenamiento de imports ──────────────────────────────────────────
       // Grupos (en orden):
       //  1. Librerías externas  — @nestjs/*, typeorm, rxjs, class-validator…
-      //  2. Path aliases internos — @shared/*, @core/*, @modules/*, @config/*, @database/*
+      //  2. Path aliases internos — @core/*, @modules/*, @utils/*
       //  3. Imports relativos   — ./, ../
       'simple-import-sort/imports': [
         'error',
@@ -68,7 +68,7 @@ export default tseslint.config(
             // 2. Librerías externas (node_modules)
             ['^@nestjs', '^typeorm', '^rxjs', '^@?\\w'],
             // 3. Aliases internos del proyecto
-            ['^@shared/', '^@core/', '^@modules/', '^@config/', '^@database/'],
+            ['^@core/', '^@modules/', '^@utils/'],
             // 4. Imports relativos
             ['^\\.'],
           ],

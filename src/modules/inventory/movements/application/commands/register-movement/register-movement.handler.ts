@@ -1,12 +1,11 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, EventPublisher, type ICommandHandler } from '@nestjs/cqrs';
 
-import { ValidationError } from '@shared/domain/errors/validation.error';
+import { NotFoundError } from '@core/domain/errors/not-found.error';
+import { ValidationError } from '@core/domain/errors/validation.error';
 import { type IProductRepository } from '@modules/inventory/products/domain/contracts/product-repository.contract';
-import { ProductNotFoundError } from '@modules/inventory/products/domain/errors/product-not-found.error';
 import { PRODUCT_REPOSITORY } from '@modules/inventory/products/domain/tokens/product-repository.token';
 import { type IWarehouseRepository } from '@modules/inventory/warehouses/domain/contracts/warehouse-repository.contract';
-import { WarehouseNotFoundError } from '@modules/inventory/warehouses/domain/errors/warehouse-not-found.error';
 import { WAREHOUSE_REPOSITORY } from '@modules/inventory/warehouses/domain/tokens/warehouse-repository.token';
 
 import { type IMovementRepository } from '../../../domain/contracts/movement-repository.contract';
@@ -30,7 +29,7 @@ export class RegisterMovementHandler implements ICommandHandler<RegisterMovement
   async execute(command: RegisterMovementCommand): Promise<string> {
     const product = await this.productRepository.findById(command.productId, command.tenantId);
     if (!product) {
-      throw new ProductNotFoundError(command.productId);
+      throw new NotFoundError('Product', command.productId);
     }
 
     if (command.warehouseId) {
@@ -39,7 +38,7 @@ export class RegisterMovementHandler implements ICommandHandler<RegisterMovement
         command.tenantId,
       );
       if (!warehouse) {
-        throw new WarehouseNotFoundError(command.warehouseId);
+        throw new NotFoundError('Warehouse', command.warehouseId);
       }
     }
 
@@ -52,7 +51,7 @@ export class RegisterMovementHandler implements ICommandHandler<RegisterMovement
         command.tenantId,
       );
       if (!toWarehouse) {
-        throw new WarehouseNotFoundError(command.toWarehouseId);
+        throw new NotFoundError('Warehouse', command.toWarehouseId);
       }
     }
 

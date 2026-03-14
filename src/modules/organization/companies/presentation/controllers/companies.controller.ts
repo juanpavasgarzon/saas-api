@@ -24,14 +24,14 @@ import {
 } from '@nestjs/swagger';
 import { memoryStorage } from 'multer';
 
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { ICompanyLogoService } from '@modules/organization/companies/application/contracts/company-logo-service.contract';
-import { COMPANY_LOGO_SERVICE } from '@modules/organization/companies/application/tokens/company-logo-service.token';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
 
 import { UpdateCompanyCommand } from '../../application/commands/update-company/update-company.command';
+import { ICompanyLogoService } from '../../application/contracts/company-logo-service.contract';
 import { GetCompanyQuery } from '../../application/queries/get-company/get-company.query';
+import { COMPANY_LOGO_SERVICE } from '../../application/tokens/company-logo-service.token';
 import { type Company } from '../../domain/entities/company.entity';
 import { CompanyResponseDto } from '../dtos/company-response.dto';
 import { UpdateCompanyDto } from '../dtos/update-company.dto';

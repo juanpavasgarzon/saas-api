@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { UserProps } from '../../domain/contracts/user-props.contract';
 import { IUserRepository } from '../../domain/contracts/user-repository.contract';

@@ -16,7 +16,7 @@ export class DeleteProspectHandler implements ICommandHandler<DeleteProspectComm
   async execute(command: DeleteProspectCommand): Promise<void> {
     const prospect = await this.prospectRepository.findById(command.id, command.tenantId);
     if (!prospect) {
-      throw new ProspectNotFoundError();
+      throw new ProspectNotFoundError(command.id);
     }
 
     await this.prospectRepository.delete(command.id, command.tenantId);

@@ -1,13 +1,13 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { ConflictError } from '@shared/domain/errors/conflict.error';
+import { ConflictError } from '@core/domain/errors/conflict.error';
+import { NotFoundError } from '@core/domain/errors/not-found.error';
 import { type ICustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
-import { CustomerNotFoundError } from '@modules/crm/customers/domain/errors/customer-not-found.error';
 import { CUSTOMER_REPOSITORY } from '@modules/crm/customers/domain/tokens/customer-repository.token';
+import { type IProspectRepository } from '@modules/crm/prospects/domain/contracts/prospect-repository.contract';
 import { ProspectStatus } from '@modules/crm/prospects/domain/enums/prospect-status.enum';
-import { type IProspectStatusService } from '@modules/crm/shared/contracts/prospect-status.contract';
-import { PROSPECT_STATUS_SERVICE } from '@modules/crm/shared/tokens/prospect-status.token';
+import { PROSPECT_REPOSITORY } from '@modules/crm/prospects/domain/tokens/prospect-repository.token';
 
 import { type IQuotationRepository } from '../../../domain/contracts/quotation-repository.contract';
 import { Quotation } from '../../../domain/entities/quotation.entity';
@@ -19,18 +19,16 @@ export class CreateQuotationHandler implements ICommandHandler<CreateQuotationCo
   constructor(
     @Inject(QUOTATION_REPOSITORY)
     private readonly quotationRepository: IQuotationRepository,
-    @Inject(PROSPECT_STATUS_SERVICE)
-    private readonly prospectStatusService: IProspectStatusService,
+    @Inject(PROSPECT_REPOSITORY)
+    private readonly prospectRepository: IProspectRepository,
     @Inject(CUSTOMER_REPOSITORY)
     private readonly customerRepository: ICustomerRepository,
   ) {}
 
   async execute(command: CreateQuotationCommand): Promise<string> {
     if (command.prospectId) {
-      const status = await this.prospectStatusService.getStatus(
-        command.prospectId,
-        command.tenantId,
-      );
+      const prospect = await this.prospectRepository.findById(command.prospectId, command.tenantId);
+      const status = prospect?.status ?? null;
       if (status === ProspectStatus.QUALIFIED || status === ProspectStatus.CONVERTED) {
         throw new ConflictError(
           'Prospect has already been converted to a customer. Use customerId instead.',
@@ -41,8 +39,9 @@ export class CreateQuotationHandler implements ICommandHandler<CreateQuotationCo
     if (command.customerId) {
       const customer = await this.customerRepository.findById(command.customerId, command.tenantId);
       if (!customer) {
-        throw new CustomerNotFoundError(command.customerId);
+        throw new NotFoundError('Customer', command.customerId);
       }
+
       if (!customer.isActive) {
         throw new ConflictError('Customer is inactive. Reactivate before creating a quotation.');
       }

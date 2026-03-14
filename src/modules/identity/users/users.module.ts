@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AUTH_USER_SERVICE } from '@modules/identity/shared/tokens/auth-user-service.token';
+import { AUTH_USER_SERVICE } from '@modules/identity/users/application/tokens/auth-user-service.token';
 
 import { AuthUserAdapter } from './application/adapters/auth-user.adapter';
 import { CreateUserHandler } from './application/commands/create-user/create-user.handler';

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type IUserRepository } from '../../../domain/contracts/user-repository.contract';
 import { type User } from '../../../domain/entities/user.entity';

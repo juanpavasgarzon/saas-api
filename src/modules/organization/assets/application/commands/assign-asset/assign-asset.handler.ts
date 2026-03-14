@@ -1,9 +1,10 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { ForbiddenError } from '@shared/domain/errors/forbidden.error';
-import { type IEmployeeStatusService } from '@modules/organization/shared/contracts/employee-status.contract';
-import { EMPLOYEE_STATUS_SERVICE } from '@modules/organization/shared/tokens/employee-status.token';
+import { ForbiddenError } from '@core/domain/errors/forbidden.error';
+import { type IEmployeeRepository } from '@modules/organization/employees/domain/contracts/employee-repository.contract';
+import { EmployeeStatus } from '@modules/organization/employees/domain/enums/employee-status.enum';
+import { EMPLOYEE_REPOSITORY } from '@modules/organization/employees/domain/tokens/employee-repository.token';
 
 import { type IAssetRepository } from '../../../domain/contracts/asset-repository.contract';
 import { AssetNotFoundError } from '../../../domain/errors/asset-not-found.error';
@@ -15,24 +16,21 @@ export class AssignAssetHandler implements ICommandHandler<AssignAssetCommand, v
   constructor(
     @Inject(ASSET_REPOSITORY)
     private readonly assetRepository: IAssetRepository,
-    @Inject(EMPLOYEE_STATUS_SERVICE)
-    private readonly employeeStatusService: IEmployeeStatusService,
+    @Inject(EMPLOYEE_REPOSITORY)
+    private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(command: AssignAssetCommand): Promise<void> {
     if (command.employeeId) {
-      const isActive = await this.employeeStatusService.isActive(
-        command.employeeId,
-        command.tenantId,
-      );
-      if (!isActive) {
+      const employee = await this.employeeRepository.findById(command.employeeId, command.tenantId);
+      if (!employee || employee.status !== EmployeeStatus.ACTIVE) {
         throw new ForbiddenError('Cannot assign asset to an inactive employee');
       }
     }
 
     const asset = await this.assetRepository.findById(command.id, command.tenantId);
     if (!asset) {
-      throw new AssetNotFoundError();
+      throw new AssetNotFoundError(command.id);
     }
     asset.assign(command.projectId, command.employeeId);
     await this.assetRepository.save(asset);

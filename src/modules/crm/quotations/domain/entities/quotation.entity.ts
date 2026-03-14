@@ -1,11 +1,14 @@
-import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
-import { generateId } from '@shared/utils/uuid.util';
+import { AggregateRootBase } from '@core/domain/aggregate-root.base';
+import { type LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { type UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
+import { generateId } from '@utils/uuid.util';
 
 import { type QuotationProps } from '../contracts/quotation-props.contract';
 import { QuotationStatus } from '../enums/quotation-status.enum';
 import { QuotationInvalidTransitionError } from '../errors/quotation-invalid-transition.error';
 import { QuotationAcceptedEvent } from '../events/quotation-accepted.event';
+import { QuotationExpiredEvent } from '../events/quotation-expired.event';
+import { QuotationRejectedEvent } from '../events/quotation-rejected.event';
 import { QuotationItem } from './quotation-item.entity';
 
 export class Quotation extends AggregateRootBase {
@@ -38,11 +41,26 @@ export class Quotation extends AggregateRootBase {
     prospectId: string | null,
     notes: string | null,
     validUntil: Date | null,
-    items: Array<{ description: string; quantity: number; unit: UnitOfMeasure; unitPrice: number }>,
+    items: Array<{
+      itemType: LineItemType;
+      itemId: string;
+      description: string;
+      quantity: number;
+      unit: UnitOfMeasure;
+      unitPrice: number;
+    }>,
   ): Quotation {
     const id = generateId();
     const quotationItems = items.map((item) =>
-      QuotationItem.create(id, item.description, item.quantity, item.unit, item.unitPrice),
+      QuotationItem.create(
+        id,
+        item.itemType,
+        item.itemId,
+        item.description,
+        item.quantity,
+        item.unit,
+        item.unitPrice,
+      ),
     );
 
     return new Quotation({
@@ -111,7 +129,14 @@ export class Quotation extends AggregateRootBase {
     title: string,
     notes: string | null,
     validUntil: Date | null,
-    items: Array<{ description: string; quantity: number; unit: UnitOfMeasure; unitPrice: number }>,
+    items: Array<{
+      itemType: LineItemType;
+      itemId: string;
+      description: string;
+      quantity: number;
+      unit: UnitOfMeasure;
+      unitPrice: number;
+    }>,
   ): void {
     if (this._status !== QuotationStatus.DRAFT) {
       throw new QuotationInvalidTransitionError(this._status, 'update');
@@ -120,7 +145,15 @@ export class Quotation extends AggregateRootBase {
     this._notes = notes;
     this._validUntil = validUntil;
     this._items = items.map((item) =>
-      QuotationItem.create(this._id, item.description, item.quantity, item.unit, item.unitPrice),
+      QuotationItem.create(
+        this._id,
+        item.itemType,
+        item.itemId,
+        item.description,
+        item.quantity,
+        item.unit,
+        item.unitPrice,
+      ),
     );
     this.touch();
   }
@@ -145,6 +178,8 @@ export class Quotation extends AggregateRootBase {
         this._customerId,
         this._prospectId,
         this._items.map((i) => ({
+          itemType: i.itemType,
+          itemId: i.itemId,
           description: i.description,
           quantity: i.quantity,
           unit: i.unit,
@@ -161,6 +196,13 @@ export class Quotation extends AggregateRootBase {
       throw new QuotationInvalidTransitionError(this._status, QuotationStatus.REJECTED);
     }
     this._status = QuotationStatus.REJECTED;
+    this.apply(
+      new QuotationRejectedEvent(
+        this._id,
+        this._tenantId,
+        this._items.map((i) => ({ itemType: i.itemType, itemId: i.itemId, quantity: i.quantity })),
+      ),
+    );
     this.touch();
   }
 
@@ -169,6 +211,13 @@ export class Quotation extends AggregateRootBase {
       throw new QuotationInvalidTransitionError(this._status, QuotationStatus.EXPIRED);
     }
     this._status = QuotationStatus.EXPIRED;
+    this.apply(
+      new QuotationExpiredEvent(
+        this._id,
+        this._tenantId,
+        this._items.map((i) => ({ itemType: i.itemType, itemId: i.itemId, quantity: i.quantity })),
+      ),
+    );
     this.touch();
   }
 

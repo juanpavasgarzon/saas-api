@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IAuthUserService } from '@modules/identity/shared/contracts/auth-user-service.contract';
-import { AUTH_USER_SERVICE } from '@modules/identity/shared/tokens/auth-user-service.token';
+import { IAuthUserService } from '@modules/identity/users/application/contracts/auth-user-service.contract';
+import { AUTH_USER_SERVICE } from '@modules/identity/users/application/tokens/auth-user-service.token';
 
 import { IInvitationRepository } from '../../../domain/contracts/invitation-repository.contract';
 import { InvitationExpiredError } from '../../../domain/errors/invitation-expired.error';

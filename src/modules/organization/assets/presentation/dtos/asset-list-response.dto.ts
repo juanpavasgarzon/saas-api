@@ -1,41 +1,41 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { type Asset } from '../../domain/entities/asset.entity';
-import { type AssetCategory } from '../../domain/enums/asset-category.enum';
-import { type AssetStatus } from '../../domain/enums/asset-status.enum';
+import { AssetCategory } from '../../domain/enums/asset-category.enum';
+import { AssetStatus } from '../../domain/enums/asset-status.enum';
 
 export class AssetListResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 3001 })
   number: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Dell Latitude 5520' })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: AssetCategory, example: AssetCategory.EQUIPMENT })
   category: AssetCategory;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ example: 'SN-123456789', nullable: true })
   serialNumber: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ example: 'Company laptop for engineering team', nullable: true })
   description: string | null;
 
-  @ApiProperty()
+  @ApiProperty({ enum: AssetStatus, example: AssetStatus.ACTIVE })
   status: AssetStatus;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ example: '2023-06-01T00:00:00.000Z', nullable: true })
   purchaseDate: Date | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ example: 1200.0, nullable: true })
   purchaseValue: number | null;
 
-  @ApiProperty()
+  @ApiProperty({ example: '2024-01-15T10:00:00.000Z' })
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ example: '2024-01-15T10:00:00.000Z' })
   updatedAt: Date;
 
   constructor(asset: Asset) {

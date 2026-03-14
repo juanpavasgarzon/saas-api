@@ -5,7 +5,7 @@ export interface InvoiceProps {
   id: string;
   tenantId: string;
   number: number;
-  saleId: string;
+  dealId: string;
   customerId: string;
   status: InvoiceStatus;
   notes: string | null;

@@ -1,7 +1,7 @@
-import { NotFoundError } from '@shared/domain/errors/not-found.error';
+import { NotFoundError } from '@core/domain/errors/not-found.error';
 
 export class ProspectNotFoundError extends NotFoundError {
-  constructor() {
-    super('Prospect', 'unknown');
+  constructor(id: string) {
+    super('Prospect', id);
   }
 }

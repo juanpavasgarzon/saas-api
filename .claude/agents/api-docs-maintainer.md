@@ -13,9 +13,8 @@ docs/api-summary.md
 
 Postman files:
 
-postman/saas-api.collection.json
-postman/saas.environment.json
-postman/saas-ws.collection.json
+postman/api.collection.json
+postman/environment.json
 
 ---
 
@@ -53,7 +52,7 @@ Add missing decorators.
 
 Open:
 
-postman/saas-api.collection.json
+postman/api.collection.json
 
 Ensure every controller route exists.
 

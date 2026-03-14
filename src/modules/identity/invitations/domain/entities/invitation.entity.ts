@@ -1,4 +1,4 @@
-import { generateId } from '@shared/utils/uuid.util';
+import { generateId } from '@utils/uuid.util';
 
 import { type InvitationProps } from '../contracts/invitation-props.contract';
 import { InvitationStatus } from '../enums/invitation-status.enum';

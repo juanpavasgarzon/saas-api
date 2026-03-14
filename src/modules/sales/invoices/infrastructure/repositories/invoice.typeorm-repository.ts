@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type InvoiceFilters } from '../../domain/contracts/invoice-filters.contract';
 import { type InvoiceItemProps } from '../../domain/contracts/invoice-item-props.contract';
@@ -37,8 +37,8 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
     if (filters.customerId) {
       where.customerId = filters.customerId;
     }
-    if (filters.saleId) {
-      where.saleId = filters.saleId;
+    if (filters.dealId) {
+      where.dealId = filters.dealId;
     }
 
     const [items, total] = await this.repository.findAndCount({
@@ -74,6 +74,8 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
         unit: i.unit,
         unitPrice: Number(i.unitPrice),
         lineTotal: Number(i.lineTotal),
+        itemType: i.itemType,
+        itemId: i.itemId,
       }),
     );
 
@@ -81,7 +83,7 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
       id: orm.id,
       tenantId: orm.tenantId,
       number: Number(orm.number),
-      saleId: orm.saleId,
+      dealId: orm.dealId,
       customerId: orm.customerId,
       status: orm.status,
       notes: orm.notes,
@@ -101,7 +103,7 @@ export class InvoiceTypeOrmRepository implements IInvoiceRepository {
     orm.id = invoice.id;
     orm.tenantId = invoice.tenantId;
     orm.number = invoice.number;
-    orm.saleId = invoice.saleId;
+    orm.dealId = invoice.dealId;
     orm.customerId = invoice.customerId;
     orm.status = invoice.status;
     orm.notes = invoice.notes;

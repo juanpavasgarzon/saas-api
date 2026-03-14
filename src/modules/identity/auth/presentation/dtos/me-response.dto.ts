@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { type AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
+import { type AuthUserData } from '@core/application/contracts/auth-user-data.contract';
 
 export class MeResponseDto {
   @ApiProperty({ example: '019542ab-1234-7abc-8def-000000000001' })

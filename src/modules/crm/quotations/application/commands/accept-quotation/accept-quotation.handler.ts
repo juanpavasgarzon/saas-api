@@ -17,7 +17,7 @@ export class AcceptQuotationHandler implements ICommandHandler<AcceptQuotationCo
   async execute(command: AcceptQuotationCommand): Promise<void> {
     const quotation = await this.quotationRepository.findById(command.id, command.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(command.id);
     }
 
     this.publisher.mergeObjectContext(quotation);

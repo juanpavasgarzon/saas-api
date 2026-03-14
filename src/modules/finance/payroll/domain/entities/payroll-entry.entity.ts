@@ -1,4 +1,4 @@
-import { generateId } from '@shared/utils/uuid.util';
+import { generateId } from '@utils/uuid.util';
 
 import { type PayrollEntryProps } from '../contracts/payroll-entry-props.contract';
 import { PayrollStatus } from '../enums/payroll-status.enum';

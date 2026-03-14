@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { type Prospect } from '../../domain/entities/prospect.entity';
-import { VendorProspectStatus } from '../../domain/enums/prospect-status.enum';
+import { SupplierProspectStatus } from '../../domain/enums/prospect-status.enum';
 
-export class VendorProspectResponseDto {
+export class SupplierProspectResponseDto {
   @ApiProperty({ example: '019542ab-1234-7abc-8def-000000000001' })
   id: string;
 
@@ -31,8 +31,8 @@ export class VendorProspectResponseDto {
   @ApiPropertyOptional({ example: 'Referred by procurement team.', nullable: true })
   notes: string | null;
 
-  @ApiProperty({ enum: VendorProspectStatus, example: VendorProspectStatus.NEW })
-  status: VendorProspectStatus;
+  @ApiProperty({ enum: SupplierProspectStatus, example: SupplierProspectStatus.NEW })
+  status: SupplierProspectStatus;
 
   @ApiProperty({ example: '2025-01-01T00:00:00.000Z' })
   createdAt: Date;

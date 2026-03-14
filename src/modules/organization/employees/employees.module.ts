@@ -2,11 +2,9 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EMPLOYEE_SALARY_SERVICE } from '@shared/application/tokens/employee-salary.token';
-import { EMPLOYEE_STATUS_SERVICE } from '@modules/organization/shared/tokens/employee-status.token';
+import { EMPLOYEE_SALARY_SERVICE } from '@core/application/tokens/employee-salary.token';
 
 import { EmployeeSalaryAdapter } from './application/adapters/employee-salary.adapter';
-import { EmployeeStatusAdapter } from './application/adapters/employee-status.adapter';
 import { CreateEmployeeHandler } from './application/commands/create-employee/create-employee.handler';
 import { DeactivateEmployeeHandler } from './application/commands/deactivate-employee/deactivate-employee.handler';
 import { ReactivateEmployeeHandler } from './application/commands/reactivate-employee/reactivate-employee.handler';
@@ -30,12 +28,10 @@ import { EmployeesController } from './presentation/controllers/employees.contro
     GetEmployeeHandler,
     ListEmployeesHandler,
     EmployeeService,
-    EmployeeStatusAdapter,
     EmployeeSalaryAdapter,
     { provide: EMPLOYEE_REPOSITORY, useClass: EmployeeTypeOrmRepository },
-    { provide: EMPLOYEE_STATUS_SERVICE, useClass: EmployeeStatusAdapter },
     { provide: EMPLOYEE_SALARY_SERVICE, useClass: EmployeeSalaryAdapter },
   ],
-  exports: [EmployeeService, EMPLOYEE_STATUS_SERVICE, EMPLOYEE_SALARY_SERVICE],
+  exports: [EmployeeService, EMPLOYEE_REPOSITORY, EMPLOYEE_SALARY_SERVICE],
 })
 export class EmployeesModule {}

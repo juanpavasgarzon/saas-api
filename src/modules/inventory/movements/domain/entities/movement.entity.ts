@@ -1,5 +1,5 @@
-import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
-import { generateId } from '@shared/utils/uuid.util';
+import { AggregateRootBase } from '@core/domain/aggregate-root.base';
+import { generateId } from '@utils/uuid.util';
 
 import { type MovementProps } from '../contracts/movement-props.contract';
 import { type MovementSource } from '../enums/movement-source.enum';

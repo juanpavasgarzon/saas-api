@@ -27,11 +27,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
+import { CreatedResponseDto } from '@core/presentation/dtos/created-response.dto';
 
 import { CreateProspectCommand } from '../../application/commands/create-prospect/create-prospect.command';
 import { DeleteProspectCommand } from '../../application/commands/delete-prospect/delete-prospect.command';
@@ -40,11 +40,11 @@ import { UpdateProspectStatusCommand } from '../../application/commands/update-p
 import { GetProspectQuery } from '../../application/queries/get-prospect/get-prospect.query';
 import { ListProspectsQuery } from '../../application/queries/list-prospects/list-prospects.query';
 import { type Prospect } from '../../domain/entities/prospect.entity';
-import { VendorProspectStatus } from '../../domain/enums/prospect-status.enum';
-import { CreateVendorProspectDto } from '../dtos/create-prospect.dto';
-import { VendorProspectResponseDto } from '../dtos/prospect-response.dto';
-import { UpdateVendorProspectDto } from '../dtos/update-prospect.dto';
-import { UpdateVendorProspectStatusDto } from '../dtos/update-prospect-status.dto';
+import { SupplierProspectStatus } from '../../domain/enums/prospect-status.enum';
+import { CreateSupplierProspectDto } from '../dtos/create-prospect.dto';
+import { SupplierProspectResponseDto } from '../dtos/prospect-response.dto';
+import { UpdateSupplierProspectDto } from '../dtos/update-prospect.dto';
+import { UpdateSupplierProspectStatusDto } from '../dtos/update-prospect-status.dto';
 
 @ApiTags('Procurement')
 @ApiBearerAuth('JWT')
@@ -56,16 +56,16 @@ export class ProspectsController {
   ) {}
 
   @Post()
-  @RequirePermission(Permission.ProcurementVendorsCreate)
+  @RequirePermission(Permission.ProcurementSuppliersCreate)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create prospect',
-    description: 'Creates a new prospect that can later be converted to a vendor.',
+    description: 'Creates a new prospect that can later be converted to a supplier.',
   })
   @ApiCreatedResponse({ type: CreatedResponseDto })
   async createProspect(
     @CurrentTenant() tenantId: string,
-    @Body() dto: CreateVendorProspectDto,
+    @Body() dto: CreateSupplierProspectDto,
   ): Promise<CreatedResponseDto> {
     const command = new CreateProspectCommand(
       tenantId,
@@ -83,13 +83,13 @@ export class ProspectsController {
   }
 
   @Get()
-  @RequirePermission(Permission.ProcurementVendorsRead)
+  @RequirePermission(Permission.ProcurementSuppliersRead)
   @ApiOperation({
     summary: 'List prospects',
     description: 'Returns prospects with pagination.',
   })
-  @ApiOkResponse({ description: 'Paginated list of vendor prospects' })
-  @ApiQuery({ name: 'status', required: false, enum: VendorProspectStatus })
+  @ApiOkResponse({ description: 'Paginated list of supplier prospects' })
+  @ApiQuery({ name: 'status', required: false, enum: SupplierProspectStatus })
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
@@ -97,37 +97,37 @@ export class ProspectsController {
     @CurrentTenant() tenantId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-    @Query('status') status?: VendorProspectStatus,
+    @Query('status') status?: SupplierProspectStatus,
     @Query('search') search?: string,
-  ): Promise<PaginatedResult<VendorProspectResponseDto>> {
+  ): Promise<PaginatedResult<SupplierProspectResponseDto>> {
     const query = new ListProspectsQuery(tenantId, { status, search }, page, limit);
     const result = await this.queryBus.execute<ListProspectsQuery, PaginatedResult<Prospect>>(
       query,
     );
     return {
       ...result,
-      items: result.items.map((p) => new VendorProspectResponseDto(p)),
+      items: result.items.map((p) => new SupplierProspectResponseDto(p)),
     };
   }
 
   @Get(':id')
-  @RequirePermission(Permission.ProcurementVendorsRead)
+  @RequirePermission(Permission.ProcurementSuppliersRead)
   @ApiOperation({ summary: 'Get prospect', description: 'Returns prospect data by ID.' })
   @ApiParam({ name: 'id', description: 'Prospect UUID' })
-  @ApiOkResponse({ type: VendorProspectResponseDto })
+  @ApiOkResponse({ type: SupplierProspectResponseDto })
   @ApiNotFoundResponse({ description: 'Prospect not found' })
   async getProspect(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<VendorProspectResponseDto> {
+  ): Promise<SupplierProspectResponseDto> {
     const query = new GetProspectQuery(id, tenantId);
     const prospect = await this.queryBus.execute<GetProspectQuery, Prospect>(query);
-    return new VendorProspectResponseDto(prospect);
+    return new SupplierProspectResponseDto(prospect);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.ProcurementVendorsModify)
+  @RequirePermission(Permission.ProcurementSuppliersModify)
   @ApiOperation({ summary: 'Update prospect', description: 'Updates prospect data.' })
   @ApiParam({ name: 'id', description: 'Prospect UUID' })
   @ApiNoContentResponse({ description: 'Prospect updated' })
@@ -135,7 +135,7 @@ export class ProspectsController {
   async updateProspect(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateVendorProspectDto,
+    @Body() dto: UpdateSupplierProspectDto,
   ): Promise<void> {
     const command = new UpdateProspectCommand(
       id,
@@ -154,7 +154,7 @@ export class ProspectsController {
 
   @Patch(':id/status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.ProcurementVendorsModify)
+  @RequirePermission(Permission.ProcurementSuppliersModify)
   @ApiOperation({
     summary: 'Update prospect status',
     description: 'Changes the prospect status.',
@@ -165,7 +165,7 @@ export class ProspectsController {
   async updateStatus(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateVendorProspectStatusDto,
+    @Body() dto: UpdateSupplierProspectStatusDto,
   ): Promise<void> {
     const command = new UpdateProspectStatusCommand(id, tenantId, dto.status);
     await this.commandBus.execute(command);
@@ -173,7 +173,7 @@ export class ProspectsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.ProcurementVendorsModify)
+  @RequirePermission(Permission.ProcurementSuppliersModify)
   @ApiOperation({ summary: 'Delete prospect', description: 'Removes the prospect.' })
   @ApiParam({ name: 'id', description: 'Prospect UUID' })
   @ApiNoContentResponse({ description: 'Prospect deleted' })

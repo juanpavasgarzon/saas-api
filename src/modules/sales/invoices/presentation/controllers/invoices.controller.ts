@@ -26,20 +26,20 @@ import {
 } from '@nestjs/swagger';
 import { type Response } from 'express';
 
-import { type ICompanyProfileService } from '@shared/application/contracts/company-profile.contract';
-import { COMPANY_PROFILE_SERVICE } from '@shared/application/tokens/company-profile.token';
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
-import { type IInvoicePdfService } from '@modules/sales/invoices/application/contracts/invoice-pdf-service.contract';
-import { INVOICE_PDF_SERVICE } from '@modules/sales/invoices/application/tokens/invoice-pdf-service.token';
+import { type ICompanyProfileService } from '@core/application/contracts/company-profile.contract';
+import { COMPANY_PROFILE_SERVICE } from '@core/application/tokens/company-profile.token';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
 
 import { CancelInvoiceCommand } from '../../application/commands/cancel-invoice/cancel-invoice.command';
 import { PayInvoiceCommand } from '../../application/commands/pay-invoice/pay-invoice.command';
 import { SendInvoiceCommand } from '../../application/commands/send-invoice/send-invoice.command';
+import { type IInvoicePdfService } from '../../application/contracts/invoice-pdf-service.contract';
 import { GetInvoiceQuery } from '../../application/queries/get-invoice/get-invoice.query';
 import { ListInvoicesQuery } from '../../application/queries/list-invoices/list-invoices.query';
+import { INVOICE_PDF_SERVICE } from '../../application/tokens/invoice-pdf-service.token';
 import { type Invoice } from '../../domain/entities/invoice.entity';
 import { InvoiceStatus } from '../../domain/enums/invoice-status.enum';
 import { InvoiceListResponseDto } from '../dtos/invoice-list-response.dto';
@@ -63,7 +63,7 @@ export class InvoicesController {
   @ApiOperation({ summary: 'List invoices', description: 'Returns invoices with pagination.' })
   @ApiOkResponse({ description: 'Paginated list of invoices' })
   @ApiQuery({ name: 'customerId', required: false })
-  @ApiQuery({ name: 'saleId', required: false })
+  @ApiQuery({ name: 'dealId', required: false })
   @ApiQuery({ name: 'status', required: false, enum: InvoiceStatus })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
@@ -72,10 +72,10 @@ export class InvoicesController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('customerId') customerId?: string,
-    @Query('saleId') saleId?: string,
+    @Query('dealId') dealId?: string,
     @Query('status') status?: string,
   ): Promise<PaginatedResult<InvoiceListResponseDto>> {
-    const listQuery = new ListInvoicesQuery(tenantId, { customerId, saleId, status }, page, limit);
+    const listQuery = new ListInvoicesQuery(tenantId, { customerId, dealId, status }, page, limit);
     const result = await this.queryBus.execute<ListInvoicesQuery, PaginatedResult<Invoice>>(
       listQuery,
     );

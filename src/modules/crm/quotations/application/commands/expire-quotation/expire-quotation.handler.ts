@@ -16,7 +16,7 @@ export class ExpireQuotationHandler implements ICommandHandler<ExpireQuotationCo
   async execute(command: ExpireQuotationCommand): Promise<void> {
     const quotation = await this.quotationRepository.findById(command.id, command.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(command.id);
     }
 
     quotation.expire();

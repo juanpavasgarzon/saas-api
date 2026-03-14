@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 
-import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { EmployeeFilters } from '../../domain/contracts/employee-filters.contract';
 import { EmployeeProps } from '../../domain/contracts/employee-props.contract';

@@ -1,6 +1,7 @@
-import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
-import { generateId } from '@shared/utils/uuid.util';
+import { AggregateRootBase } from '@core/domain/aggregate-root.base';
+import { type LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { type UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
+import { generateId } from '@utils/uuid.util';
 
 import { type InvoiceProps } from '../contracts/invoice-props.contract';
 import { InvoiceStatus } from '../enums/invoice-status.enum';
@@ -9,7 +10,7 @@ import { InvoiceItem } from './invoice-item.entity';
 
 export class Invoice extends AggregateRootBase {
   private _number: number;
-  private _saleId: string;
+  private _dealId: string;
   private _customerId: string;
   private _status: InvoiceStatus;
   private _notes: string | null;
@@ -20,7 +21,7 @@ export class Invoice extends AggregateRootBase {
   private constructor(props: InvoiceProps) {
     super(props.id, props.tenantId);
     this._number = props.number;
-    this._saleId = props.saleId;
+    this._dealId = props.dealId;
     this._customerId = props.customerId;
     this._status = props.status;
     this._notes = props.notes;
@@ -32,9 +33,11 @@ export class Invoice extends AggregateRootBase {
   static createFromSale(
     tenantId: string,
     number: number,
-    saleId: string,
+    dealId: string,
     customerId: string,
     items: Array<{
+      itemType: LineItemType;
+      itemId: string;
       description: string;
       quantity: number;
       unit: UnitOfMeasure;
@@ -44,13 +47,13 @@ export class Invoice extends AggregateRootBase {
   ): Invoice {
     const id = generateId();
     const invoiceItems = items.map((i) =>
-      InvoiceItem.create(id, i.description, i.quantity, i.unit, i.unitPrice),
+      InvoiceItem.create(id, i.itemType, i.itemId, i.description, i.quantity, i.unit, i.unitPrice),
     );
     return new Invoice({
       id,
       tenantId,
       number,
-      saleId,
+      dealId,
       customerId,
       status: InvoiceStatus.DRAFT,
       notes: null,
@@ -71,8 +74,8 @@ export class Invoice extends AggregateRootBase {
   get number(): number {
     return this._number;
   }
-  get saleId(): string {
-    return this._saleId;
+  get dealId(): string {
+    return this._dealId;
   }
   get customerId(): string {
     return this._customerId;

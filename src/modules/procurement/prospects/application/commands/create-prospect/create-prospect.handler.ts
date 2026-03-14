@@ -1,10 +1,9 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { type IProspectRepository } from '@modules/procurement/prospects/domain/contracts/prospect-repository.contract';
-import { Prospect } from '@modules/procurement/prospects/domain/entities/prospect.entity';
-import { PROSPECT_REPOSITORY } from '@modules/procurement/prospects/domain/tokens/prospect-repository.token';
-
+import { type IProspectRepository } from '../../../domain/contracts/prospect-repository.contract';
+import { Prospect } from '../../../domain/entities/prospect.entity';
+import { PROSPECT_REPOSITORY } from '../../../domain/tokens/prospect-repository.token';
 import { CreateProspectCommand } from './create-prospect.command';
 
 @CommandHandler(CreateProspectCommand)

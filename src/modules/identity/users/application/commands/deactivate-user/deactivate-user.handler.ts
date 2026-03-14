@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { ForbiddenError } from '@shared/domain/errors/forbidden.error';
+import { ForbiddenError } from '@core/domain/errors/forbidden.error';
 
 import { IUserRepository } from '../../../domain/contracts/user-repository.contract';
 import { UserNotFoundError } from '../../../domain/errors/user-not-found.error';

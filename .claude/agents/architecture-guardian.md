@@ -50,9 +50,9 @@ src/modules/sales → src/modules/inventory
 
 2. Cross-module communication must use:
 
-src/shared/application/contracts  
-src/shared/application/tokens  
-src/shared/application/events  
+src/core/application/contracts  
+src/core/application/tokens  
+src/core/application/events  
 
 3. Domain events must never leave a module.
 
@@ -71,7 +71,7 @@ You must:
 Inspect:
 
 src/modules/
-src/shared/application/
+src/core/application/
 
 Use Glob and Grep to detect architecture violations.
 

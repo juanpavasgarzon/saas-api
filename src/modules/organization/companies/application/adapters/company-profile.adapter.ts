@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   type CompanyProfile,
   type ICompanyProfileService,
-} from '@shared/application/contracts/company-profile.contract';
+} from '@core/application/contracts/company-profile.contract';
 
 import { type ICompanyRepository } from '../../domain/contracts/company-repository.contract';
 import { COMPANY_REPOSITORY } from '../../domain/tokens/company-repository.token';

@@ -1,6 +1,7 @@
 import { Column, Entity, Index, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
+import { LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
 
 import { InvoiceOrmEntity } from './invoice.orm-entity';
 
@@ -15,6 +16,12 @@ export class InvoiceItemOrmEntity {
 
   @ManyToOne(() => InvoiceOrmEntity, (inv) => inv.items, { onDelete: 'CASCADE' })
   invoice!: InvoiceOrmEntity;
+
+  @Column({ type: 'enum', enum: LineItemType })
+  itemType!: LineItemType;
+
+  @Column({ type: 'uuid' })
+  itemId!: string;
 
   @Column()
   description!: string;

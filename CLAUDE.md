@@ -59,8 +59,8 @@ Controller → CommandBus/QueryBus → Handler → Service (optional) → Reposi
 
 Modules never import each other's service classes directly. The pattern:
 
-1. Define interface in `src/shared/application/contracts/`
-2. Define token (Symbol) in `src/shared/application/tokens/` or the module's `domain/tokens/`
+1. Define interface in `src/core/application/contracts/`
+2. Define token (Symbol) in `src/core/application/tokens/` or the module's `domain/tokens/`
 3. Provider module: `{ provide: TOKEN, useClass: Adapter }` + `exports: [TOKEN]`
 4. Consumer module: `@Inject(TOKEN) private readonly svc: IContract`
 
@@ -69,9 +69,9 @@ Example: `UsersModule` exports `AUTH_USER_SERVICE` (backed by `AuthUserAdapter`)
 ### Authentication & Authorization
 
 - `JwtAuthGuard` is registered as **global** `APP_GUARD` in `AppModule` — all routes are protected by default.
-- Mark public endpoints with `@Public()` from `@shared/presentation/decorators/public.decorator`.
-- Extract the current user's tenant from JWT with `@CurrentTenant()` from `@shared/presentation/decorators/current-tenant.decorator`. Returns `tenantId: string`.
-- `AuthUserData` shape (from `@shared/application/contracts/auth-user-data.contract`): `{ id, tenantId, email, role, isActive }`.
+- Mark public endpoints with `@Public()` from `@core/presentation/decorators/public.decorator`.
+- Extract the current user's tenant from JWT with `@CurrentTenant()` from `@core/presentation/decorators/current-tenant.decorator`. Returns `tenantId: string`.
+- `AuthUserData` shape (from `@core/application/contracts/auth-user-data.contract`): `{ id, tenantId, email, role, isActive }`.
 
 ### Error Handling
 
@@ -81,7 +81,7 @@ Example: `UsersModule` exports `AUTH_USER_SERVICE` (backed by `AuthUserAdapter`)
 - TypeORM `EntityNotFoundError` → 404
 - PostgreSQL `QueryFailedError` → maps PG error codes (23505 unique, 23503 FK, etc.) to HTTP responses
 
-Always extend `AppError` (`@shared/domain/app-error.base`) for domain errors. Each error is one file in `domain/errors/`.
+Always extend `AppError` (`@core/domain/app-error.base`) for domain errors. Each error is one file in `domain/errors/`.
 
 ### Repository Conventions
 
@@ -89,7 +89,7 @@ Always extend `AppError` (`@shared/domain/app-error.base`) for domain errors. Ea
 - Case-insensitive search: `ILike('%term%')` — not `Like` (PostgreSQL-specific)
 - ORM entities: `*.orm-entity.ts` in `infrastructure/entities/`; domain entities: `*.entity.ts` in `domain/entities/`
 
-### Shared Kernel (`src/shared/`)
+### Shared Kernel (`src/core/`)
 
 | Path | Purpose |
 |------|---------|
@@ -107,7 +107,7 @@ Always extend `AppError` (`@shared/domain/app-error.base`) for domain errors. Ea
 ### Architecture Rules (Critical)
 
 - **One class/interface/enum per file.** Only barrels (`index.ts`) may re-export multiple things.
-- **No relative cross-module imports.** Use `@modules/`, `@shared/`, `@config/`, `@database/` aliases.
+- **No relative cross-module imports.** Use `@modules/`, `@core/` aliases.
 - **Modules export tokens, not service classes.**
 - Errors always extend `AppError`. Never `throw new Error('string')`.
 
@@ -157,7 +157,7 @@ const result = await this.queryBus.execute(new ListVendorsQuery(tenantId, search
 @ApiNoContentResponse({ description: '...' })
 ```
 
-**6. POST endpoints — return `CreatedResponseDto` from `@shared/presentation/dtos/created-response.dto`:**
+**6. POST endpoints — return `CreatedResponseDto` from `@core/presentation/dtos/created-response.dto`:**
 ```typescript
 // ✅ correct
 return new CreatedResponseDto(id);
@@ -174,9 +174,7 @@ return { id };
 ### Path Aliases
 
 ```
-@shared/*   → src/shared/*
-@config/*   → src/config/*
-@database/* → src/database/*
+@core/*   → src/core/*
 @modules/*  → src/modules/*
 ```
 

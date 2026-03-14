@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { IAccountingRepository } from '../../../domain/contracts/accounting-repository.contract';
 import { AccountingTransaction } from '../../../domain/entities/accounting-transaction.entity';

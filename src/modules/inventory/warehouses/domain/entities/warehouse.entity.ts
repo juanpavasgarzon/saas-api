@@ -1,6 +1,6 @@
-import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
-import { ConflictError } from '@shared/domain/errors/conflict.error';
-import { generateId } from '@shared/utils/uuid.util';
+import { AggregateRootBase } from '@core/domain/aggregate-root.base';
+import { ConflictError } from '@core/domain/errors/conflict.error';
+import { generateId } from '@utils/uuid.util';
 
 import { type WarehouseProps } from '../contracts/warehouse-props.contract';
 

@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { COMPANY_CREATION_SERVICE } from '@shared/application/tokens/company-creation.token';
-import { COMPANY_PROFILE_SERVICE } from '@shared/application/tokens/company-profile.token';
+import { COMPANY_CREATION_SERVICE } from '@core/application/tokens/company-creation.token';
+import { COMPANY_PROFILE_SERVICE } from '@core/application/tokens/company-profile.token';
 
 import { CompanyCreationAdapter } from './application/adapters/company-creation.adapter';
 import { CompanyProfileAdapter } from './application/adapters/company-profile.adapter';

@@ -17,7 +17,7 @@ export class GetInvoiceHandler implements IQueryHandler<GetInvoiceQuery, Invoice
   async execute(query: GetInvoiceQuery): Promise<Invoice> {
     const invoice = await this.invoiceRepository.findById(query.id, query.tenantId);
     if (!invoice) {
-      throw new InvoiceNotFoundError();
+      throw new InvoiceNotFoundError(query.id);
     }
     return invoice;
   }

@@ -20,13 +20,13 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { type AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
-import { ICompanyProfileService } from '@shared/application/contracts/company-profile.contract';
-import { COMPANY_PROFILE_SERVICE } from '@shared/application/tokens/company-profile.token';
-import { ROLE_PERMISSIONS } from '@shared/domain/enums/role-permissions';
-import { UserRole } from '@shared/domain/enums/user-role.enum';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { Public } from '@shared/presentation/decorators/public.decorator';
+import { type AuthUserData } from '@core/application/contracts/auth-user-data.contract';
+import { ICompanyProfileService } from '@core/application/contracts/company-profile.contract';
+import { COMPANY_PROFILE_SERVICE } from '@core/application/tokens/company-profile.token';
+import { ROLE_PERMISSIONS } from '@core/domain/enums/role-permissions';
+import { UserRole } from '@core/domain/enums/user-role.enum';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { Public } from '@core/presentation/decorators/public.decorator';
 
 import { LoginCommand } from '../../application/commands/login/login.command';
 import { RefreshTokenCommand } from '../../application/commands/refresh-token/refresh-token.command';
@@ -41,6 +41,7 @@ import { TokenResponseDto } from '../dtos/token-response.dto';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 
 @ApiTags('Identity')
+@ApiBearerAuth('JWT')
 @Controller('identity/auth')
 export class AuthController {
   constructor(

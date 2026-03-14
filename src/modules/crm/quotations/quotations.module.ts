@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CompaniesModule } from '@modules/organization/companies/companies.module';
+import { OutboxModule } from '@core/infrastructure/outbox/outbox.module';
+import { OrganizationModule } from '@modules/organization/organization.module';
 
 import { CustomersModule } from '../customers/customers.module';
 import { ProspectsModule } from '../prospects/prospects.module';
@@ -14,6 +15,8 @@ import { RejectQuotationHandler } from './application/commands/reject-quotation/
 import { SendQuotationHandler } from './application/commands/send-quotation/send-quotation.handler';
 import { UpdateQuotationHandler } from './application/commands/update-quotation/update-quotation.handler';
 import { QuotationAcceptedEventHandler } from './application/event-handlers/quotation-accepted.event-handler';
+import { QuotationExpiredEventHandler } from './application/event-handlers/quotation-expired.event-handler';
+import { QuotationRejectedEventHandler } from './application/event-handlers/quotation-rejected.event-handler';
 import { GetQuotationHandler } from './application/queries/get-quotation/get-quotation.handler';
 import { ListQuotationsHandler } from './application/queries/list-quotations/list-quotations.handler';
 import { QUOTATION_PDF_SERVICE } from './application/tokens/quotation-pdf-service.token';
@@ -27,8 +30,9 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
 @Module({
   imports: [
     CqrsModule,
+    OutboxModule,
     TypeOrmModule.forFeature([QuotationOrmEntity, QuotationItemOrmEntity]),
-    CompaniesModule,
+    OrganizationModule,
     CustomersModule,
     ProspectsModule,
   ],
@@ -44,6 +48,8 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
     GetQuotationHandler,
     ListQuotationsHandler,
     QuotationAcceptedEventHandler,
+    QuotationRejectedEventHandler,
+    QuotationExpiredEventHandler,
     { provide: QUOTATION_PDF_SERVICE, useClass: QuotationPdfService },
     { provide: QUOTATION_REPOSITORY, useClass: QuotationTypeOrmRepository },
   ],

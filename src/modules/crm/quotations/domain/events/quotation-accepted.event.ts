@@ -1,4 +1,5 @@
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
+import { type LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { type UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
 
 export class QuotationAcceptedEvent {
   constructor(
@@ -7,6 +8,8 @@ export class QuotationAcceptedEvent {
     public readonly customerId: string | null,
     public readonly prospectId: string | null,
     public readonly items: Array<{
+      itemType: LineItemType;
+      itemId: string;
       description: string;
       quantity: number;
       unit: UnitOfMeasure;

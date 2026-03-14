@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type StockProps } from '../../domain/contracts/stock-props.contract';
 import {
@@ -62,6 +62,11 @@ export class StockTypeOrmRepository implements IStockRepository {
       page,
       limit,
     };
+  }
+
+  async findAllByProduct(productId: string, tenantId: string): Promise<Stock[]> {
+    const items = await this.repository.find({ where: { productId, tenantId } });
+    return items.map((item) => this.toDomain(item));
   }
 
   async save(stock: Stock): Promise<void> {

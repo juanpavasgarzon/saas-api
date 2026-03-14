@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { UserRole } from '@shared/domain/enums/user-role.enum';
+import { UserRole } from '@core/domain/enums/user-role.enum';
 
 import { Invitation } from '../../domain/entities/invitation.entity';
 

@@ -17,7 +17,7 @@ export class GetProspectHandler implements IQueryHandler<GetProspectQuery, Prosp
   async execute(query: GetProspectQuery): Promise<Prospect> {
     const prospect = await this.prospectRepository.findById(query.id, query.tenantId);
     if (!prospect) {
-      throw new ProspectNotFoundError();
+      throw new ProspectNotFoundError(query.id);
     }
     return prospect;
   }

@@ -16,8 +16,9 @@ export class ReturnAssetHandler implements ICommandHandler<ReturnAssetCommand, v
   async execute(command: ReturnAssetCommand): Promise<void> {
     const asset = await this.assetRepository.findById(command.id, command.tenantId);
     if (!asset) {
-      throw new AssetNotFoundError();
+      throw new AssetNotFoundError(command.id);
     }
+
     asset.return();
     await this.assetRepository.save(asset);
   }

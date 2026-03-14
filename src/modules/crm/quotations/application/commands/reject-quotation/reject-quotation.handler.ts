@@ -16,7 +16,7 @@ export class RejectQuotationHandler implements ICommandHandler<RejectQuotationCo
   async execute(command: RejectQuotationCommand): Promise<void> {
     const quotation = await this.quotationRepository.findById(command.id, command.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(command.id);
     }
 
     quotation.reject();

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type ICompanyCreationService } from '@shared/application/contracts/company-creation.contract';
+import { type ICompanyCreationService } from '@core/application/contracts/company-creation.contract';
 
 import { type ICompanyRepository } from '../../domain/contracts/company-repository.contract';
 import { Company } from '../../domain/entities/company.entity';

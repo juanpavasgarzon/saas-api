@@ -1,11 +1,14 @@
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
-import { generateId } from '@shared/utils/uuid.util';
+import { type LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { type UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
+import { generateId } from '@utils/uuid.util';
 
 import { type InvoiceItemProps } from '../contracts/invoice-item-props.contract';
 
 export class InvoiceItem {
   private readonly _id: string;
   private readonly _invoiceId: string;
+  private readonly _itemType: LineItemType;
+  private readonly _itemId: string;
   private readonly _description: string;
   private readonly _quantity: number;
   private readonly _unit: UnitOfMeasure;
@@ -14,6 +17,8 @@ export class InvoiceItem {
   private constructor(props: InvoiceItemProps) {
     this._id = props.id;
     this._invoiceId = props.invoiceId;
+    this._itemType = props.itemType;
+    this._itemId = props.itemId;
     this._description = props.description;
     this._quantity = props.quantity;
     this._unit = props.unit;
@@ -22,6 +27,8 @@ export class InvoiceItem {
 
   static create(
     invoiceId: string,
+    itemType: LineItemType,
+    itemId: string,
     description: string,
     quantity: number,
     unit: UnitOfMeasure,
@@ -30,6 +37,8 @@ export class InvoiceItem {
     return new InvoiceItem({
       id: generateId(),
       invoiceId,
+      itemType,
+      itemId,
       description,
       quantity,
       unit,
@@ -47,6 +56,12 @@ export class InvoiceItem {
   }
   get invoiceId(): string {
     return this._invoiceId;
+  }
+  get itemType(): LineItemType {
+    return this._itemType;
+  }
+  get itemId(): string {
+    return this._itemId;
   }
   get description(): string {
     return this._description;
@@ -68,6 +83,8 @@ export class InvoiceItem {
     return {
       id: this._id,
       invoiceId: this._invoiceId,
+      itemType: this._itemType,
+      itemId: this._itemId,
       description: this._description,
       quantity: this._quantity,
       unit: this._unit,

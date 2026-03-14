@@ -1,4 +1,4 @@
-import { UnauthorizedError } from '@shared/domain/errors/unauthorized.error';
+import { UnauthorizedError } from '@core/domain/errors/unauthorized.error';
 
 export class UserInactiveError extends UnauthorizedError {
   constructor() {

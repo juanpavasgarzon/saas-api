@@ -11,6 +11,11 @@ import { MovementRegisteredEventHandler } from './application/event-handlers/mov
 import { GetMovementHandler } from './application/queries/get-movement/get-movement.handler';
 import { ListMovementsHandler } from './application/queries/list-movements/list-movements.handler';
 import { MOVEMENT_REPOSITORY } from './domain/tokens/movement-repository.token';
+import { DealApprovedConsumer } from './infrastructure/consumers/deal-approved.consumer';
+import { OrderReceivedConsumer } from './infrastructure/consumers/order-received.consumer';
+import { QuotationAcceptedReservationConsumer } from './infrastructure/consumers/quotation-accepted-reservation.consumer';
+import { QuotationExpiredReservationConsumer } from './infrastructure/consumers/quotation-expired-reservation.consumer';
+import { QuotationRejectedReservationConsumer } from './infrastructure/consumers/quotation-rejected-reservation.consumer';
 import { MovementOrmEntity } from './infrastructure/entities/movement.orm-entity';
 import { MovementTypeOrmRepository } from './infrastructure/repositories/movement.typeorm-repository';
 import { MovementsController } from './presentation/controllers/movements.controller';
@@ -29,6 +34,11 @@ import { MovementsController } from './presentation/controllers/movements.contro
     MovementRegisteredEventHandler,
     GetMovementHandler,
     ListMovementsHandler,
+    QuotationAcceptedReservationConsumer,
+    QuotationExpiredReservationConsumer,
+    QuotationRejectedReservationConsumer,
+    DealApprovedConsumer,
+    OrderReceivedConsumer,
     { provide: MOVEMENT_REPOSITORY, useClass: MovementTypeOrmRepository },
   ],
 })

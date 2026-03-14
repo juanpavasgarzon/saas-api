@@ -1,1 +1,1 @@
-export { JwtAuthGuard } from '@shared/presentation/guards/jwt-auth.guard';
+export { JwtAuthGuard } from '@core/presentation/guards/jwt-auth.guard';

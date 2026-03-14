@@ -16,7 +16,7 @@ export class SendQuotationHandler implements ICommandHandler<SendQuotationComman
   async execute(command: SendQuotationCommand): Promise<void> {
     const quotation = await this.quotationRepository.findById(command.id, command.tenantId);
     if (!quotation) {
-      throw new QuotationNotFoundError();
+      throw new QuotationNotFoundError(command.id);
     }
 
     quotation.send();

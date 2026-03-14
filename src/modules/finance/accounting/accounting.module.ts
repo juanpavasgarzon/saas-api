@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CompaniesModule } from '@modules/organization/companies/companies.module';
+import { OrganizationModule } from '@modules/organization/organization.module';
 
 import { CreateTransactionHandler } from './application/commands/create-transaction/create-transaction.handler';
 import { GetTransactionHandler } from './application/queries/get-transaction/get-transaction.handler';
@@ -18,7 +18,7 @@ import { AccountingController } from './presentation/controllers/accounting.cont
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([AccountingTransactionOrmEntity]),
-    CompaniesModule,
+    OrganizationModule,
   ],
   controllers: [AccountingController],
   providers: [

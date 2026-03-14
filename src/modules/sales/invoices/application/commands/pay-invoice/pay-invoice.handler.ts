@@ -16,7 +16,7 @@ export class PayInvoiceHandler implements ICommandHandler<PayInvoiceCommand, voi
   async execute(command: PayInvoiceCommand): Promise<void> {
     const invoice = await this.invoiceRepository.findById(command.id, command.tenantId);
     if (!invoice) {
-      throw new InvoiceNotFoundError();
+      throw new InvoiceNotFoundError(command.id);
     }
     invoice.pay();
     await this.invoiceRepository.save(invoice);

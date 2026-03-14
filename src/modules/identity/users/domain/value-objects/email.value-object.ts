@@ -1,5 +1,5 @@
-import { ValidationError } from '@shared/domain/errors/validation.error';
-import { ValueObject } from '@shared/domain/value-object.base';
+import { ValidationError } from '@core/domain/errors/validation.error';
+import { ValueObject } from '@core/domain/value-object.base';
 
 import { type EmailProps } from '../contracts/email-props.contract';
 

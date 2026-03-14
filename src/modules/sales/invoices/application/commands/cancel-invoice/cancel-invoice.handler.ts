@@ -16,7 +16,7 @@ export class CancelInvoiceHandler implements ICommandHandler<CancelInvoiceComman
   async execute(command: CancelInvoiceCommand): Promise<void> {
     const invoice = await this.invoiceRepository.findById(command.id, command.tenantId);
     if (!invoice) {
-      throw new InvoiceNotFoundError();
+      throw new InvoiceNotFoundError(command.id);
     }
     invoice.cancel();
     await this.invoiceRepository.save(invoice);

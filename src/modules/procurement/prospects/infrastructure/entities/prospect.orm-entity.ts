@@ -1,15 +1,15 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
-import { VendorProspectStatus } from '../../domain/enums/prospect-status.enum';
+import { SupplierProspectStatus } from '../../domain/enums/prospect-status.enum';
 
-@Entity('vendor_prospects')
-@Index('IDX_vendor_prospects_tenant_status', ['tenantId', 'status'])
+@Entity('supplier_prospects')
+@Index('IDX_supplier_prospects_tenant_status', ['tenantId', 'status'])
 export class ProspectOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
   @Column({ type: 'uuid' })
-  @Index('IDX_vendor_prospects_tenant')
+  @Index('IDX_supplier_prospects_tenant')
   tenantId!: string;
 
   @Column()
@@ -38,11 +38,11 @@ export class ProspectOrmEntity {
 
   @Column({
     type: 'enum',
-    enum: VendorProspectStatus,
-    enumName: 'vendor_prospect_status_enum',
-    default: VendorProspectStatus.NEW,
+    enum: SupplierProspectStatus,
+    enumName: 'supplier_prospect_status_enum',
+    default: SupplierProspectStatus.NEW,
   })
-  status!: VendorProspectStatus;
+  status!: SupplierProspectStatus;
 
   @CreateDateColumn()
   createdAt!: Date;

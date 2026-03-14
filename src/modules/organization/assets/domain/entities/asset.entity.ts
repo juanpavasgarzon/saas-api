@@ -1,5 +1,5 @@
-import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
-import { generateId } from '@shared/utils/uuid.util';
+import { AggregateRootBase } from '@core/domain/aggregate-root.base';
+import { generateId } from '@utils/uuid.util';
 
 import { type AssetProps } from '../contracts/asset-props.contract';
 import { type AssetCategory } from '../enums/asset-category.enum';

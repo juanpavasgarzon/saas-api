@@ -1,5 +1,5 @@
-import { AggregateRootBase } from '@shared/domain/aggregate-root.base';
-import { generateId } from '@shared/utils/uuid.util';
+import { AggregateRootBase } from '@core/domain/aggregate-root.base';
+import { generateId } from '@utils/uuid.util';
 
 import { type ProspectProps } from '../contracts/prospect-props.contract';
 import { type ProspectSource } from '../enums/prospect-source.enum';

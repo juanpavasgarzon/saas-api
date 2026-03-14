@@ -1,4 +1,4 @@
-import { AppError } from '@shared/domain/app-error.base';
+import { AppError } from '@core/domain/app-error.base';
 
 export class ProductNotFoundError extends AppError {
   readonly statusCode = 404;

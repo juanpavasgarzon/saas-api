@@ -14,11 +14,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@shared/*": ["src/shared/*"],
-      "@config/*": ["src/config/*"],
-      "@database/*": ["src/database/*"],
       "@modules/*": ["src/modules/*"],
-      "@core/*": ["src/core/*"]
+      "@core/*": ["src/core/*"],
+      "@utils/*": ["src/utils/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

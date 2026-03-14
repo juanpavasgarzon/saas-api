@@ -1,4 +1,13 @@
-import { Body, Controller, DefaultValuePipe, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
@@ -11,11 +20,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { Permission } from '@shared/domain/enums/permission.enum';
-import { PaginatedResult } from '@shared/index';
-import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
-import { Public } from '@shared/presentation/decorators/public.decorator';
-import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
+import { Permission } from '@core/domain/enums/permission.enum';
+import { PaginatedResult } from '@core/index';
+import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
+import { Public } from '@core/presentation/decorators/public.decorator';
+import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
 
 import { AcceptInvitationCommand } from '../../application/commands/accept-invitation/accept-invitation.command';
 import { SendInvitationCommand } from '../../application/commands/send-invitation/send-invitation.command';
@@ -47,8 +56,8 @@ export class InvitationsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listInvitations(
     @CurrentTenant() tenantId: string,
-    @Param('page', new DefaultValuePipe(1)) page: number,
-    @Param('limit', new DefaultValuePipe(20)) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<PaginatedResult<InvitationResponseDto>> {
     const listInvitationsQuery = new ListInvitationsQuery(tenantId, page, limit);
     const result = await this.queryBus.execute<ListInvitationsQuery, PaginatedResult<Invitation>>(

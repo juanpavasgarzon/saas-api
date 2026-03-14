@@ -1,1 +1,1 @@
-export { UserRole } from '@shared/domain/enums/user-role.enum';
+export { UserRole } from '@core/domain/enums/user-role.enum';

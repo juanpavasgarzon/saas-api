@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
-import { UnauthorizedError } from '@shared/domain/errors/unauthorized.error';
+import { AuthUserData } from '@core/application/contracts/auth-user-data.contract';
+import { UnauthorizedError } from '@core/domain/errors/unauthorized.error';
 
 import { JwtPayload } from '../../application/contracts/jwt-payload.contract';
 import { AuthService } from '../../application/services/auth.service';

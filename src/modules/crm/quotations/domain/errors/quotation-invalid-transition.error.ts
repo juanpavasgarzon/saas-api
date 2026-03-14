@@ -1,4 +1,4 @@
-import { ConflictError } from '@shared/domain/errors/conflict.error';
+import { ConflictError } from '@core/domain/errors/conflict.error';
 
 export class QuotationInvalidTransitionError extends ConflictError {
   constructor(from: string, to: string) {

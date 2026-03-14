@@ -25,7 +25,7 @@ Integration Events
 
 - live in:
 
-src/shared/application/events/
+src/core/application/events/
 
 - are published by event handlers
 
@@ -49,7 +49,7 @@ Report violations.
 
 All integration events must live in:
 
-src/shared/application/events/
+src/core/application/events/
 
 ---
 

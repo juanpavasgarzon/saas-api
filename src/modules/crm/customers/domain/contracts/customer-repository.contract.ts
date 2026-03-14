@@ -1,4 +1,4 @@
-import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type Customer } from '../entities/customer.entity';
 import { type CustomerFilters } from './customer-filters.contract';

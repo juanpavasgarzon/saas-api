@@ -5,7 +5,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
-import { GlobalHttpExceptionFilter } from './shared/presentation/http-exception.filter';
+import { GlobalHttpExceptionFilter } from './core/presentation/http-exception.filter';
 import { setUpSwagger } from './swagger';
 
 async function bootstrap(): Promise<void> {

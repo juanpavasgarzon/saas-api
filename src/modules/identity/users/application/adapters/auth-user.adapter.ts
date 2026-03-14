@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
-import { IAuthUserService } from '@modules/identity/shared/contracts/auth-user-service.contract';
+import { AuthUserData } from '@core/application/contracts/auth-user-data.contract';
+import { IAuthUserService } from '@modules/identity/users/application/contracts/auth-user-service.contract';
 
 import { UserRole } from '../../domain/enums/user-role.enum';
 import { UserService } from '../services/user.service';

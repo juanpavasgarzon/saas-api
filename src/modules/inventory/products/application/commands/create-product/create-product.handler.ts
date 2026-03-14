@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { ConflictError } from '@shared/domain/errors/conflict.error';
+import { ConflictError } from '@core/domain/errors/conflict.error';
 
 import { type IProductRepository } from '../../../domain/contracts/product-repository.contract';
 import { Product } from '../../../domain/entities/product.entity';

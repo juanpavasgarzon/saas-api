@@ -1,4 +1,4 @@
-import { ConflictError } from '@shared/domain/errors/conflict.error';
+import { ConflictError } from '@core/domain/errors/conflict.error';
 
 export class CompanySlugTakenError extends ConflictError {
   constructor(slug: string) {

@@ -1,12 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
+import { LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { type UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
 
 import { type QuotationItem } from '../../domain/entities/quotation-item.entity';
 
 export class QuotationItemResponseDto {
   @ApiProperty({ example: '019542ab-0000-7abc-8def-000000000001' })
   id: string;
+
+  @ApiProperty({ enum: LineItemType })
+  itemType: LineItemType;
+
+  @ApiProperty({ example: 'uuid-of-product-or-asset' })
+  itemId: string;
 
   @ApiProperty({ example: 'Web development — homepage' })
   description: string;
@@ -25,6 +32,8 @@ export class QuotationItemResponseDto {
 
   constructor(item: QuotationItem) {
     this.id = item.id;
+    this.itemType = item.itemType;
+    this.itemId = item.itemId;
     this.description = item.description;
     this.quantity = item.quantity;
     this.unit = item.unit;

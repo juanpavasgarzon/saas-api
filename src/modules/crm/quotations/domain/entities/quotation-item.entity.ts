@@ -1,11 +1,14 @@
-import { type UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
-import { generateId } from '@shared/utils/uuid.util';
+import { type LineItemType } from '@core/domain/enums/line-item-type.enum';
+import { type UnitOfMeasure } from '@core/domain/enums/unit-of-measure.enum';
+import { generateId } from '@utils/uuid.util';
 
 import { type QuotationItemProps } from '../contracts/quotation-item-props.contract';
 
 export class QuotationItem {
   private readonly _id: string;
   private readonly _quotationId: string;
+  private _itemType: LineItemType;
+  private _itemId: string;
   private _description: string;
   private _quantity: number;
   private _unit: UnitOfMeasure;
@@ -14,6 +17,8 @@ export class QuotationItem {
   private constructor(props: QuotationItemProps) {
     this._id = props.id;
     this._quotationId = props.quotationId;
+    this._itemType = props.itemType;
+    this._itemId = props.itemId;
     this._description = props.description;
     this._quantity = props.quantity;
     this._unit = props.unit;
@@ -22,6 +27,8 @@ export class QuotationItem {
 
   static create(
     quotationId: string,
+    itemType: LineItemType,
+    itemId: string,
     description: string,
     quantity: number,
     unit: UnitOfMeasure,
@@ -30,6 +37,8 @@ export class QuotationItem {
     return new QuotationItem({
       id: generateId(),
       quotationId,
+      itemType,
+      itemId,
       description,
       quantity,
       unit,
@@ -48,6 +57,14 @@ export class QuotationItem {
 
   get quotationId(): string {
     return this._quotationId;
+  }
+
+  get itemType(): LineItemType {
+    return this._itemType;
+  }
+
+  get itemId(): string {
+    return this._itemId;
   }
 
   get description(): string {
@@ -74,6 +91,8 @@ export class QuotationItem {
     return {
       id: this._id,
       quotationId: this._quotationId,
+      itemType: this._itemType,
+      itemId: this._itemId,
       description: this._description,
       quantity: this._quantity,
       unit: this._unit,

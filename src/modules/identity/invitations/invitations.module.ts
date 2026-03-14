@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EmailModule } from '@core/infrastructure/email/email.module';
 import { UsersModule } from '@modules/identity/users/users.module';
 
 import { AcceptInvitationHandler } from './application/commands/accept-invitation/accept-invitation.handler';
@@ -13,7 +14,7 @@ import { InvitationTypeOrmRepository } from './infrastructure/repositories/invit
 import { InvitationsController } from './presentation/controllers/invitations.controller';
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([InvitationOrmEntity]), UsersModule],
+  imports: [CqrsModule, EmailModule, TypeOrmModule.forFeature([InvitationOrmEntity]), UsersModule],
   controllers: [InvitationsController],
   providers: [
     SendInvitationHandler,

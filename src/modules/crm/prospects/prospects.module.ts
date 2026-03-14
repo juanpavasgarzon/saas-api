@@ -2,11 +2,6 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CustomersModule } from '../customers/customers.module';
-import { PROSPECT_STATUS_SERVICE } from '../shared/tokens/prospect-status.token';
-import { PROSPECT_TO_CUSTOMER_SERVICE } from '../shared/tokens/prospect-to-customer.token';
-import { ProspectStatusAdapter } from './application/adapters/prospect-status.adapter';
-import { ProspectToCustomerAdapter } from './application/adapters/prospect-to-customer.adapter';
 import { CreateProspectHandler } from './application/commands/create-prospect/create-prospect.handler';
 import { DeleteProspectHandler } from './application/commands/delete-prospect/delete-prospect.handler';
 import { UpdateProspectHandler } from './application/commands/update-prospect/update-prospect.handler';
@@ -20,7 +15,7 @@ import { ProspectTypeOrmRepository } from './infrastructure/repositories/prospec
 import { ProspectsController } from './presentation/controllers/prospects.controller';
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([ProspectOrmEntity]), CustomersModule],
+  imports: [CqrsModule, TypeOrmModule.forFeature([ProspectOrmEntity])],
   controllers: [ProspectsController],
   providers: [
     CreateProspectHandler,
@@ -31,9 +26,7 @@ import { ProspectsController } from './presentation/controllers/prospects.contro
     ListProspectsHandler,
     SearchCustomersHandler,
     { provide: PROSPECT_REPOSITORY, useClass: ProspectTypeOrmRepository },
-    { provide: PROSPECT_TO_CUSTOMER_SERVICE, useClass: ProspectToCustomerAdapter },
-    { provide: PROSPECT_STATUS_SERVICE, useClass: ProspectStatusAdapter },
   ],
-  exports: [PROSPECT_REPOSITORY, PROSPECT_TO_CUSTOMER_SERVICE, PROSPECT_STATUS_SERVICE],
+  exports: [PROSPECT_REPOSITORY],
 })
 export class ProspectsModule {}

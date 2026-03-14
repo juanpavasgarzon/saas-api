@@ -1,4 +1,4 @@
-import { type PaginatedResult } from '@shared/index';
+import { type PaginatedResult } from '@core/index';
 
 import { type Invitation } from '../entities/invitation.entity';
 
