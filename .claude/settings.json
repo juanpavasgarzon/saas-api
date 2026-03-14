@@ -13,32 +13,52 @@
       "Bash(git log *)",
       "Bash(git add *)",
       "Bash(git commit *)",
+      "Bash(git pull *)",
+      "Bash(git push *)",
 
       "Bash(docker compose *)",
 
       "Bash(ls *)",
       "Bash(mkdir *)",
-      "Bash(chmod *)"
+      "Bash(chmod *)",
+      "Bash(cat *)",
+      "Bash(find *)",
+
+      "Read(./.env.example)",
+      "Read(./package.json)",
+      "Read(./tsconfig*.json)"
     ],
+
     "deny": [
-      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+
       "Bash(git push --force *)",
       "Bash(git reset --hard *)",
-      "Bash(sudo *)"
+      "Bash(git clean -fd *)",
+
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
     ]
   },
-
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|MultiEdit",
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "if [[ \"$CLAUDE_TOOL_FILE_PATH\" == *.ts || \"$CLAUDE_TOOL_FILE_PATH\" == *.tsx || \"$CLAUDE_TOOL_FILE_PATH\" == *.js ]]; then npx eslint \"$CLAUDE_TOOL_FILE_PATH\" --fix 2>/dev/null || true; fi"
+            "command": "if [[ \"$CLAUDE_TOOL_FILE_PATH\" =~ \\.(ts|tsx|js)$ ]]; then npx eslint \"$CLAUDE_TOOL_FILE_PATH\" --fix 2>/dev/null || true; fi"
           }
         ]
       }
     ]
+  },
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8000",
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
+    "DISABLE_COST_WARNINGS": "1",
+    "DISABLE_TELEMETRY": "1",
+    "BASH_DEFAULT_TIMEOUT_MS": "30000"
   }
 }

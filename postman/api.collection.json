@@ -15,6 +15,53 @@
       }
     ]
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "let jwt = pm.environment.get(\"access_token\");",
+          "if (!jwt) {",
+          "    console.log(\"No token found\");",
+          "    return;",
+          "}",
+          "",
+          "let payload = JSON.parse(atob(jwt.split('.')[1]));",
+          "let exp = payload.exp;",
+          "let now = Math.floor(Date.now() / 1000);",
+          "",
+          "if (now >= (exp - 30)) {",
+          "    console.log(\"Token expired. Refreshing...\");",
+          "",
+          "    pm.sendRequest({",
+          "        url: pm.environment.get(\"base_url\") + \"/identity/auth/refresh\",",
+          "        method: \"POST\",",
+          "        header: {",
+          "            \"Authorization\": \"Bearer \" + pm.environment.get(\"refresh_token\")",
+          "        }",
+          "    }, function (err, res) {",
+          "",
+          "        if (err) {",
+          "            console.log(\"Refresh error:\", err);",
+          "            return;",
+          "        }",
+          "",
+          "        let json = res.json();",
+          "",
+          "        pm.environment.set(\"access_token\", json.accessToken);",
+          "        pm.environment.set(\"refresh_token\", json.refreshToken);",
+          "",
+          "        console.log(\"Token refreshed\");",
+          "    });",
+          "",
+          "} else {",
+          "    console.log(\"Token still valid\");",
+          "}"
+        ]
+      }
+    }
+  ],
   "item": [
     {
       "name": "Identity",
@@ -168,7 +215,7 @@
                   "raw": "{{base_url}}/identity/users/:id",
                   "host": ["{{base_url}}"],
                   "path": ["identity", "users", ":id"],
-                  "variable": [{ "key": "id", "value": "{{user_id}}", "description": "User UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "User UUID" }]
                 },
                 "description": "Returns user data by ID."
               }
@@ -182,7 +229,7 @@
                   "raw": "{{base_url}}/identity/users/:id/activate",
                   "host": ["{{base_url}}"],
                   "path": ["identity", "users", ":id", "activate"],
-                  "variable": [{ "key": "id", "value": "{{user_id}}", "description": "User UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "User UUID" }]
                 },
                 "description": "Reactivates a previously deactivated user."
               }
@@ -196,7 +243,7 @@
                   "raw": "{{base_url}}/identity/users/:id",
                   "host": ["{{base_url}}"],
                   "path": ["identity", "users", ":id"],
-                  "variable": [{ "key": "id", "value": "{{user_id}}", "description": "User UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "User UUID" }]
                 },
                 "description": "Deactivates a user. Cannot deactivate yourself."
               }
@@ -256,7 +303,13 @@
                   "raw": "{{base_url}}/identity/invitations/:token/accept",
                   "host": ["{{base_url}}"],
                   "path": ["identity", "invitations", ":token", "accept"],
-                  "variable": [{ "key": "token", "value": "{{invitation_token}}", "description": "Invitation token received by email" }]
+                  "variable": [
+                    {
+                      "key": "token",
+                      "value": "",
+                      "description": "Invitation token received by email"
+                    }
+                  ]
                 },
                 "description": "Creates a user account from an invitation token. No authentication required."
               }
@@ -371,7 +424,7 @@
                   "raw": "{{base_url}}/organization/employees/:id",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "employees", ":id"],
-                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Employee UUID" }]
                 },
                 "description": "Returns employee data by ID."
               }
@@ -390,7 +443,7 @@
                   "raw": "{{base_url}}/organization/employees/:id",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "employees", ":id"],
-                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Employee UUID" }]
                 },
                 "description": "Updates employee data."
               }
@@ -404,7 +457,7 @@
                   "raw": "{{base_url}}/organization/employees/:id/activate",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "employees", ":id", "activate"],
-                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Employee UUID" }]
                 },
                 "description": "Reactivates an inactive employee."
               }
@@ -418,7 +471,7 @@
                   "raw": "{{base_url}}/organization/employees/:id",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "employees", ":id"],
-                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Employee UUID" }]
                 },
                 "description": "Marks employee as inactive."
               }
@@ -475,7 +528,7 @@
                   "raw": "{{base_url}}/organization/assets/:id",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "assets", ":id"],
-                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Asset UUID" }]
                 },
                 "description": "Returns asset by ID with assignments."
               }
@@ -494,7 +547,7 @@
                   "raw": "{{base_url}}/organization/assets/:id",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "assets", ":id"],
-                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Asset UUID" }]
                 },
                 "description": "Updates asset details."
               }
@@ -513,7 +566,7 @@
                   "raw": "{{base_url}}/organization/assets/:id/assign",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "assets", ":id", "assign"],
-                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Asset UUID" }]
                 },
                 "description": "Assigns asset to a project or employee."
               }
@@ -527,7 +580,7 @@
                   "raw": "{{base_url}}/organization/assets/:id/return",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "assets", ":id", "return"],
-                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Asset UUID" }]
                 },
                 "description": "Returns an assigned asset."
               }
@@ -541,7 +594,7 @@
                   "raw": "{{base_url}}/organization/assets/:id/retire",
                   "host": ["{{base_url}}"],
                   "path": ["organization", "assets", ":id", "retire"],
-                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Asset UUID" }]
                 },
                 "description": "Retires an active asset permanently."
               }
@@ -618,7 +671,7 @@
                   "raw": "{{base_url}}/crm/customers/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "customers", ":id"],
-                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Customer UUID" }]
                 },
                 "description": "Returns customer data by ID."
               }
@@ -637,7 +690,7 @@
                   "raw": "{{base_url}}/crm/customers/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "customers", ":id"],
-                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Customer UUID" }]
                 },
                 "description": "Updates customer data."
               }
@@ -651,7 +704,7 @@
                   "raw": "{{base_url}}/crm/customers/:id/activate",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "customers", ":id", "activate"],
-                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Customer UUID" }]
                 },
                 "description": "Marks the customer as active."
               }
@@ -665,7 +718,7 @@
                   "raw": "{{base_url}}/crm/customers/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "customers", ":id"],
-                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Customer UUID" }]
                 },
                 "description": "Marks the customer as inactive."
               }
@@ -738,7 +791,7 @@
                   "raw": "{{base_url}}/crm/prospects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "prospects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Prospect UUID" }]
                 },
                 "description": "Returns prospect data by ID."
               }
@@ -757,7 +810,7 @@
                   "raw": "{{base_url}}/crm/prospects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "prospects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Prospect UUID" }]
                 },
                 "description": "Updates prospect data."
               }
@@ -776,7 +829,7 @@
                   "raw": "{{base_url}}/crm/prospects/:id/status",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "prospects", ":id", "status"],
-                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Prospect UUID" }]
                 },
                 "description": "Changes the prospect status."
               }
@@ -790,7 +843,7 @@
                   "raw": "{{base_url}}/crm/prospects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "prospects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Prospect UUID" }]
                 },
                 "description": "Removes the prospect permanently."
               }
@@ -847,7 +900,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Returns quotation data by ID including line items."
               }
@@ -861,7 +914,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id/pdf",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id", "pdf"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Generates and downloads the quotation as a PDF."
               }
@@ -880,7 +933,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Updates a draft quotation."
               }
@@ -894,7 +947,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id/send",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id", "send"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Transitions quotation from DRAFT to SENT."
               }
@@ -908,7 +961,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id/accept",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id", "accept"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Transitions quotation from SENT to ACCEPTED."
               }
@@ -922,7 +975,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id/reject",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id", "reject"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Transitions quotation from SENT to REJECTED."
               }
@@ -936,7 +989,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id/expire",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id", "expire"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Marks quotation as EXPIRED."
               }
@@ -950,7 +1003,7 @@
                   "raw": "{{base_url}}/crm/quotations/:id",
                   "host": ["{{base_url}}"],
                   "path": ["crm", "quotations", ":id"],
-                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Quotation UUID" }]
                 },
                 "description": "Removes the quotation. Only DRAFT quotations can be deleted."
               }
@@ -1011,7 +1064,7 @@
                   "raw": "{{base_url}}/sales/orders/:id",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "orders", ":id"],
-                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
                 },
                 "description": "Returns sale by ID with line items."
               }
@@ -1025,7 +1078,7 @@
                   "raw": "{{base_url}}/sales/orders/:id/pdf",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "orders", ":id", "pdf"],
-                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
                 },
                 "description": "Generates and downloads the sale order as a PDF."
               }
@@ -1039,7 +1092,7 @@
                   "raw": "{{base_url}}/sales/orders/:id/approve",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "orders", ":id", "approve"],
-                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
                 },
                 "description": "Transitions sale from PENDING to APPROVED. Auto-creates invoice."
               }
@@ -1053,7 +1106,7 @@
                   "raw": "{{base_url}}/sales/orders/:id/cancel",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "orders", ":id", "cancel"],
-                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
                 },
                 "description": "Cancels a PENDING sale."
               }
@@ -1092,7 +1145,7 @@
                   "raw": "{{base_url}}/sales/invoices/:id",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "invoices", ":id"],
-                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Invoice UUID" }]
                 },
                 "description": "Returns invoice by ID with line items."
               }
@@ -1106,7 +1159,7 @@
                   "raw": "{{base_url}}/sales/invoices/:id/pdf",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "invoices", ":id", "pdf"],
-                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Invoice UUID" }]
                 },
                 "description": "Generates and downloads the invoice as a PDF."
               }
@@ -1120,7 +1173,7 @@
                   "raw": "{{base_url}}/sales/invoices/:id/send",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "invoices", ":id", "send"],
-                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Invoice UUID" }]
                 },
                 "description": "Transitions invoice from DRAFT to SENT."
               }
@@ -1134,7 +1187,7 @@
                   "raw": "{{base_url}}/sales/invoices/:id/pay",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "invoices", ":id", "pay"],
-                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Invoice UUID" }]
                 },
                 "description": "Transitions invoice from SENT to PAID."
               }
@@ -1148,7 +1201,7 @@
                   "raw": "{{base_url}}/sales/invoices/:id/cancel",
                   "host": ["{{base_url}}"],
                   "path": ["sales", "invoices", ":id", "cancel"],
-                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Invoice UUID" }]
                 },
                 "description": "Cancels a DRAFT or SENT invoice."
               }
@@ -1210,7 +1263,7 @@
                   "raw": "{{base_url}}/projects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["projects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
                 },
                 "description": "Returns a project with its members."
               }
@@ -1229,7 +1282,7 @@
                   "raw": "{{base_url}}/projects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["projects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
                 },
                 "description": "Updates project details. Replaces members array entirely."
               }
@@ -1248,7 +1301,7 @@
                   "raw": "{{base_url}}/projects/:id/status",
                   "host": ["{{base_url}}"],
                   "path": ["projects", ":id", "status"],
-                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
                 },
                 "description": "Transitions project status."
               }
@@ -1262,7 +1315,7 @@
                   "raw": "{{base_url}}/projects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["projects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
                 },
                 "description": "Removes a project from the tenant."
               }
@@ -1324,7 +1377,7 @@
                   "raw": "{{base_url}}/finance/payroll/:id/pdf",
                   "host": ["{{base_url}}"],
                   "path": ["finance", "payroll", ":id", "pdf"],
-                  "variable": [{ "key": "id", "value": "{{payroll_id}}", "description": "Payroll entry UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Payroll entry UUID" }]
                 },
                 "description": "Generates and downloads the payroll entry as a pay stub PDF."
               }
@@ -1338,7 +1391,7 @@
                   "raw": "{{base_url}}/finance/payroll/:id/pay",
                   "host": ["{{base_url}}"],
                   "path": ["finance", "payroll", ":id", "pay"],
-                  "variable": [{ "key": "id", "value": "{{payroll_id}}", "description": "Payroll entry UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Payroll entry UUID" }]
                 },
                 "description": "Marks a payroll entry as paid."
               }
@@ -1395,7 +1448,7 @@
                   "raw": "{{base_url}}/finance/accounting/transactions/:id/pdf",
                   "host": ["{{base_url}}"],
                   "path": ["finance", "accounting", "transactions", ":id", "pdf"],
-                  "variable": [{ "key": "id", "value": "{{transaction_id}}", "description": "Transaction UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Transaction UUID" }]
                 },
                 "description": "Generates and downloads the transaction as a receipt PDF."
               }
@@ -1456,7 +1509,7 @@
                   "raw": "{{base_url}}/inventory/products/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "products", ":id"],
-                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Product UUID" }]
                 },
                 "description": "Returns product data by ID."
               }
@@ -1475,7 +1528,7 @@
                   "raw": "{{base_url}}/inventory/products/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "products", ":id"],
-                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Product UUID" }]
                 },
                 "description": "Updates product data."
               }
@@ -1489,7 +1542,7 @@
                   "raw": "{{base_url}}/inventory/products/:id/activate",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "products", ":id", "activate"],
-                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Product UUID" }]
                 },
                 "description": "Marks the product as active."
               }
@@ -1503,7 +1556,7 @@
                   "raw": "{{base_url}}/inventory/products/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "products", ":id"],
-                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Product UUID" }]
                 },
                 "description": "Marks the product as inactive."
               }
@@ -1559,7 +1612,7 @@
                   "raw": "{{base_url}}/inventory/warehouses/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "warehouses", ":id"],
-                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Warehouse UUID" }]
                 },
                 "description": "Returns warehouse data by ID."
               }
@@ -1578,7 +1631,7 @@
                   "raw": "{{base_url}}/inventory/warehouses/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "warehouses", ":id"],
-                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Warehouse UUID" }]
                 },
                 "description": "Updates warehouse data."
               }
@@ -1592,7 +1645,7 @@
                   "raw": "{{base_url}}/inventory/warehouses/:id/activate",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "warehouses", ":id", "activate"],
-                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Warehouse UUID" }]
                 },
                 "description": "Marks the warehouse as active."
               }
@@ -1606,7 +1659,7 @@
                   "raw": "{{base_url}}/inventory/warehouses/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "warehouses", ":id"],
-                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Warehouse UUID" }]
                 },
                 "description": "Marks the warehouse as inactive."
               }
@@ -1644,7 +1697,7 @@
                   "raw": "{{base_url}}/inventory/stock/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "stock", ":id"],
-                  "variable": [{ "key": "id", "value": "{{stock_id}}", "description": "Stock UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Stock UUID" }]
                 },
                 "description": "Returns stock entry by ID."
               }
@@ -1701,7 +1754,7 @@
                   "raw": "{{base_url}}/inventory/movements/:id",
                   "host": ["{{base_url}}"],
                   "path": ["inventory", "movements", ":id"],
-                  "variable": [{ "key": "id", "value": "{{movement_id}}", "description": "Movement UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Movement UUID" }]
                 },
                 "description": "Returns inventory movement by ID."
               }
@@ -1761,7 +1814,7 @@
                   "raw": "{{base_url}}/procurement/suppliers/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "suppliers", ":id"],
-                  "variable": [{ "key": "id", "value": "{{supplier_id}}", "description": "Supplier UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Supplier UUID" }]
                 },
                 "description": "Returns supplier data by ID."
               }
@@ -1780,7 +1833,7 @@
                   "raw": "{{base_url}}/procurement/suppliers/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "suppliers", ":id"],
-                  "variable": [{ "key": "id", "value": "{{supplier_id}}", "description": "Supplier UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Supplier UUID" }]
                 },
                 "description": "Updates supplier data."
               }
@@ -1836,7 +1889,9 @@
                   "raw": "{{base_url}}/procurement/prospects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "prospects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                  "variable": [
+                    { "key": "id", "value": "", "description": "Supplier prospect UUID" }
+                  ]
                 },
                 "description": "Returns supplier prospect data by ID."
               }
@@ -1855,7 +1910,9 @@
                   "raw": "{{base_url}}/procurement/prospects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "prospects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                  "variable": [
+                    { "key": "id", "value": "", "description": "Supplier prospect UUID" }
+                  ]
                 },
                 "description": "Updates supplier prospect data."
               }
@@ -1874,7 +1931,9 @@
                   "raw": "{{base_url}}/procurement/prospects/:id/status",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "prospects", ":id", "status"],
-                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                  "variable": [
+                    { "key": "id", "value": "", "description": "Supplier prospect UUID" }
+                  ]
                 },
                 "description": "Changes the supplier prospect status."
               }
@@ -1888,7 +1947,9 @@
                   "raw": "{{base_url}}/procurement/prospects/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "prospects", ":id"],
-                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                  "variable": [
+                    { "key": "id", "value": "", "description": "Supplier prospect UUID" }
+                  ]
                 },
                 "description": "Removes the supplier prospect."
               }
@@ -1944,7 +2005,7 @@
                   "raw": "{{base_url}}/procurement/requisitions/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "requisitions", ":id"],
-                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase request UUID" }]
                 },
                 "description": "Returns purchase request data by ID."
               }
@@ -1958,7 +2019,7 @@
                   "raw": "{{base_url}}/procurement/requisitions/:id/submit",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "requisitions", ":id", "submit"],
-                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase request UUID" }]
                 },
                 "description": "Transitions purchase request from DRAFT to PENDING_REVIEW."
               }
@@ -1972,7 +2033,7 @@
                   "raw": "{{base_url}}/procurement/requisitions/:id/approve",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "requisitions", ":id", "approve"],
-                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase request UUID" }]
                 },
                 "description": "Transitions from PENDING_REVIEW to APPROVED. Auto-creates a purchase order."
               }
@@ -1986,7 +2047,7 @@
                   "raw": "{{base_url}}/procurement/requisitions/:id/reject",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "requisitions", ":id", "reject"],
-                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase request UUID" }]
                 },
                 "description": "Transitions from PENDING_REVIEW to REJECTED."
               }
@@ -2024,7 +2085,7 @@
                   "raw": "{{base_url}}/procurement/orders/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "orders", ":id"],
-                  "variable": [{ "key": "id", "value": "{{order_id}}", "description": "Purchase order UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase order UUID" }]
                 },
                 "description": "Returns purchase order data by ID."
               }
@@ -2038,7 +2099,7 @@
                   "raw": "{{base_url}}/procurement/orders/:id/receive",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "orders", ":id", "receive"],
-                  "variable": [{ "key": "id", "value": "{{order_id}}", "description": "Purchase order UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase order UUID" }]
                 },
                 "description": "Marks the purchase order as RECEIVED. Triggers inventory ENTRY movement."
               }
@@ -2052,7 +2113,7 @@
                   "raw": "{{base_url}}/procurement/orders/:id/cancel",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "orders", ":id", "cancel"],
-                  "variable": [{ "key": "id", "value": "{{order_id}}", "description": "Purchase order UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Purchase order UUID" }]
                 },
                 "description": "Marks the purchase order as CANCELLED."
               }
@@ -2109,7 +2170,7 @@
                   "raw": "{{base_url}}/procurement/invoices/:id",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "invoices", ":id"],
-                  "variable": [{ "key": "id", "value": "{{supplier_invoice_id}}", "description": "Supplier invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Supplier invoice UUID" }]
                 },
                 "description": "Returns a supplier invoice by ID."
               }
@@ -2123,7 +2184,7 @@
                   "raw": "{{base_url}}/procurement/invoices/:id/pay",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "invoices", ":id", "pay"],
-                  "variable": [{ "key": "id", "value": "{{supplier_invoice_id}}", "description": "Supplier invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Supplier invoice UUID" }]
                 },
                 "description": "Transitions the invoice status to PAID."
               }
@@ -2137,7 +2198,7 @@
                   "raw": "{{base_url}}/procurement/invoices/:id/overdue",
                   "host": ["{{base_url}}"],
                   "path": ["procurement", "invoices", ":id", "overdue"],
-                  "variable": [{ "key": "id", "value": "{{supplier_invoice_id}}", "description": "Supplier invoice UUID" }]
+                  "variable": [{ "key": "id", "value": "", "description": "Supplier invoice UUID" }]
                 },
                 "description": "Transitions the invoice status to OVERDUE."
               }
