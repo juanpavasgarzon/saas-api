@@ -44,11 +44,11 @@ export enum Permission {
   FinanceAccountingCreate = 'finance.accounting.create',
   FinanceAccountingRead = 'finance.accounting.read',
 
-  SalesDealsCreate = 'sales.sales.create',
-  SalesDealsRead = 'sales.sales.read',
-  SalesDealsModify = 'sales.sales.modify',
-  SalesSalesApprove = 'sales.sales.approve',
-  SalesSalesDownload = 'sales.sales.download',
+  SalesDealsCreate = 'sales.deals.create',
+  SalesDealsRead = 'sales.deals.read',
+  SalesDealsModify = 'sales.deals.modify',
+  SalesDealsApprove = 'sales.deals.approve',
+  SalesDealsDownload = 'sales.deals.download',
 
   SalesInvoicesRead = 'sales.invoices.read',
   SalesInvoicesModify = 'sales.invoices.modify',

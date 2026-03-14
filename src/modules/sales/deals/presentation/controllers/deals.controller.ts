@@ -120,7 +120,7 @@ export class SalesController {
   }
 
   @Get(':id/pdf')
-  @RequirePermission(Permission.SalesSalesDownload)
+  @RequirePermission(Permission.SalesDealsDownload)
   @ApiOperation({
     summary: 'Download sale PDF',
     description: 'Generates and downloads the sale order as a PDF.',
@@ -153,7 +153,7 @@ export class SalesController {
 
   @Patch(':id/approve')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.SalesSalesApprove)
+  @RequirePermission(Permission.SalesDealsApprove)
   @ApiOperation({
     summary: 'Approve sale',
     description: 'Transitions sale from PENDING to APPROVED.',
