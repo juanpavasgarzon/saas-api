@@ -1,0 +1,2150 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-0000-0000-0000-000000000001",
+    "name": "SaaS API",
+    "description": "Complete NestJS multi-tenant SaaS API.\n\nSetup:\n1. Import `api.environment.json` as environment\n2. Select 'SaaS API - Local' as active environment\n3. Run **Register** or **Login** — tokens are saved automatically\n4. All protected endpoints use `{{access_token}}` from the environment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Identity",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json.accessToken) {",
+                      "    pm.environment.set('access_token', json.accessToken);",
+                      "    pm.environment.set('refresh_token', json.refreshToken);",
+                      "    console.log('Tokens saved to environment');",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"companyName\": \"Acme Corp\",\n  \"email\": \"owner@acme.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/identity/auth/register",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "auth", "register"]
+                },
+                "description": "Creates a new tenant (company) and an OWNER user. Returns access and refresh tokens."
+              }
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json.accessToken) {",
+                      "    pm.environment.set('access_token', json.accessToken);",
+                      "    pm.environment.set('refresh_token', json.refreshToken);",
+                      "    console.log('Tokens saved to environment');",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"owner@acme.com\",\n  \"password\": \"Password123!\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/identity/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "auth", "login"]
+                },
+                "description": "Authenticates a user and returns access + refresh tokens."
+              }
+            },
+            {
+              "name": "Refresh Token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "if (json.accessToken) {",
+                      "    pm.environment.set('access_token', json.accessToken);",
+                      "    pm.environment.set('refresh_token', json.refreshToken);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [{ "key": "token", "value": "{{refresh_token}}", "type": "string" }]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/auth/refresh",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "auth", "refresh"]
+                },
+                "description": "Uses the refresh token to issue a new access + refresh token pair."
+              }
+            },
+            {
+              "name": "Get Me",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/auth/me",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "auth", "me"]
+                },
+                "description": "Returns the authenticated user data extracted from the JWT."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "List Users",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/users?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "users"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" }
+                  ]
+                },
+                "description": "Returns all users for the current tenant. Requires owner-level permission."
+              }
+            },
+            {
+              "name": "Get User",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/users/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "users", ":id"],
+                  "variable": [{ "key": "id", "value": "{{user_id}}", "description": "User UUID" }]
+                },
+                "description": "Returns user data by ID."
+              }
+            },
+            {
+              "name": "Reactivate User",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/users/:id/activate",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "users", ":id", "activate"],
+                  "variable": [{ "key": "id", "value": "{{user_id}}", "description": "User UUID" }]
+                },
+                "description": "Reactivates a previously deactivated user."
+              }
+            },
+            {
+              "name": "Deactivate User",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/users/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "users", ":id"],
+                  "variable": [{ "key": "id", "value": "{{user_id}}", "description": "User UUID" }]
+                },
+                "description": "Deactivates a user. Cannot deactivate yourself."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invitations",
+          "item": [
+            {
+              "name": "List Invitations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/identity/invitations?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "invitations"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" }
+                  ]
+                },
+                "description": "Returns all pending invitations for the current tenant."
+              }
+            },
+            {
+              "name": "Send Invitation",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"employee@acme.com\",\n  \"role\": \"EMPLOYEE\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/identity/invitations",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "invitations"]
+                },
+                "description": "Sends an invitation email to a new user."
+              }
+            },
+            {
+              "name": "Accept Invitation",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"password\": \"NewPassword123!\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/identity/invitations/:token/accept",
+                  "host": ["{{base_url}}"],
+                  "path": ["identity", "invitations", ":token", "accept"],
+                  "variable": [{ "key": "token", "value": "{{invitation_token}}", "description": "Invitation token received by email" }]
+                },
+                "description": "Creates a user account from an invitation token. No authentication required."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Organization",
+      "item": [
+        {
+          "name": "Companies",
+          "item": [
+            {
+              "name": "Get Company",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/companies",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "companies"]
+                },
+                "description": "Returns the company profile of the current tenant."
+              }
+            },
+            {
+              "name": "Update Company",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Acme Corporation\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/companies",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "companies"]
+                },
+                "description": "Updates the company name."
+              }
+            },
+            {
+              "name": "Upload Logo",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [{ "key": "file", "type": "file", "src": "" }]
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/companies/logo",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "companies", "logo"]
+                },
+                "description": "Uploads a logo (PNG, JPG, WebP — max 2 MB). Normalized and stored as PNG."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Employees",
+          "item": [
+            {
+              "name": "Create Employee",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@acme.com\",\n  \"position\": \"Software Engineer\",\n  \"department\": \"Engineering\",\n  \"hiredAt\": \"2025-01-15\",\n  \"basicSalary\": 5000\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/employees",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "employees"]
+                },
+                "description": "Registers a new employee."
+              }
+            },
+            {
+              "name": "List Employees",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/employees?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "employees"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "department", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns employees with pagination. Filter by department, status, or search term."
+              }
+            },
+            {
+              "name": "Get Employee",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/employees/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "employees", ":id"],
+                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                },
+                "description": "Returns employee data by ID."
+              }
+            },
+            {
+              "name": "Update Employee",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@acme.com\",\n  \"position\": \"Senior Software Engineer\",\n  \"department\": \"Engineering\",\n  \"basicSalary\": 6000\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/employees/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "employees", ":id"],
+                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                },
+                "description": "Updates employee data."
+              }
+            },
+            {
+              "name": "Reactivate Employee",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/employees/:id/activate",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "employees", ":id", "activate"],
+                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                },
+                "description": "Reactivates an inactive employee."
+              }
+            },
+            {
+              "name": "Deactivate Employee",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/employees/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "employees", ":id"],
+                  "variable": [{ "key": "id", "value": "{{employee_id}}", "description": "Employee UUID" }]
+                },
+                "description": "Marks employee as inactive."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assets",
+          "item": [
+            {
+              "name": "Create Asset",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"MacBook Pro 16\",\n  \"category\": \"HARDWARE\",\n  \"serialNumber\": \"SN-2025-001\",\n  \"description\": \"Developer laptop\",\n  \"purchaseDate\": \"2025-01-10\",\n  \"purchaseValue\": 2500\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/assets",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets"]
+                },
+                "description": "Registers a new asset."
+              }
+            },
+            {
+              "name": "List Assets",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/assets?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "category", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns assets with pagination."
+              }
+            },
+            {
+              "name": "Get Asset",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/assets/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets", ":id"],
+                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                },
+                "description": "Returns asset by ID with assignments."
+              }
+            },
+            {
+              "name": "Update Asset",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"MacBook Pro 16\",\n  \"category\": \"HARDWARE\",\n  \"serialNumber\": \"SN-2025-001\",\n  \"description\": \"Updated description\",\n  \"purchaseDate\": \"2025-01-10\",\n  \"purchaseValue\": 2500\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/assets/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets", ":id"],
+                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                },
+                "description": "Updates asset details."
+              }
+            },
+            {
+              "name": "Assign Asset",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"{{employee_id}}\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/organization/assets/:id/assign",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets", ":id", "assign"],
+                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                },
+                "description": "Assigns asset to a project or employee."
+              }
+            },
+            {
+              "name": "Return Asset",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/assets/:id/return",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets", ":id", "return"],
+                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                },
+                "description": "Returns an assigned asset."
+              }
+            },
+            {
+              "name": "Retire Asset",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/organization/assets/:id/retire",
+                  "host": ["{{base_url}}"],
+                  "path": ["organization", "assets", ":id", "retire"],
+                  "variable": [{ "key": "id", "value": "{{asset_id}}", "description": "Asset UUID" }]
+                },
+                "description": "Retires an active asset permanently."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CRM",
+      "item": [
+        {
+          "name": "Customers",
+          "item": [
+            {
+              "name": "Create Customer",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Globex Corporation\",\n  \"email\": \"contact@globex.com\",\n  \"phone\": \"+1-555-0100\",\n  \"identificationNumber\": \"TAX-001\",\n  \"address\": \"742 Evergreen Terrace, Springfield\",\n  \"company\": \"Globex\",\n  \"contactPerson\": \"Hank Scorpio\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/customers",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers"]
+                },
+                "description": "Registers a new customer."
+              }
+            },
+            {
+              "name": "List Customers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/customers?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns customers with pagination."
+              }
+            },
+            {
+              "name": "Search Customers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/customers/search?search=globex&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers", "search"],
+                  "query": [
+                    { "key": "search", "value": "globex" },
+                    { "key": "limit", "value": "20" }
+                  ]
+                },
+                "description": "Searches customers by name, identification number, contact person, or company."
+              }
+            },
+            {
+              "name": "Get Customer",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/customers/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers", ":id"],
+                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                },
+                "description": "Returns customer data by ID."
+              }
+            },
+            {
+              "name": "Update Customer",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Globex Corporation\",\n  \"email\": \"contact@globex.com\",\n  \"phone\": \"+1-555-0100\",\n  \"identificationNumber\": \"TAX-001\",\n  \"address\": \"742 Evergreen Terrace, Springfield\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/customers/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers", ":id"],
+                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                },
+                "description": "Updates customer data."
+              }
+            },
+            {
+              "name": "Activate Customer",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/customers/:id/activate",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers", ":id", "activate"],
+                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                },
+                "description": "Marks the customer as active."
+              }
+            },
+            {
+              "name": "Deactivate Customer",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/customers/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "customers", ":id"],
+                  "variable": [{ "key": "id", "value": "{{customer_id}}", "description": "Customer UUID" }]
+                },
+                "description": "Marks the customer as inactive."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Prospects",
+          "item": [
+            {
+              "name": "Create Prospect",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Initech LLC\",\n  \"email\": \"info@initech.com\",\n  \"phone\": \"+1-555-0200\",\n  \"company\": \"Initech\",\n  \"source\": \"REFERRAL\",\n  \"notes\": \"Interested in enterprise plan\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects"]
+                },
+                "description": "Registers a new prospect."
+              }
+            },
+            {
+              "name": "List Prospects",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns prospects with pagination."
+              }
+            },
+            {
+              "name": "Search Prospects",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects/search?search=initech&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects", "search"],
+                  "query": [
+                    { "key": "search", "value": "initech" },
+                    { "key": "limit", "value": "20" }
+                  ]
+                },
+                "description": "Searches prospects by name, identification number, contact person, or company."
+              }
+            },
+            {
+              "name": "Get Prospect",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                },
+                "description": "Returns prospect data by ID."
+              }
+            },
+            {
+              "name": "Update Prospect",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Initech LLC\",\n  \"email\": \"info@initech.com\",\n  \"phone\": \"+1-555-0200\",\n  \"notes\": \"Updated notes\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                },
+                "description": "Updates prospect data."
+              }
+            },
+            {
+              "name": "Update Prospect Status",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"QUALIFIED\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects/:id/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects", ":id", "status"],
+                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                },
+                "description": "Changes the prospect status."
+              }
+            },
+            {
+              "name": "Delete Prospect",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/prospects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "prospects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{prospect_id}}", "description": "Prospect UUID" }]
+                },
+                "description": "Removes the prospect permanently."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quotations",
+          "item": [
+            {
+              "name": "Create Quotation",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Q-2025-001\",\n  \"customerId\": \"{{customer_id}}\",\n  \"notes\": \"Standard terms apply\",\n  \"validUntil\": \"2025-12-31\",\n  \"items\": [\n    {\n      \"itemType\": \"PRODUCT\",\n      \"itemId\": \"{{product_id}}\",\n      \"description\": \"Widget A\",\n      \"quantity\": 10,\n      \"unitPrice\": 25.00\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations"]
+                },
+                "description": "Creates a new draft quotation."
+              }
+            },
+            {
+              "name": "List Quotations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "customerId", "value": "", "disabled": true },
+                    { "key": "prospectId", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns quotations with pagination. Excludes line items."
+              }
+            },
+            {
+              "name": "Get Quotation",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Returns quotation data by ID including line items."
+              }
+            },
+            {
+              "name": "Download Quotation PDF",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id/pdf",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id", "pdf"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Generates and downloads the quotation as a PDF."
+              }
+            },
+            {
+              "name": "Update Quotation",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Q-2025-001 Rev1\",\n  \"notes\": \"Revised terms\",\n  \"validUntil\": \"2025-12-31\",\n  \"items\": [\n    {\n      \"itemType\": \"PRODUCT\",\n      \"itemId\": \"{{product_id}}\",\n      \"description\": \"Widget A\",\n      \"quantity\": 15,\n      \"unitPrice\": 22.00\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Updates a draft quotation."
+              }
+            },
+            {
+              "name": "Send Quotation",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id/send",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id", "send"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Transitions quotation from DRAFT to SENT."
+              }
+            },
+            {
+              "name": "Accept Quotation",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id/accept",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id", "accept"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Transitions quotation from SENT to ACCEPTED."
+              }
+            },
+            {
+              "name": "Reject Quotation",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id/reject",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id", "reject"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Transitions quotation from SENT to REJECTED."
+              }
+            },
+            {
+              "name": "Expire Quotation",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id/expire",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id", "expire"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Marks quotation as EXPIRED."
+              }
+            },
+            {
+              "name": "Delete Quotation",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/crm/quotations/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["crm", "quotations", ":id"],
+                  "variable": [{ "key": "id", "value": "{{quotation_id}}", "description": "Quotation UUID" }]
+                },
+                "description": "Removes the quotation. Only DRAFT quotations can be deleted."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "Sales Orders",
+          "item": [
+            {
+              "name": "Create Sale",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"{{customer_id}}\",\n  \"notes\": \"Rush order\",\n  \"items\": [\n    {\n      \"description\": \"Widget A\",\n      \"quantity\": 10,\n      \"unitPrice\": 25.00\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/sales/orders",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "orders"]
+                },
+                "description": "Creates a new sale manually."
+              }
+            },
+            {
+              "name": "List Sales",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/orders?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "orders"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "customerId", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns sales with pagination. Excludes line items."
+              }
+            },
+            {
+              "name": "Get Sale",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/orders/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "orders", ":id"],
+                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                },
+                "description": "Returns sale by ID with line items."
+              }
+            },
+            {
+              "name": "Download Sale PDF",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/orders/:id/pdf",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "orders", ":id", "pdf"],
+                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                },
+                "description": "Generates and downloads the sale order as a PDF."
+              }
+            },
+            {
+              "name": "Approve Sale",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/orders/:id/approve",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "orders", ":id", "approve"],
+                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                },
+                "description": "Transitions sale from PENDING to APPROVED. Auto-creates invoice."
+              }
+            },
+            {
+              "name": "Cancel Sale",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/orders/:id/cancel",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "orders", ":id", "cancel"],
+                  "variable": [{ "key": "id", "value": "{{sale_id}}", "description": "Sale UUID" }]
+                },
+                "description": "Cancels a PENDING sale."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invoices",
+          "item": [
+            {
+              "name": "List Invoices",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/invoices?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "invoices"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "customerId", "value": "", "disabled": true },
+                    { "key": "dealId", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns invoices with pagination."
+              }
+            },
+            {
+              "name": "Get Invoice",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/invoices/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "invoices", ":id"],
+                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                },
+                "description": "Returns invoice by ID with line items."
+              }
+            },
+            {
+              "name": "Download Invoice PDF",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/invoices/:id/pdf",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "invoices", ":id", "pdf"],
+                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                },
+                "description": "Generates and downloads the invoice as a PDF."
+              }
+            },
+            {
+              "name": "Send Invoice",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/invoices/:id/send",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "invoices", ":id", "send"],
+                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                },
+                "description": "Transitions invoice from DRAFT to SENT."
+              }
+            },
+            {
+              "name": "Pay Invoice",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/invoices/:id/pay",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "invoices", ":id", "pay"],
+                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                },
+                "description": "Transitions invoice from SENT to PAID."
+              }
+            },
+            {
+              "name": "Cancel Invoice",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/sales/invoices/:id/cancel",
+                  "host": ["{{base_url}}"],
+                  "path": ["sales", "invoices", ":id", "cancel"],
+                  "variable": [{ "key": "id", "value": "{{invoice_id}}", "description": "Invoice UUID" }]
+                },
+                "description": "Cancels a DRAFT or SENT invoice."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "Projects",
+          "item": [
+            {
+              "name": "Create Project",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Website Redesign\",\n  \"description\": \"Full redesign of the corporate website\",\n  \"customerId\": \"{{customer_id}}\",\n  \"budget\": 15000,\n  \"startDate\": \"2025-02-01\",\n  \"endDate\": \"2025-06-30\",\n  \"members\": [\n    {\n      \"employeeId\": \"{{employee_id}}\",\n      \"role\": \"LEAD\"\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/projects",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects"]
+                },
+                "description": "Creates a project within the tenant."
+              }
+            },
+            {
+              "name": "List Projects",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/projects?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "customerId", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns projects with pagination."
+              }
+            },
+            {
+              "name": "Get Project",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/projects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                },
+                "description": "Returns a project with its members."
+              }
+            },
+            {
+              "name": "Update Project",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Website Redesign\",\n  \"description\": \"Updated description\",\n  \"budget\": 18000,\n  \"startDate\": \"2025-02-01\",\n  \"endDate\": \"2025-07-31\",\n  \"members\": [\n    {\n      \"employeeId\": \"{{employee_id}}\",\n      \"role\": \"LEAD\"\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/projects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                },
+                "description": "Updates project details. Replaces members array entirely."
+              }
+            },
+            {
+              "name": "Change Project Status",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"action\": \"activate\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/projects/:id/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", ":id", "status"],
+                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                },
+                "description": "Transitions project status."
+              }
+            },
+            {
+              "name": "Delete Project",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/projects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{project_id}}", "description": "Project UUID" }]
+                },
+                "description": "Removes a project from the tenant."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Finance",
+      "item": [
+        {
+          "name": "Payroll",
+          "item": [
+            {
+              "name": "Create Payroll Entry",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employeeId\": \"{{employee_id}}\",\n  \"period\": \"2025-03\",\n  \"daysWorked\": 22,\n  \"baseSalary\": 5000,\n  \"bonuses\": 500,\n  \"deductions\": 200\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/finance/payroll",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "payroll"]
+                },
+                "description": "Creates a payroll record."
+              }
+            },
+            {
+              "name": "List Payroll Entries",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/finance/payroll?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "payroll"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "employeeId", "value": "", "disabled": true },
+                    { "key": "period", "value": "", "disabled": true },
+                    { "key": "status", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns payroll records with pagination."
+              }
+            },
+            {
+              "name": "Download Pay Stub PDF",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/finance/payroll/:id/pdf",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "payroll", ":id", "pdf"],
+                  "variable": [{ "key": "id", "value": "{{payroll_id}}", "description": "Payroll entry UUID" }]
+                },
+                "description": "Generates and downloads the payroll entry as a pay stub PDF."
+              }
+            },
+            {
+              "name": "Mark as Paid",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/finance/payroll/:id/pay",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "payroll", ":id", "pay"],
+                  "variable": [{ "key": "id", "value": "{{payroll_id}}", "description": "Payroll entry UUID" }]
+                },
+                "description": "Marks a payroll entry as paid."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Accounting",
+          "item": [
+            {
+              "name": "Create Transaction",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"INCOME\",\n  \"amount\": 5000,\n  \"description\": \"Consulting services\",\n  \"reference\": \"INV-2025-001\",\n  \"date\": \"2025-03-14\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/finance/accounting/transactions",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "accounting", "transactions"]
+                },
+                "description": "Records a financial transaction."
+              }
+            },
+            {
+              "name": "List Transactions",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/finance/accounting/transactions?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "accounting", "transactions"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "type", "value": "", "disabled": true },
+                    { "key": "dateFrom", "value": "", "disabled": true },
+                    { "key": "dateTo", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns transactions with pagination and optional date/type filters."
+              }
+            },
+            {
+              "name": "Download Transaction Receipt PDF",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/finance/accounting/transactions/:id/pdf",
+                  "host": ["{{base_url}}"],
+                  "path": ["finance", "accounting", "transactions", ":id", "pdf"],
+                  "variable": [{ "key": "id", "value": "{{transaction_id}}", "description": "Transaction UUID" }]
+                },
+                "description": "Generates and downloads the transaction as a receipt PDF."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "Create Product",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Widget A\",\n  \"sku\": \"WGT-001\",\n  \"description\": \"Standard widget\",\n  \"unit\": \"pcs\",\n  \"category\": \"Components\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/inventory/products",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "products"]
+                },
+                "description": "Registers a new inventory product."
+              }
+            },
+            {
+              "name": "List Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/products?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "products"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "isActive", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns inventory products with pagination."
+              }
+            },
+            {
+              "name": "Get Product",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/products/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "products", ":id"],
+                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                },
+                "description": "Returns product data by ID."
+              }
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Widget A Pro\",\n  \"description\": \"Enhanced widget\",\n  \"unit\": \"pcs\",\n  \"category\": \"Components\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/inventory/products/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "products", ":id"],
+                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                },
+                "description": "Updates product data."
+              }
+            },
+            {
+              "name": "Reactivate Product",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/products/:id/activate",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "products", ":id", "activate"],
+                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                },
+                "description": "Marks the product as active."
+              }
+            },
+            {
+              "name": "Deactivate Product",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/products/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "products", ":id"],
+                  "variable": [{ "key": "id", "value": "{{product_id}}", "description": "Product UUID" }]
+                },
+                "description": "Marks the product as inactive."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Warehouses",
+          "item": [
+            {
+              "name": "Create Warehouse",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Main Warehouse\",\n  \"location\": \"123 Industrial Park, Springfield\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/inventory/warehouses",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "warehouses"]
+                },
+                "description": "Registers a new warehouse."
+              }
+            },
+            {
+              "name": "List Warehouses",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/warehouses?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "warehouses"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "search", "value": "", "disabled": true },
+                    { "key": "isActive", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns warehouses with pagination."
+              }
+            },
+            {
+              "name": "Get Warehouse",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/warehouses/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "warehouses", ":id"],
+                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                },
+                "description": "Returns warehouse data by ID."
+              }
+            },
+            {
+              "name": "Update Warehouse",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Main Warehouse\",\n  \"location\": \"456 New Industrial Park\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/inventory/warehouses/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "warehouses", ":id"],
+                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                },
+                "description": "Updates warehouse data."
+              }
+            },
+            {
+              "name": "Reactivate Warehouse",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/warehouses/:id/activate",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "warehouses", ":id", "activate"],
+                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                },
+                "description": "Marks the warehouse as active."
+              }
+            },
+            {
+              "name": "Deactivate Warehouse",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/warehouses/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "warehouses", ":id"],
+                  "variable": [{ "key": "id", "value": "{{warehouse_id}}", "description": "Warehouse UUID" }]
+                },
+                "description": "Marks the warehouse as inactive."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Stock",
+          "item": [
+            {
+              "name": "List Stock",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/stock?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "stock"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "productId", "value": "", "disabled": true },
+                    { "key": "warehouseId", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns stock levels with pagination."
+              }
+            },
+            {
+              "name": "Get Stock",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/stock/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "stock", ":id"],
+                  "variable": [{ "key": "id", "value": "{{stock_id}}", "description": "Stock UUID" }]
+                },
+                "description": "Returns stock entry by ID."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Movements",
+          "item": [
+            {
+              "name": "Register Movement",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"warehouseId\": \"{{warehouse_id}}\",\n  \"type\": \"ENTRY\",\n  \"quantity\": 100,\n  \"notes\": \"Initial stock entry\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/inventory/movements",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "movements"]
+                },
+                "description": "Records a manual inventory movement. type: ENTRY | EXIT | TRANSFER. toWarehouseId required for TRANSFER."
+              }
+            },
+            {
+              "name": "List Movements",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/movements?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "movements"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "productId", "value": "", "disabled": true },
+                    { "key": "warehouseId", "value": "", "disabled": true },
+                    { "key": "type", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns inventory movements with pagination."
+              }
+            },
+            {
+              "name": "Get Movement",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/inventory/movements/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["inventory", "movements", ":id"],
+                  "variable": [{ "key": "id", "value": "{{movement_id}}", "description": "Movement UUID" }]
+                },
+                "description": "Returns inventory movement by ID."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Procurement",
+      "item": [
+        {
+          "name": "Suppliers",
+          "item": [
+            {
+              "name": "Create Supplier",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Acme Supplies Co.\",\n  \"email\": \"sales@acme-supplies.com\",\n  \"phone\": \"+1-555-0300\",\n  \"company\": \"Acme Supplies\",\n  \"identificationNumber\": \"TAX-SUP-001\",\n  \"address\": \"999 Supply Ave, Metropolis\",\n  \"contactPerson\": \"Jane Smith\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/suppliers",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "suppliers"]
+                },
+                "description": "Creates a new active supplier."
+              }
+            },
+            {
+              "name": "List Suppliers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/suppliers?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "suppliers"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns suppliers with pagination."
+              }
+            },
+            {
+              "name": "Get Supplier",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/suppliers/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "suppliers", ":id"],
+                  "variable": [{ "key": "id", "value": "{{supplier_id}}", "description": "Supplier UUID" }]
+                },
+                "description": "Returns supplier data by ID."
+              }
+            },
+            {
+              "name": "Update Supplier",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Acme Supplies Co.\",\n  \"email\": \"sales@acme-supplies.com\",\n  \"phone\": \"+1-555-0301\",\n  \"address\": \"999 Supply Ave, Metropolis\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/suppliers/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "suppliers", ":id"],
+                  "variable": [{ "key": "id", "value": "{{supplier_id}}", "description": "Supplier UUID" }]
+                },
+                "description": "Updates supplier data."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Supplier Prospects",
+          "item": [
+            {
+              "name": "Create Supplier Prospect",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"NewCo Supplies\",\n  \"email\": \"contact@newco.com\",\n  \"phone\": \"+1-555-0400\",\n  \"company\": \"NewCo\",\n  \"notes\": \"Potential raw material supplier\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/prospects",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "prospects"]
+                },
+                "description": "Creates a new supplier prospect that can later be converted to a supplier."
+              }
+            },
+            {
+              "name": "List Supplier Prospects",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/prospects?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "prospects"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "search", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns supplier prospects with pagination."
+              }
+            },
+            {
+              "name": "Get Supplier Prospect",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/prospects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "prospects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                },
+                "description": "Returns supplier prospect data by ID."
+              }
+            },
+            {
+              "name": "Update Supplier Prospect",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"NewCo Supplies\",\n  \"email\": \"contact@newco.com\",\n  \"notes\": \"Updated notes\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/prospects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "prospects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                },
+                "description": "Updates supplier prospect data."
+              }
+            },
+            {
+              "name": "Update Supplier Prospect Status",
+              "request": {
+                "method": "PATCH",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"QUALIFIED\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/prospects/:id/status",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "prospects", ":id", "status"],
+                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                },
+                "description": "Changes the supplier prospect status."
+              }
+            },
+            {
+              "name": "Delete Supplier Prospect",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/prospects/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "prospects", ":id"],
+                  "variable": [{ "key": "id", "value": "{{supplier_prospect_id}}", "description": "Supplier prospect UUID" }]
+                },
+                "description": "Removes the supplier prospect."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Purchase Requests",
+          "item": [
+            {
+              "name": "Create Purchase Request",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"PR-2025-001\",\n  \"supplierId\": \"{{supplier_id}}\",\n  \"notes\": \"Urgent restock needed\",\n  \"items\": [\n    {\n      \"description\": \"Widget A\",\n      \"quantity\": 500,\n      \"unitPrice\": 12.00\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/requisitions",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "requisitions"]
+                },
+                "description": "Creates a new draft purchase request."
+              }
+            },
+            {
+              "name": "List Purchase Requests",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/requisitions?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "requisitions"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "supplierId", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns purchase requests with pagination."
+              }
+            },
+            {
+              "name": "Get Purchase Request",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/requisitions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "requisitions", ":id"],
+                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                },
+                "description": "Returns purchase request data by ID."
+              }
+            },
+            {
+              "name": "Submit for Review",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/requisitions/:id/submit",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "requisitions", ":id", "submit"],
+                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                },
+                "description": "Transitions purchase request from DRAFT to PENDING_REVIEW."
+              }
+            },
+            {
+              "name": "Approve Purchase Request",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/requisitions/:id/approve",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "requisitions", ":id", "approve"],
+                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                },
+                "description": "Transitions from PENDING_REVIEW to APPROVED. Auto-creates a purchase order."
+              }
+            },
+            {
+              "name": "Reject Purchase Request",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/requisitions/:id/reject",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "requisitions", ":id", "reject"],
+                  "variable": [{ "key": "id", "value": "{{requisition_id}}", "description": "Purchase request UUID" }]
+                },
+                "description": "Transitions from PENDING_REVIEW to REJECTED."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Purchase Orders",
+          "item": [
+            {
+              "name": "List Purchase Orders",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/orders?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "orders"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "supplierId", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns purchase orders with pagination."
+              }
+            },
+            {
+              "name": "Get Purchase Order",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/orders/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "orders", ":id"],
+                  "variable": [{ "key": "id", "value": "{{order_id}}", "description": "Purchase order UUID" }]
+                },
+                "description": "Returns purchase order data by ID."
+              }
+            },
+            {
+              "name": "Mark as Received",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/orders/:id/receive",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "orders", ":id", "receive"],
+                  "variable": [{ "key": "id", "value": "{{order_id}}", "description": "Purchase order UUID" }]
+                },
+                "description": "Marks the purchase order as RECEIVED. Triggers inventory ENTRY movement."
+              }
+            },
+            {
+              "name": "Cancel Purchase Order",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/orders/:id/cancel",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "orders", ":id", "cancel"],
+                  "variable": [{ "key": "id", "value": "{{order_id}}", "description": "Purchase order UUID" }]
+                },
+                "description": "Marks the purchase order as CANCELLED."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Supplier Invoices",
+          "item": [
+            {
+              "name": "Create Supplier Invoice",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"invoiceNumber\": \"SUP-INV-2025-001\",\n  \"supplierId\": \"{{supplier_id}}\",\n  \"orderId\": \"{{order_id}}\",\n  \"amount\": 6000,\n  \"dueDate\": \"2025-04-14\",\n  \"notes\": \"Net 30\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/procurement/invoices",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "invoices"]
+                },
+                "description": "Manually creates a supplier invoice for a purchase order."
+              }
+            },
+            {
+              "name": "List Supplier Invoices",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/invoices?page=1&limit=20",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "invoices"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "disabled": true },
+                    { "key": "supplierId", "value": "", "disabled": true },
+                    { "key": "orderId", "value": "", "disabled": true }
+                  ]
+                },
+                "description": "Returns paginated supplier invoices with optional filters."
+              }
+            },
+            {
+              "name": "Get Supplier Invoice",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/invoices/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "invoices", ":id"],
+                  "variable": [{ "key": "id", "value": "{{supplier_invoice_id}}", "description": "Supplier invoice UUID" }]
+                },
+                "description": "Returns a supplier invoice by ID."
+              }
+            },
+            {
+              "name": "Mark Supplier Invoice as Paid",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/invoices/:id/pay",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "invoices", ":id", "pay"],
+                  "variable": [{ "key": "id", "value": "{{supplier_invoice_id}}", "description": "Supplier invoice UUID" }]
+                },
+                "description": "Transitions the invoice status to PAID."
+              }
+            },
+            {
+              "name": "Mark Supplier Invoice as Overdue",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/procurement/invoices/:id/overdue",
+                  "host": ["{{base_url}}"],
+                  "path": ["procurement", "invoices", ":id", "overdue"],
+                  "variable": [{ "key": "id", "value": "{{supplier_invoice_id}}", "description": "Supplier invoice UUID" }]
+                },
+                "description": "Transitions the invoice status to OVERDUE."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
