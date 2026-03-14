@@ -8,4 +8,3 @@ export { UnauthorizedError } from './domain/errors/unauthorized.error';
 export { ValidationError } from './domain/errors/validation.error';
 export { ValueObject } from './domain/value-object.base';
 export { GlobalHttpExceptionFilter } from './presentation/http-exception.filter';
-export { generateId } from '@utils/uuid.util';
