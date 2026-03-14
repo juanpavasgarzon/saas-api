@@ -81,7 +81,9 @@ export class Company {
 
   update(name: string, logo: string | null): void {
     this._name = name;
-    this._logo = logo;
+    if (logo !== null) {
+      this._logo = logo;
+    }
     this._updatedAt = new Date();
   }
 

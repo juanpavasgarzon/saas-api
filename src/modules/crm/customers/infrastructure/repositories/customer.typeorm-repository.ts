@@ -6,12 +6,12 @@ import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contr
 
 import { CustomerFilters } from '../../domain/contracts/customer-filters.contract';
 import { CustomerProps } from '../../domain/contracts/customer-props.contract';
-import { CustomerRepository } from '../../domain/contracts/customer-repository.contract';
+import { ICustomerRepository } from '../../domain/contracts/customer-repository.contract';
 import { Customer } from '../../domain/entities/customer.entity';
 import { CustomerOrmEntity } from '../entities/customer.orm-entity';
 
 @Injectable()
-export class CustomerTypeOrmRepository implements CustomerRepository {
+export class CustomerTypeOrmRepository implements ICustomerRepository {
   constructor(
     @InjectRepository(CustomerOrmEntity)
     private readonly repository: Repository<CustomerOrmEntity>,
@@ -59,6 +59,21 @@ export class CustomerTypeOrmRepository implements CustomerRepository {
     };
   }
 
+  async search(tenantId: string, search: string, limit: number): Promise<Customer[]> {
+    const items = await this.repository.find({
+      where: [
+        { tenantId, name: ILike(`%${search}%`) },
+        { tenantId, identificationNumber: ILike(`%${search}%`) },
+        { tenantId, contactPerson: ILike(`%${search}%`) },
+        { tenantId, company: ILike(`%${search}%`) },
+      ],
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return items.map((item) => this.toDomain(item));
+  }
+
   async save(customer: Customer): Promise<void> {
     await this.repository.save(this.toOrm(customer));
   }
@@ -80,6 +95,8 @@ export class CustomerTypeOrmRepository implements CustomerRepository {
       name: orm.name,
       email: orm.email,
       phone: orm.phone,
+      company: orm.company,
+      identificationNumber: orm.identificationNumber,
       address: orm.address,
       contactPerson: orm.contactPerson,
       isActive: orm.isActive,
@@ -96,6 +113,8 @@ export class CustomerTypeOrmRepository implements CustomerRepository {
     orm.name = customer.name;
     orm.email = customer.email;
     orm.phone = customer.phone;
+    orm.company = customer.company;
+    orm.identificationNumber = customer.identificationNumber;
     orm.address = customer.address;
     orm.contactPerson = customer.contactPerson;
     orm.isActive = customer.isActive;

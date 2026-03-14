@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColum
 import { VendorProspectStatus } from '../../domain/enums/prospect-status.enum';
 
 @Entity('vendor_prospects')
+@Index('IDX_vendor_prospects_tenant_status', ['tenantId', 'status'])
 export class ProspectOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
@@ -22,6 +23,15 @@ export class ProspectOrmEntity {
 
   @Column({ type: 'varchar', nullable: true, default: null })
   company!: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  identificationNumber!: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  address!: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  contactPerson!: string | null;
 
   @Column({ type: 'text', nullable: true, default: null })
   notes!: string | null;

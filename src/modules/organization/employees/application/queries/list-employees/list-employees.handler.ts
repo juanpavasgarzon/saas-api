@@ -3,7 +3,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
 import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
 
-import { EmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
+import { IEmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
 import { Employee } from '../../../domain/entities/employee.entity';
 import { EMPLOYEE_REPOSITORY } from '../../../domain/tokens/employee-repository.token';
 import { ListEmployeesQuery } from './list-employees.query';
@@ -15,7 +15,7 @@ export class ListEmployeesHandler implements IQueryHandler<
 > {
   constructor(
     @Inject(EMPLOYEE_REPOSITORY)
-    private readonly employeeRepository: EmployeeRepository,
+    private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(query: ListEmployeesQuery): Promise<PaginatedResult<Employee>> {

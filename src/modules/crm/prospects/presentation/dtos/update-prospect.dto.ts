@@ -23,6 +23,21 @@ export class UpdateProspectDto {
   @IsString()
   company?: string | null;
 
+  @ApiPropertyOptional({ example: '123456789' })
+  @IsOptional()
+  @IsString()
+  identificationNumber?: string | null;
+
+  @ApiPropertyOptional({ example: '100 Main St, New York, NY' })
+  @IsOptional()
+  @IsString()
+  address?: string | null;
+
+  @ApiPropertyOptional({ example: 'Jane Smith' })
+  @IsOptional()
+  @IsString()
+  contactPerson?: string | null;
+
   @ApiPropertyOptional({ enum: ProspectSource })
   @IsOptional()
   @IsEnum(ProspectSource)

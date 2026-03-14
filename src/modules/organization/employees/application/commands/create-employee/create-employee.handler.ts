@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { EmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
+import { IEmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
 import { Employee } from '../../../domain/entities/employee.entity';
 import { EmployeeEmailAlreadyExistsError } from '../../../domain/errors/employee-email-already-exists.error';
 import { EMPLOYEE_REPOSITORY } from '../../../domain/tokens/employee-repository.token';
@@ -11,7 +11,7 @@ import { CreateEmployeeCommand } from './create-employee.command';
 export class CreateEmployeeHandler implements ICommandHandler<CreateEmployeeCommand, string> {
   constructor(
     @Inject(EMPLOYEE_REPOSITORY)
-    private readonly employeeRepository: EmployeeRepository,
+    private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(command: CreateEmployeeCommand): Promise<string> {

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type CustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
+import { type ICustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
 import { Customer } from '@modules/crm/customers/domain/entities/customer.entity';
 import { CUSTOMER_REPOSITORY } from '@modules/crm/customers/domain/tokens/customer-repository.token';
 import { type IProspectRepository } from '@modules/crm/prospects/domain/contracts/prospect-repository.contract';
@@ -14,7 +14,7 @@ export class ProspectToCustomerAdapter implements IProspectToCustomerService {
     @Inject(PROSPECT_REPOSITORY)
     private readonly prospectRepository: IProspectRepository,
     @Inject(CUSTOMER_REPOSITORY)
-    private readonly customerRepository: CustomerRepository,
+    private readonly customerRepository: ICustomerRepository,
   ) {}
 
   async convert(prospectId: string, tenantId: string): Promise<string> {
@@ -38,8 +38,10 @@ export class ProspectToCustomerAdapter implements IProspectToCustomerService {
       prospect.name,
       email,
       prospect.phone ?? '',
-      prospect.company ?? '',
-      prospect.name,
+      prospect.identificationNumber ?? '',
+      prospect.address ?? '',
+      prospect.company ?? null,
+      prospect.contactPerson ?? null,
     );
     await this.customerRepository.save(customer);
 

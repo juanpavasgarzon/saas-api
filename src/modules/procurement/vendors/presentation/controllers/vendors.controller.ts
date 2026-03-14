@@ -1,17 +1,22 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -27,10 +32,12 @@ import { RequirePermission } from '@shared/presentation/decorators/require-permi
 import { CreatedResponseDto } from '@shared/presentation/dtos/created-response.dto';
 
 import { CreateVendorCommand } from '../../application/commands/create-vendor/create-vendor.command';
+import { UpdateVendorCommand } from '../../application/commands/update-vendor/update-vendor.command';
 import { GetVendorQuery } from '../../application/queries/get-vendor/get-vendor.query';
 import { ListVendorsQuery } from '../../application/queries/list-vendors/list-vendors.query';
 import { type Vendor } from '../../domain/entities/vendor.entity';
 import { CreateVendorDto } from '../dtos/create-vendor.dto';
+import { UpdateVendorDto } from '../dtos/update-vendor.dto';
 import { VendorResponseDto } from '../dtos/vendor-response.dto';
 
 @ApiTags('Procurement')
@@ -55,8 +62,10 @@ export class VendorsController {
       dto.name,
       dto.email,
       dto.phone ?? '',
+      dto.company ?? null,
+      dto.identificationNumber ?? '',
       dto.address ?? '',
-      dto.contactPerson ?? '',
+      dto.contactPerson ?? null,
     );
     const id = await this.commandBus.execute<CreateVendorCommand, string>(command);
     return new CreatedResponseDto(id);
@@ -71,9 +80,9 @@ export class VendorsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listVendors(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('search') search?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<VendorResponseDto>> {
     const query = new ListVendorsQuery(tenantId, search, page, limit);
     const result = await this.queryBus.execute<ListVendorsQuery, PaginatedResult<Vendor>>(query);
@@ -96,5 +105,31 @@ export class VendorsController {
     const query = new GetVendorQuery(id, tenantId);
     const vendor = await this.queryBus.execute<GetVendorQuery, Vendor>(query);
     return new VendorResponseDto(vendor);
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermission(Permission.ProcurementVendorsModify)
+  @ApiOperation({ summary: 'Update vendor', description: 'Updates vendor data.' })
+  @ApiParam({ name: 'id', description: 'Vendor UUID' })
+  @ApiNoContentResponse({ description: 'Vendor updated' })
+  @ApiNotFoundResponse({ description: 'Vendor not found' })
+  async updateVendor(
+    @CurrentTenant() tenantId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateVendorDto,
+  ): Promise<void> {
+    const command = new UpdateVendorCommand(
+      tenantId,
+      id,
+      dto.name,
+      dto.email,
+      dto.phone ?? '',
+      dto.company ?? null,
+      dto.identificationNumber ?? '',
+      dto.address ?? '',
+      dto.contactPerson ?? null,
+    );
+    await this.commandBus.execute(command);
   }
 }

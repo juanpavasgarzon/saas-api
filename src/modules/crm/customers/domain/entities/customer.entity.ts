@@ -8,15 +8,20 @@ export class Customer extends AggregateRootBase {
   private _name: string;
   private _email: string;
   private _phone: string;
+  private _company: string | null;
+  private _identificationNumber: string;
   private _address: string;
-  private _contactPerson: string;
+  private _contactPerson: string | null;
   private _isActive: boolean;
 
   private constructor(props: CustomerProps) {
     super(props.id, props.tenantId);
+
     this._name = props.name;
     this._email = props.email;
     this._phone = props.phone;
+    this._company = props.company;
+    this._identificationNumber = props.identificationNumber;
     this._address = props.address;
     this._contactPerson = props.contactPerson;
     this._isActive = props.isActive;
@@ -27,8 +32,10 @@ export class Customer extends AggregateRootBase {
     name: string,
     email: string,
     phone: string,
+    identificationNumber: string,
     address: string,
-    contactPerson: string,
+    company: string | null,
+    contactPerson: string | null,
   ): Customer {
     return new Customer({
       id: generateId(),
@@ -36,7 +43,36 @@ export class Customer extends AggregateRootBase {
       name,
       email: email.toLowerCase().trim(),
       phone,
+      identificationNumber,
       address,
+      company,
+      contactPerson,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  }
+
+  static createFromProspect(
+    prospectId: string,
+    tenantId: string,
+    name: string,
+    email: string,
+    phone: string,
+    identificationNumber: string,
+    address: string,
+    company: string | null,
+    contactPerson: string | null,
+  ): Customer {
+    return new Customer({
+      id: prospectId,
+      tenantId,
+      name,
+      email: email.toLowerCase().trim(),
+      phone,
+      identificationNumber,
+      address,
+      company,
       contactPerson,
       isActive: true,
       createdAt: new Date(),
@@ -48,36 +84,55 @@ export class Customer extends AggregateRootBase {
     return new Customer(props);
   }
 
-  get name(): string {
+  get name() {
     return this._name;
   }
 
-  get email(): string {
+  get email() {
     return this._email;
   }
 
-  get phone(): string {
+  get phone() {
     return this._phone;
   }
 
-  get address(): string {
+  get company() {
+    return this._company;
+  }
+
+  get identificationNumber() {
+    return this._identificationNumber;
+  }
+
+  get address() {
     return this._address;
   }
 
-  get contactPerson(): string {
+  get contactPerson() {
     return this._contactPerson;
   }
 
-  get isActive(): boolean {
+  get isActive() {
     return this._isActive;
   }
 
-  update(name: string, email: string, phone: string, address: string, contactPerson: string): void {
+  update(
+    name: string,
+    email: string,
+    phone: string,
+    identificationNumber: string,
+    address: string,
+    company: string | null,
+    contactPerson: string | null,
+  ): void {
     this._name = name;
     this._email = email.toLowerCase().trim();
     this._phone = phone;
+    this._identificationNumber = identificationNumber;
     this._address = address;
+    this._company = company;
     this._contactPerson = contactPerson;
+
     this.touch();
   }
 
@@ -85,6 +140,7 @@ export class Customer extends AggregateRootBase {
     if (!this._isActive) {
       throw new ConflictError('Customer is already inactive');
     }
+
     this._isActive = false;
     this.touch();
   }
@@ -93,30 +149,8 @@ export class Customer extends AggregateRootBase {
     if (this._isActive) {
       throw new ConflictError('Customer is already active');
     }
+
     this._isActive = true;
     this.touch();
-  }
-
-  static createFromProspect(
-    prospectId: string,
-    tenantId: string,
-    name: string,
-    email: string,
-    phone: string,
-    address: string,
-    contactPerson: string,
-  ): Customer {
-    return new Customer({
-      id: prospectId,
-      tenantId,
-      name,
-      email: email.toLowerCase().trim(),
-      phone,
-      address,
-      contactPerson,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
   }
 }

@@ -7,13 +7,15 @@ export class CreateCustomers1748000004000 implements MigrationInterface {
     // email unique per tenant.
     await queryRunner.query(`
       CREATE TABLE "customers" (
-        "id"            uuid      NOT NULL,
-        "tenantId"      uuid      NOT NULL,
-        "name"          varchar   NOT NULL,
-        "email"         varchar   NOT NULL,
-        "phone"         varchar   NOT NULL,
-        "address"       varchar   NOT NULL,
-        "contactPerson" varchar   NOT NULL,
+        "id"                   uuid      NOT NULL,
+        "tenantId"             uuid      NOT NULL,
+        "name"                 varchar   NOT NULL,
+        "company"              varchar   NULL DEFAULT NULL,
+        "identificationNumber" varchar   NOT NULL DEFAULT '',
+        "email"                varchar   NOT NULL,
+        "phone"                varchar   NOT NULL,
+        "address"              varchar   NOT NULL,
+        "contactPerson"        varchar   NULL DEFAULT NULL,
         "isActive"      boolean   NOT NULL DEFAULT true,
         "createdAt"     TIMESTAMP NOT NULL DEFAULT now(),
         "updatedAt"     TIMESTAMP NOT NULL DEFAULT now(),

@@ -25,6 +25,15 @@ export class ProspectOrmEntity {
   @Column({ type: 'varchar', nullable: true, default: null })
   company!: string | null;
 
+  @Column({ type: 'varchar', nullable: true, default: null })
+  identificationNumber!: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  address!: string | null;
+
+  @Column({ type: 'varchar', nullable: true, default: null })
+  contactPerson!: string | null;
+
   @Column({ type: 'enum', enum: ProspectSource, nullable: true, default: null })
   source!: ProspectSource | null;
 

@@ -1,23 +1,29 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { Body, Controller, DefaultValuePipe, Get, Param, Post } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 
 import { Permission } from '@shared/domain/enums/permission.enum';
+import { PaginatedResult } from '@shared/index';
 import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { Public } from '@shared/presentation/decorators/public.decorator';
 import { RequirePermission } from '@shared/presentation/decorators/require-permission.decorator';
 
 import { AcceptInvitationCommand } from '../../application/commands/accept-invitation/accept-invitation.command';
 import { SendInvitationCommand } from '../../application/commands/send-invitation/send-invitation.command';
+import { ListInvitationsQuery } from '../../application/queries/list-invitations/list-invitations.query';
+import { Invitation } from '../../domain/entities/invitation.entity';
 import { AcceptInvitationDto } from '../dtos/accept-invitation.dto';
 import { AcceptInvitationResponseDto } from '../dtos/accept-invitation-response.dto';
+import { InvitationResponseDto } from '../dtos/invitation-response.dto';
 import { InvitationTokenResponseDto } from '../dtos/invitation-token-response.dto';
 import { SendInvitationDto } from '../dtos/send-invitation.dto';
 
@@ -25,7 +31,34 @@ import { SendInvitationDto } from '../dtos/send-invitation.dto';
 @ApiBearerAuth('JWT')
 @Controller('identity/invitations')
 export class InvitationsController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  @Get()
+  @RequirePermission(Permission.IdentityAccountsRead)
+  @ApiOperation({
+    summary: 'List invitations',
+    description: 'Returns all pending invitations for the current tenant. Owner only.',
+  })
+  @ApiOkResponse({ description: 'Paginated list of invitations' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 20 })
+  async listInvitations(
+    @CurrentTenant() tenantId: string,
+    @Param('page', new DefaultValuePipe(1)) page: number,
+    @Param('limit', new DefaultValuePipe(20)) limit: number,
+  ): Promise<PaginatedResult<InvitationResponseDto>> {
+    const listInvitationsQuery = new ListInvitationsQuery(tenantId, page, limit);
+    const result = await this.queryBus.execute<ListInvitationsQuery, PaginatedResult<Invitation>>(
+      listInvitationsQuery,
+    );
+    return {
+      ...result,
+      items: result.items.map((invitation) => new InvitationResponseDto(invitation)),
+    };
+  }
 
   @Post()
   @RequirePermission(Permission.IdentityAccountsCreate)

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -90,11 +91,11 @@ export class ProjectsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listProjects(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('customerId') customerId?: string,
     @Query('status') status?: string,
     @Query('search') search?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<ProjectResponseDto>> {
     const filters = { customerId, status, search };
     const listProjectsQuery = new ListProjectsQuery(tenantId, filters, page, limit);

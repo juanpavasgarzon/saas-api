@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpStatus,
@@ -56,10 +57,10 @@ export class PurchaseOrdersController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listPurchaseOrders(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('status') status?: PurchaseOrderStatus,
     @Query('vendorId') vendorId?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<PurchaseOrderResponseDto>> {
     const query = new ListPurchaseOrdersQuery(tenantId, status, vendorId, page, limit);
     const result = await this.queryBus.execute<

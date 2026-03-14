@@ -12,9 +12,26 @@ export class MeResponseDto {
   @ApiProperty({ example: 'OWNER' })
   role: string;
 
-  constructor(user: AuthUserData) {
+  @ApiProperty({ example: 'acme' })
+  companyName: string;
+
+  @ApiProperty({ example: 'base64', nullable: true })
+  companyLogo?: string | null;
+
+  @ApiProperty({ example: ['main.sub.permission'] })
+  permissions: string[];
+
+  constructor(
+    user: AuthUserData,
+    companyName: string,
+    companyLogo: string | null,
+    permissions: string[],
+  ) {
     this.id = user.id;
     this.email = user.email;
     this.role = user.role;
+    this.companyName = companyName;
+    this.companyLogo = companyLogo;
+    this.permissions = permissions;
   }
 }

@@ -12,6 +12,12 @@ export class VendorOrmEntity {
   @Column()
   name!: string;
 
+  @Column({ type: 'varchar', nullable: true, default: null })
+  company!: string | null;
+
+  @Column({ default: '' })
+  identificationNumber!: string;
+
   @Column()
   email!: string;
 
@@ -21,8 +27,8 @@ export class VendorOrmEntity {
   @Column({ default: '' })
   address!: string;
 
-  @Column({ default: '' })
-  contactPerson!: string;
+  @Column({ type: 'varchar', nullable: true, default: null })
+  contactPerson!: string | null;
 
   @Column({ default: true })
   isActive!: boolean;

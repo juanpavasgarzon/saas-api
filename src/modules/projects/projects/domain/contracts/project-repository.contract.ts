@@ -3,7 +3,7 @@ import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.
 import { type Project } from '../entities/project.entity';
 import { type ProjectFilters } from './project-filters.contract';
 
-export interface ProjectRepository {
+export interface IProjectRepository {
   findById(id: string, tenantId: string): Promise<Project | null>;
   findAll(
     tenantId: string,

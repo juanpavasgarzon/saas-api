@@ -8,6 +8,9 @@ export interface ProspectProps {
   email: string | null;
   phone: string | null;
   company: string | null;
+  identificationNumber: string | null;
+  address: string | null;
+  contactPerson: string | null;
   source: ProspectSource | null;
   status: ProspectStatus;
   notes: string | null;

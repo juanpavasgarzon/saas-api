@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { type ProjectRepository } from '../../../domain/contracts/project-repository.contract';
+import { type IProjectRepository } from '../../../domain/contracts/project-repository.contract';
 import { Project } from '../../../domain/entities/project.entity';
 import { ProjectNotFoundError } from '../../../domain/errors/project.errors';
 import { PROJECT_REPOSITORY } from '../../../domain/tokens/project-repository.token';
@@ -11,7 +11,7 @@ import { GetProjectQuery } from './get-project.query';
 export class GetProjectHandler implements IQueryHandler<GetProjectQuery, Project> {
   constructor(
     @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: ProjectRepository,
+    private readonly projectRepository: IProjectRepository,
   ) {}
 
   async execute(query: GetProjectQuery): Promise<Project> {

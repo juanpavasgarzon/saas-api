@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { type ProjectRepository } from '../../../domain/contracts/project-repository.contract';
+import { type IProjectRepository } from '../../../domain/contracts/project-repository.contract';
 import { ProjectNotFoundError } from '../../../domain/errors/project.errors';
 import { PROJECT_REPOSITORY } from '../../../domain/tokens/project-repository.token';
 import { AddMemberCommand } from './add-member.command';
@@ -10,7 +10,7 @@ import { AddMemberCommand } from './add-member.command';
 export class AddMemberHandler implements ICommandHandler<AddMemberCommand, string> {
   constructor(
     @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: ProjectRepository,
+    private readonly projectRepository: IProjectRepository,
   ) {}
 
   async execute(command: AddMemberCommand): Promise<string> {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { ILike, Not, Repository } from 'typeorm';
 
 import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
 
@@ -8,6 +8,7 @@ import { type ProspectFilters } from '../../domain/contracts/prospect-filters.co
 import { type ProspectProps } from '../../domain/contracts/prospect-props.contract';
 import { type IProspectRepository } from '../../domain/contracts/prospect-repository.contract';
 import { Prospect } from '../../domain/entities/prospect.entity';
+import { ProspectStatus } from '../../domain/enums/prospect-status.enum';
 import { ProspectOrmEntity } from '../entities/prospect.orm-entity';
 
 @Injectable()
@@ -46,6 +47,27 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
     return { items: items.map((item) => this.toDomain(item)), total, page, limit };
   }
 
+  async search(tenantId: string, search: string, limit: number): Promise<Prospect[]> {
+    const where = (field: keyof ProspectOrmEntity): Record<string, unknown> => ({
+      status: Not(ProspectStatus.CONVERTED),
+      tenantId,
+      [field]: ILike(`%${search}%`),
+    });
+
+    const items = await this.repository.find({
+      where: [
+        { ...where('name') },
+        { ...where('identificationNumber') },
+        { ...where('contactPerson') },
+        { ...where('company') },
+      ],
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return items.map((item) => this.toDomain(item));
+  }
+
   async save(prospect: Prospect): Promise<void> {
     await this.repository.save(this.toOrm(prospect));
   }
@@ -62,6 +84,9 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
       email: orm.email,
       phone: orm.phone,
       company: orm.company,
+      identificationNumber: orm.identificationNumber,
+      address: orm.address,
+      contactPerson: orm.contactPerson,
       source: orm.source,
       status: orm.status,
       notes: orm.notes,
@@ -79,6 +104,9 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
     orm.email = prospect.email;
     orm.phone = prospect.phone;
     orm.company = prospect.company;
+    orm.identificationNumber = prospect.identificationNumber;
+    orm.address = prospect.address;
+    orm.contactPerson = prospect.contactPerson;
     orm.source = prospect.source;
     orm.status = prospect.status;
     orm.notes = prospect.notes;

@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
 import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
+import { type IOutboxMessageRepository } from '@shared/application/contracts/outbox-repository.contract';
 import { SaleApprovedIntegrationEvent } from '@shared/application/events/sale-approved.integration-event';
 import { OUTBOX_REPOSITORY } from '@shared/application/tokens/outbox-repository.token';
-import { type IOutboxMessageRepository } from '@shared/application/contracts/outbox-repository.contract';
 
 import { SaleApprovedEvent } from '../../domain/events/sale-approved.event';
 

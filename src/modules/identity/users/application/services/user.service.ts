@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { UserRepository } from '../../domain/contracts/user-repository.contract';
+import { IUserRepository } from '../../domain/contracts/user-repository.contract';
 import { User } from '../../domain/entities/user.entity';
 import { UserRole } from '../../domain/enums/user-role.enum';
 import { USER_REPOSITORY } from '../../domain/tokens/user-repository.token';
@@ -16,7 +16,7 @@ export class UserService {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     @Inject(USER_REPOSITORY)
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: IUserRepository,
     @Inject(HASH_SERVICE)
     private readonly hashService: HashService,
   ) {}

@@ -1,4 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
@@ -36,10 +44,10 @@ export class StockController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listStock(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('productId') productId?: string,
     @Query('warehouseId') warehouseId?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<StockResponseDto>> {
     const query = new ListStockQuery(tenantId, { productId, warehouseId }, page, limit);
     const result = await this.queryBus.execute<ListStockQuery, PaginatedResult<Stock>>(query);

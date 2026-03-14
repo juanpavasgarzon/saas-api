@@ -26,6 +26,7 @@ interface PgDriverError {
 }
 
 interface ErrorBody {
+  name: string;
   statusCode: number;
   errorCode: string;
   message: string;
@@ -51,6 +52,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof AppError) {
       this.logger.warn(`[${exception.errorCode}] ${exception.message}`);
       return {
+        name: exception.name,
         statusCode: exception.statusCode,
         errorCode: exception.errorCode,
         message: exception.message,
@@ -63,6 +65,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       const status = exception.getStatus();
       const res = exception.getResponse();
       return {
+        name: exception.name,
         statusCode: status,
         errorCode: HttpStatus[status] ?? 'HTTP_ERROR',
         ...(typeof res === 'object' ? res : { message: res }),
@@ -74,6 +77,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof EntityNotFoundError) {
       this.logger.warn(`EntityNotFound: ${exception.message}`);
       return {
+        name: exception.name,
         statusCode: HttpStatus.NOT_FOUND,
         errorCode: 'NOT_FOUND',
         message: 'The requested resource was not found',
@@ -91,6 +95,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       exception instanceof Error ? exception.stack : String(exception),
     );
     return {
+      name: 'InternalServerError',
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       errorCode: 'INTERNAL_SERVER_ERROR',
       message: 'An unexpected error occurred',
@@ -112,6 +117,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
         const field = this.extractFieldFromConstraint(pg.constraint, pg.detail);
         this.logger.warn(`[DB_CONFLICT] unique violation on constraint "${pg.constraint}"`);
         return {
+          name: 'DB_CONFLICT',
           statusCode: HttpStatus.CONFLICT,
           errorCode: 'DB_CONFLICT',
           message: field ? `${field} already exists` : 'A record with this value already exists',
@@ -125,6 +131,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
           `[DB_FK_VIOLATION] foreign key violation on constraint "${pg.constraint}"`,
         );
         return {
+          name: 'DB_FK_VIOLATION',
           statusCode: HttpStatus.CONFLICT,
           errorCode: 'DB_FK_VIOLATION',
           message: 'Operation violates a referential integrity constraint',
@@ -136,6 +143,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       case PG.NOT_NULL_VIOLATION: {
         this.logger.warn(`[DB_VALIDATION] not-null violation on column "${pg.column}"`);
         return {
+          name: 'DB_VALIDATION',
           statusCode: HttpStatus.BAD_REQUEST,
           errorCode: 'DB_VALIDATION',
           message: pg.column ? `Field "${pg.column}" is required` : 'A required field is missing',
@@ -147,6 +155,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       case PG.CHECK_VIOLATION: {
         this.logger.warn(`[DB_VALIDATION] check constraint violation on "${pg.constraint}"`);
         return {
+          name: 'DB_VALIDATION',
           statusCode: HttpStatus.BAD_REQUEST,
           errorCode: 'DB_VALIDATION',
           message: 'The provided value does not satisfy a database constraint',
@@ -161,6 +170,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
           exception.stack,
         );
         return {
+          name: 'DB_ERROR',
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
           errorCode: 'DB_ERROR',
           message: 'A database error occurred',

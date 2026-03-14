@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { UserRole } from '@shared/domain/enums/user-role.enum';
 
-import { type User } from '../../domain/entities/user.entity';
+import { User } from '../../domain/entities/user.entity';
 
 export class UserResponseDto {
   @ApiProperty({ example: '019542ab-1234-7abc-8def-000000000001' })

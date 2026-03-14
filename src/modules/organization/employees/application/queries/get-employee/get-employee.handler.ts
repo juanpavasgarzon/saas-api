@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { EmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
+import { IEmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
 import { Employee } from '../../../domain/entities/employee.entity';
 import { EmployeeNotFoundError } from '../../../domain/errors/employee-not-found.error';
 import { EMPLOYEE_REPOSITORY } from '../../../domain/tokens/employee-repository.token';
@@ -11,7 +11,7 @@ import { GetEmployeeQuery } from './get-employee.query';
 export class GetEmployeeHandler implements IQueryHandler<GetEmployeeQuery, Employee> {
   constructor(
     @Inject(EMPLOYEE_REPOSITORY)
-    private readonly employeeRepository: EmployeeRepository,
+    private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(query: GetEmployeeQuery): Promise<Employee> {

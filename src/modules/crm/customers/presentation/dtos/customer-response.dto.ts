@@ -15,11 +15,17 @@ export class CustomerResponseDto {
   @ApiProperty({ example: '+1 555 000 0000' })
   phone: string;
 
+  @ApiProperty({ example: 'Acme Corporation' })
+  company: string | null;
+
+  @ApiProperty({ example: '123456789' })
+  identificationNumber: string;
+
   @ApiProperty({ example: '123 Main St, Springfield' })
   address: string;
 
   @ApiProperty({ example: 'John Doe' })
-  contactPerson: string;
+  contactPerson: string | null;
 
   @ApiProperty({ example: true })
   isActive: boolean;
@@ -35,6 +41,8 @@ export class CustomerResponseDto {
     this.name = customer.name;
     this.email = customer.email;
     this.phone = customer.phone;
+    this.company = customer.company;
+    this.identificationNumber = customer.identificationNumber;
     this.address = customer.address;
     this.contactPerson = customer.contactPerson;
     this.isActive = customer.isActive;

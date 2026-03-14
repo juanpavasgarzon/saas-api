@@ -38,8 +38,10 @@ export class ProspectToVendorAdapter implements IProspectToVendorService {
       prospect.name,
       email,
       prospect.phone ?? '',
-      prospect.company ?? '',
-      prospect.name,
+      prospect.identificationNumber ?? '',
+      prospect.address ?? '',
+      prospect.company ?? null,
+      prospect.contactPerson ?? null,
     );
     await this.vendorRepository.save(vendor);
 

@@ -19,7 +19,9 @@ export class CreateVendorHandler implements ICommandHandler<CreateVendorCommand,
       command.name,
       command.email,
       command.phone,
+      command.identificationNumber,
       command.address,
+      command.company,
       command.contactPerson,
     );
     await this.vendorRepository.save(vendor);

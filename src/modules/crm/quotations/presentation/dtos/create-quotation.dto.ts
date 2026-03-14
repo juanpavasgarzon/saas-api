@@ -14,7 +14,7 @@ import { QuotationItemDto } from './quotation-item.dto';
 export class CreateQuotationDto {
   @ApiProperty({ example: 'Website redesign proposal' })
   @IsString()
-  title: string;
+  title!: string;
 
   @ApiPropertyOptional({ example: 'uuid-of-customer', nullable: true })
   @IsOptional()
@@ -40,5 +40,5 @@ export class CreateQuotationDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => QuotationItemDto)
-  items: QuotationItemDto[];
+  items!: QuotationItemDto[];
 }

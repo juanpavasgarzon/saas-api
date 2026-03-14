@@ -6,19 +6,19 @@ import { UnitOfMeasure } from '@shared/domain/enums/unit-of-measure.enum';
 export class QuotationItemDto {
   @ApiProperty({ example: 'Web development — homepage' })
   @IsString()
-  description: string;
+  description!: string;
 
   @ApiProperty({ example: 10 })
   @IsNumber()
   @Min(0.01)
-  quantity: number;
+  quantity!: number;
 
   @ApiProperty({ enum: UnitOfMeasure, example: UnitOfMeasure.UNIT })
   @IsEnum(UnitOfMeasure)
-  unit: UnitOfMeasure;
+  unit!: UnitOfMeasure;
 
   @ApiProperty({ example: 150.0 })
   @IsNumber()
   @Min(0)
-  unitPrice: number;
+  unitPrice!: number;
 }

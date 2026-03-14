@@ -11,6 +11,16 @@ export class CreateVendorDto {
   @IsEmail()
   email!: string;
 
+  @ApiPropertyOptional({ example: 'Acme Corporation' })
+  @IsOptional()
+  @IsString()
+  company?: string;
+
+  @ApiPropertyOptional({ example: '123456789' })
+  @IsOptional()
+  @IsString()
+  identificationNumber?: string;
+
   @ApiPropertyOptional({ example: '+1-555-000-1234' })
   @IsOptional()
   @IsString()

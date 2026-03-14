@@ -2,7 +2,7 @@ import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.
 
 import { type User } from '../entities/user.entity';
 
-export interface UserRepository {
+export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   findAll(tenantId: string, page: number, limit: number): Promise<PaginatedResult<User>>;

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { EmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
+import { IEmployeeRepository } from '../../../domain/contracts/employee-repository.contract';
 import { EmployeeNotFoundError } from '../../../domain/errors/employee-not-found.error';
 import { EMPLOYEE_REPOSITORY } from '../../../domain/tokens/employee-repository.token';
 import { ReactivateEmployeeCommand } from './reactivate-employee.command';
@@ -10,7 +10,7 @@ import { ReactivateEmployeeCommand } from './reactivate-employee.command';
 export class ReactivateEmployeeHandler implements ICommandHandler<ReactivateEmployeeCommand> {
   constructor(
     @Inject(EMPLOYEE_REPOSITORY)
-    private readonly employeeRepository: EmployeeRepository,
+    private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(command: ReactivateEmployeeCommand): Promise<void> {

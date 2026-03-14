@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { type IntegrationEvent } from '../../domain/contracts/integration-event.contract';
 import { type IOutboxMessageRepository } from '../../application/contracts/outbox-repository.contract';
+import { type IntegrationEvent } from '../../domain/contracts/integration-event.contract';
 import { generateId } from '../../utils/uuid.util';
 import { OutboxMessageOrmEntity } from './outbox-message.orm-entity';
 import { OutboxMessageStatus } from './outbox-message-status.enum';

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
-import { CustomerRepository } from '../../../domain/contracts/customer-repository.contract';
+import { ICustomerRepository } from '../../../domain/contracts/customer-repository.contract';
 import { Customer } from '../../../domain/entities/customer.entity';
 import { CustomerNotFoundError } from '../../../domain/errors/customer-not-found.error';
 import { CUSTOMER_REPOSITORY } from '../../../domain/tokens/customer-repository.token';
@@ -11,7 +11,7 @@ import { GetCustomerQuery } from './get-customer.query';
 export class GetCustomerHandler implements IQueryHandler<GetCustomerQuery, Customer> {
   constructor(
     @Inject(CUSTOMER_REPOSITORY)
-    private readonly customerRepository: CustomerRepository,
+    private readonly customerRepository: ICustomerRepository,
   ) {}
 
   async execute(query: GetCustomerQuery): Promise<Customer> {

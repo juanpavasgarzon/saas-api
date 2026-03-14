@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   Inject,
   Param,
@@ -87,11 +88,11 @@ export class AccountingController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async findAll(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('type') type?: string,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<TransactionResponseDto>> {
     const filters = { type, dateFrom, dateTo };
     const listTransactionsQuery = new ListTransactionsQuery(tenantId, filters, page, limit);

@@ -13,6 +13,7 @@ import { UpdateProspectHandler } from './application/commands/update-prospect/up
 import { UpdateProspectStatusHandler } from './application/commands/update-prospect-status/update-prospect-status.handler';
 import { GetProspectHandler } from './application/queries/get-prospect/get-prospect.handler';
 import { ListProspectsHandler } from './application/queries/list-prospects/list-prospects.handler';
+import { SearchCustomersHandler } from './application/queries/search-prospects/search-prospects.handler';
 import { PROSPECT_REPOSITORY } from './domain/tokens/prospect-repository.token';
 import { ProspectOrmEntity } from './infrastructure/entities/prospect.orm-entity';
 import { ProspectTypeOrmRepository } from './infrastructure/repositories/prospect.typeorm-repository';
@@ -28,6 +29,7 @@ import { ProspectsController } from './presentation/controllers/prospects.contro
     DeleteProspectHandler,
     GetProspectHandler,
     ListProspectsHandler,
+    SearchCustomersHandler,
     { provide: PROSPECT_REPOSITORY, useClass: ProspectTypeOrmRepository },
     { provide: PROSPECT_TO_CUSTOMER_SERVICE, useClass: ProspectToCustomerAdapter },
     { provide: PROSPECT_STATUS_SERVICE, useClass: ProspectStatusAdapter },

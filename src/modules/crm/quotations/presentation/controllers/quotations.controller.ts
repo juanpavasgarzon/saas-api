@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -101,11 +102,11 @@ export class QuotationsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listQuotations(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('status') status?: QuotationStatus,
     @Query('customerId') customerId?: string,
     @Query('prospectId') prospectId?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<QuotationListResponseDto>> {
     const filters = { status, customerId, prospectId };
     const query = new ListQuotationsQuery(tenantId, filters, page, limit);

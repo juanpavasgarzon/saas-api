@@ -14,7 +14,8 @@ docs/api-summary.md
 Postman files:
 
 postman/saas-api.collection.json
-postman/saas-api.environment.json
+postman/saas.environment.json
+postman/saas-ws.collection.json
 
 ---
 

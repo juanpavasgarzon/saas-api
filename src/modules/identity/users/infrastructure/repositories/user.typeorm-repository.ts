@@ -5,13 +5,13 @@ import { Repository } from 'typeorm';
 import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
 
 import { UserProps } from '../../domain/contracts/user-props.contract';
-import { UserRepository } from '../../domain/contracts/user-repository.contract';
+import { IUserRepository } from '../../domain/contracts/user-repository.contract';
 import { User } from '../../domain/entities/user.entity';
 import { Email } from '../../domain/value-objects/email.value-object';
 import { UserOrmEntity } from '../entities/user.orm-entity';
 
 @Injectable()
-export class UserTypeOrmRepository implements UserRepository {
+export class UserTypeOrmRepository implements IUserRepository {
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly repository: Repository<UserOrmEntity>,

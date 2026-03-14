@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpStatus,
@@ -87,11 +88,11 @@ export class AssetsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listAssets(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('status') status?: string,
     @Query('category') category?: string,
     @Query('search') search?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<AssetListResponseDto>> {
     const query = new ListAssetsQuery(tenantId, { status, category, search }, page, limit);
     const result = await this.queryBus.execute<ListAssetsQuery, PaginatedResult<Asset>>(query);

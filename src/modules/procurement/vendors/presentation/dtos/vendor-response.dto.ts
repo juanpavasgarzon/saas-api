@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { type Vendor } from '../../domain/entities/vendor.entity';
 
@@ -12,6 +12,12 @@ export class VendorResponseDto {
   @ApiProperty({ example: 'contact@acme.com' })
   email: string;
 
+  @ApiPropertyOptional({ example: 'Acme Corporation', nullable: true })
+  company: string | null;
+
+  @ApiProperty({ example: '123456789' })
+  identificationNumber: string;
+
   @ApiProperty({ example: '+1-555-000-1234' })
   phone: string;
 
@@ -19,7 +25,7 @@ export class VendorResponseDto {
   address: string;
 
   @ApiProperty({ example: 'John Smith' })
-  contactPerson: string;
+  contactPerson: string | null;
 
   @ApiProperty({ example: true })
   isActive: boolean;
@@ -34,6 +40,8 @@ export class VendorResponseDto {
     this.id = vendor.id;
     this.name = vendor.name;
     this.email = vendor.email;
+    this.company = vendor.company;
+    this.identificationNumber = vendor.identificationNumber;
     this.phone = vendor.phone;
     this.address = vendor.address;
     this.contactPerson = vendor.contactPerson;

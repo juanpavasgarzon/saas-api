@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserRepository } from '../../../domain/contracts/user-repository.contract';
+import { IUserRepository } from '../../../domain/contracts/user-repository.contract';
 import { UserNotFoundError } from '../../../domain/errors/user-not-found.error';
 import { USER_REPOSITORY } from '../../../domain/tokens/user-repository.token';
 import { ReactivateUserCommand } from './reactivate-user.command';
@@ -10,7 +10,7 @@ import { ReactivateUserCommand } from './reactivate-user.command';
 export class ReactivateUserHandler implements ICommandHandler<ReactivateUserCommand> {
   constructor(
     @Inject(USER_REPOSITORY)
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async execute(command: ReactivateUserCommand): Promise<void> {

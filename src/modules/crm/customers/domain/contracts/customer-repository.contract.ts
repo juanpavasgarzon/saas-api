@@ -3,7 +3,7 @@ import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.
 import { type Customer } from '../entities/customer.entity';
 import { type CustomerFilters } from './customer-filters.contract';
 
-export interface CustomerRepository {
+export interface ICustomerRepository {
   findById(id: string, tenantId: string): Promise<Customer | null>;
   findByEmail(email: string, tenantId: string): Promise<Customer | null>;
   findAll(
@@ -12,6 +12,7 @@ export interface CustomerRepository {
     page: number,
     limit: number,
   ): Promise<PaginatedResult<Customer>>;
+  search(tenantId: string, search: string, limit: number): Promise<Customer[]>;
   save(customer: Customer): Promise<void>;
   delete(id: string, tenantId: string): Promise<void>;
   existsByEmail(email: string, tenantId: string): Promise<boolean>;

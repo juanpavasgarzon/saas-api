@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
 import { ConflictError } from '@shared/domain/errors/conflict.error';
-import { type CustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
+import { type ICustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
 import { CustomerNotFoundError } from '@modules/crm/customers/domain/errors/customer-not-found.error';
 import { CUSTOMER_REPOSITORY } from '@modules/crm/customers/domain/tokens/customer-repository.token';
 import { ProspectStatus } from '@modules/crm/prospects/domain/enums/prospect-status.enum';
@@ -22,7 +22,7 @@ export class CreateQuotationHandler implements ICommandHandler<CreateQuotationCo
     @Inject(PROSPECT_STATUS_SERVICE)
     private readonly prospectStatusService: IProspectStatusService,
     @Inject(CUSTOMER_REPOSITORY)
-    private readonly customerRepository: CustomerRepository,
+    private readonly customerRepository: ICustomerRepository,
   ) {}
 
   async execute(command: CreateQuotationCommand): Promise<string> {

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserRepository } from '../../../domain/contracts/user-repository.contract';
+import { IUserRepository } from '../../../domain/contracts/user-repository.contract';
 import { User } from '../../../domain/entities/user.entity';
 import { UserEmailAlreadyExistsError } from '../../../domain/errors/user-email-already-exists.error';
 import { USER_REPOSITORY } from '../../../domain/tokens/user-repository.token';
@@ -13,7 +13,7 @@ import { CreateUserCommand } from './create-user.command';
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand, string> {
   constructor(
     @Inject(USER_REPOSITORY)
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: IUserRepository,
     @Inject(HASH_SERVICE)
     private readonly hashService: HashService,
   ) {}

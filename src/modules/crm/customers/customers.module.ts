@@ -8,6 +8,7 @@ import { DeactivateCustomerHandler } from './application/commands/update-custome
 import { UpdateCustomerHandler } from './application/commands/update-customer/update-customer.handler';
 import { GetCustomerHandler } from './application/queries/get-customer/get-customer.handler';
 import { ListCustomersHandler } from './application/queries/list-customers/list-customers.handler';
+import { SearchCustomersHandler } from './application/queries/search-customers/search-customers.handler';
 import { CUSTOMER_REPOSITORY } from './domain/tokens/customer-repository.token';
 import { CustomerOrmEntity } from './infrastructure/entities/customer.orm-entity';
 import { CustomerTypeOrmRepository } from './infrastructure/repositories/customer.typeorm-repository';
@@ -23,6 +24,7 @@ import { CustomersController } from './presentation/controllers/customers.contro
     ReactivateCustomerHandler,
     GetCustomerHandler,
     ListCustomersHandler,
+    SearchCustomersHandler,
     { provide: CUSTOMER_REPOSITORY, useClass: CustomerTypeOrmRepository },
   ],
   exports: [CUSTOMER_REPOSITORY],

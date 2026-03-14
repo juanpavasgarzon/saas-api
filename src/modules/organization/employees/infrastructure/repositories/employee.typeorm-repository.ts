@@ -6,12 +6,12 @@ import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contr
 
 import { EmployeeFilters } from '../../domain/contracts/employee-filters.contract';
 import { EmployeeProps } from '../../domain/contracts/employee-props.contract';
-import { EmployeeRepository } from '../../domain/contracts/employee-repository.contract';
+import { IEmployeeRepository } from '../../domain/contracts/employee-repository.contract';
 import { Employee } from '../../domain/entities/employee.entity';
 import { EmployeeOrmEntity } from '../entities/employee.orm-entity';
 
 @Injectable()
-export class EmployeeTypeOrmRepository implements EmployeeRepository {
+export class EmployeeTypeOrmRepository implements IEmployeeRepository {
   constructor(
     @InjectRepository(EmployeeOrmEntity)
     private readonly repository: Repository<EmployeeOrmEntity>,

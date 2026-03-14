@@ -6,13 +6,15 @@ export class CreateVendors1748000016000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE "vendors" (
-        "id"            uuid      NOT NULL,
-        "tenantId"      uuid      NOT NULL,
-        "name"          varchar   NOT NULL,
-        "email"         varchar   NOT NULL,
-        "phone"         varchar   NOT NULL DEFAULT '',
-        "address"       varchar   NOT NULL DEFAULT '',
-        "contactPerson" varchar   NOT NULL DEFAULT '',
+        "id"                   uuid      NOT NULL,
+        "tenantId"             uuid      NOT NULL,
+        "name"                 varchar   NOT NULL,
+        "company"              varchar   NULL DEFAULT NULL,
+        "identificationNumber" varchar   NOT NULL DEFAULT '',
+        "email"                varchar   NOT NULL,
+        "phone"                varchar   NOT NULL DEFAULT '',
+        "address"              varchar   NOT NULL DEFAULT '',
+        "contactPerson"        varchar   NULL DEFAULT NULL,
         "isActive"      boolean   NOT NULL DEFAULT true,
         "createdAt"     TIMESTAMP NOT NULL DEFAULT now(),
         "updatedAt"     TIMESTAMP NOT NULL DEFAULT now(),

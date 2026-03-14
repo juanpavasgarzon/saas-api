@@ -22,6 +22,21 @@ export class CreateVendorProspectDto {
   @IsString()
   company?: string;
 
+  @ApiPropertyOptional({ example: '123456789', nullable: true })
+  @IsOptional()
+  @IsString()
+  identificationNumber?: string;
+
+  @ApiPropertyOptional({ example: '100 Industrial Ave', nullable: true })
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @ApiPropertyOptional({ example: 'John Smith', nullable: true })
+  @IsOptional()
+  @IsString()
+  contactPerson?: string;
+
   @ApiPropertyOptional({ example: 'Referred by procurement team.', nullable: true })
   @IsOptional()
   @IsString()

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -38,6 +39,7 @@ import { UpdateProspectCommand } from '../../application/commands/update-prospec
 import { UpdateProspectStatusCommand } from '../../application/commands/update-prospect-status/update-prospect-status.command';
 import { GetProspectQuery } from '../../application/queries/get-prospect/get-prospect.query';
 import { ListProspectsQuery } from '../../application/queries/list-prospects/list-prospects.query';
+import { SearchProspectsQuery } from '../../application/queries/search-prospects/search-prospects.query';
 import { type Prospect } from '../../domain/entities/prospect.entity';
 import { ProspectStatus } from '../../domain/enums/prospect-status.enum';
 import { CreateProspectDto } from '../dtos/create-prospect.dto';
@@ -68,6 +70,9 @@ export class ProspectsController {
       dto.email ?? null,
       dto.phone ?? null,
       dto.company ?? null,
+      dto.identificationNumber ?? null,
+      dto.address ?? null,
+      dto.contactPerson ?? null,
       dto.source ?? null,
       dto.notes ?? null,
     );
@@ -89,12 +94,13 @@ export class ProspectsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listProspects(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('status') status?: ProspectStatus,
     @Query('search') search?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<ProspectResponseDto>> {
-    const listProspectsQuery = new ListProspectsQuery(tenantId, { status, search }, page, limit);
+    const filters = { status, search };
+    const listProspectsQuery = new ListProspectsQuery(tenantId, filters, page, limit);
     const result = await this.queryBus.execute<ListProspectsQuery, PaginatedResult<Prospect>>(
       listProspectsQuery,
     );
@@ -102,6 +108,27 @@ export class ProspectsController {
       ...result,
       items: result.items.map((p) => new ProspectResponseDto(p)),
     };
+  }
+
+  @Get('search')
+  @RequirePermission(Permission.CrmProspectsRead)
+  @ApiOperation({
+    summary: 'Search prospects',
+    description: 'Searches prospects by name, identification number, contact person, or company.',
+  })
+  @ApiQuery({ name: 'search', required: true })
+  @ApiQuery({ name: 'limit', required: false, example: 20 })
+  @ApiOkResponse({ description: 'List of matching prospects' })
+  async searchProspects(
+    @CurrentTenant() tenantId: string,
+    @Query('search') search: string,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+  ): Promise<ProspectResponseDto[]> {
+    const searchProspectsQuery = new SearchProspectsQuery(tenantId, search, limit);
+    const result = await this.queryBus.execute<SearchProspectsQuery, Prospect[]>(
+      searchProspectsQuery,
+    );
+    return result.map((p) => new ProspectResponseDto(p));
   }
 
   @Get(':id')
@@ -138,6 +165,9 @@ export class ProspectsController {
       dto.email ?? null,
       dto.phone ?? null,
       dto.company ?? null,
+      dto.identificationNumber ?? null,
+      dto.address ?? null,
+      dto.contactPerson ?? null,
       dto.source ?? null,
       dto.notes ?? null,
     );

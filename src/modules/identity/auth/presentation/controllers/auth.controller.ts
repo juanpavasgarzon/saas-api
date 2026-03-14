@@ -1,8 +1,17 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -12,6 +21,11 @@ import {
 import { Request } from 'express';
 
 import { type AuthUserData } from '@shared/application/contracts/auth-user-data.contract';
+import { ICompanyProfileService } from '@shared/application/contracts/company-profile.contract';
+import { COMPANY_PROFILE_SERVICE } from '@shared/application/tokens/company-profile.token';
+import { ROLE_PERMISSIONS } from '@shared/domain/enums/role-permissions';
+import { UserRole } from '@shared/domain/enums/user-role.enum';
+import { CurrentTenant } from '@shared/presentation/decorators/current-tenant.decorator';
 import { Public } from '@shared/presentation/decorators/public.decorator';
 
 import { LoginCommand } from '../../application/commands/login/login.command';
@@ -21,7 +35,6 @@ import { type RegisterResult } from '../../application/contracts/register.contra
 import { type TokenPair } from '../../application/contracts/token-pair.contract';
 import { LoginDto } from '../dtos/login.dto';
 import { MeResponseDto } from '../dtos/me-response.dto';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { RegisterResponseDto } from '../dtos/register-response.dto';
 import { TokenResponseDto } from '../dtos/token-response.dto';
@@ -30,7 +43,11 @@ import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 @ApiTags('Identity')
 @Controller('identity/auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    @Inject(COMPANY_PROFILE_SERVICE)
+    private readonly companyProfileService: ICompanyProfileService,
+  ) {}
 
   @Post('register')
   @Public()
@@ -69,7 +86,6 @@ export class AuthController {
     summary: 'Refresh tokens',
     description: 'Validates the refresh token and issues a new access + refresh token pair.',
   })
-  @ApiBody({ type: RefreshTokenDto })
   @ApiOkResponse({ type: TokenResponseDto })
   @ApiUnauthorizedResponse({ description: 'Refresh token invalid or expired' })
   async refresh(@Req() req: Request): Promise<TokenResponseDto> {
@@ -79,6 +95,18 @@ export class AuthController {
     return new TokenResponseDto(pair);
   }
 
+  // @Post('recover-password')
+  // @Public()
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOperation({
+  //   summary: 'Recover password',
+  //   description: 'Initiates the password recovery process',
+  // })
+  // @ApiOkResponse({ description: 'Password recovery initiated (placeholder)' })
+  // async recoverPassword(@Body('email') email: string): Promise<void> {
+  //   return {};
+  // }
+
   @Get('me')
   @ApiBearerAuth('JWT')
   @ApiOperation({
@@ -87,8 +115,11 @@ export class AuthController {
   })
   @ApiOkResponse({ type: MeResponseDto })
   @ApiUnauthorizedResponse({ description: 'Invalid or expired token' })
-  getMe(@Req() req: Request): MeResponseDto {
+  async getMe(@CurrentTenant() tenant: string, @Req() req: Request): Promise<MeResponseDto> {
+    const profile = await this.companyProfileService.getProfile(tenant);
     const user = req.user as AuthUserData;
-    return new MeResponseDto(user);
+    const role = user.role as UserRole;
+    const permissions = ROLE_PERMISSIONS[role] || [];
+    return new MeResponseDto(user, profile.name, profile.logo, permissions);
   }
 }

@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { ForbiddenError } from '@shared/domain/errors/forbidden.error';
 
-import { UserRepository } from '../../../domain/contracts/user-repository.contract';
+import { IUserRepository } from '../../../domain/contracts/user-repository.contract';
 import { UserNotFoundError } from '../../../domain/errors/user-not-found.error';
 import { USER_REPOSITORY } from '../../../domain/tokens/user-repository.token';
 import { DeactivateUserCommand } from './deactivate-user.command';
@@ -12,7 +12,7 @@ import { DeactivateUserCommand } from './deactivate-user.command';
 export class DeactivateUserHandler implements ICommandHandler<DeactivateUserCommand> {
   constructor(
     @Inject(USER_REPOSITORY)
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async execute(command: DeactivateUserCommand): Promise<void> {

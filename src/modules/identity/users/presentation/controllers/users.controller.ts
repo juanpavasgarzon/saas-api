@@ -1,5 +1,6 @@
 import {
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -56,8 +57,8 @@ export class UsersController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listUsers(
     @CurrentTenant() tenantId: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<PaginatedResult<UserResponseDto>> {
     const query = new ListUsersQuery(tenantId, page, limit);
     const result = await this.queryBus.execute<ListUsersQuery, PaginatedResult<User>>(query);

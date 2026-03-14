@@ -5,14 +5,14 @@ import { ILike, Repository } from 'typeorm';
 import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
 
 import { type ProjectFilters } from '../../domain/contracts/project-filters.contract';
-import { type ProjectRepository } from '../../domain/contracts/project-repository.contract';
+import { type IProjectRepository } from '../../domain/contracts/project-repository.contract';
 import { Project } from '../../domain/entities/project.entity';
 import { ProjectMember } from '../../domain/entities/project-member.entity';
 import { ProjectOrmEntity } from '../entities/project.orm-entity';
 import { ProjectMemberOrmEntity } from '../entities/project-member.orm-entity';
 
 @Injectable()
-export class ProjectTypeOrmRepository implements ProjectRepository {
+export class ProjectTypeOrmRepository implements IProjectRepository {
   constructor(
     @InjectRepository(ProjectOrmEntity)
     private readonly repository: Repository<ProjectOrmEntity>,

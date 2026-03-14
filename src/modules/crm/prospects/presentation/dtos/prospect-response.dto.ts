@@ -20,6 +20,15 @@ export class ProspectResponseDto {
   @ApiPropertyOptional({ example: 'Acme Corp', nullable: true })
   company: string | null;
 
+  @ApiPropertyOptional({ example: '123456789', nullable: true })
+  identificationNumber: string | null;
+
+  @ApiPropertyOptional({ example: '100 Main St', nullable: true })
+  address: string | null;
+
+  @ApiPropertyOptional({ example: 'Jane Smith', nullable: true })
+  contactPerson: string | null;
+
   @ApiPropertyOptional({ enum: ProspectSource, nullable: true })
   source: ProspectSource | null;
 
@@ -41,6 +50,9 @@ export class ProspectResponseDto {
     this.email = prospect.email;
     this.phone = prospect.phone;
     this.company = prospect.company;
+    this.identificationNumber = prospect.identificationNumber;
+    this.address = prospect.address;
+    this.contactPerson = prospect.contactPerson;
     this.source = prospect.source;
     this.status = prospect.status;
     this.notes = prospect.notes;

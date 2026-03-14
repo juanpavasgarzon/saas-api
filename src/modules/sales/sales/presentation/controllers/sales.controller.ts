@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpStatus,
@@ -90,10 +91,10 @@ export class SalesController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listSales(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('customerId') customerId?: string,
     @Query('status') status?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<SaleListResponseDto>> {
     const listQuery = new ListSalesQuery(tenantId, { customerId, status }, page, limit);
     const result = await this.queryBus.execute<ListSalesQuery, PaginatedResult<Sale>>(listQuery);

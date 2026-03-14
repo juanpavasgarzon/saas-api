@@ -10,6 +10,9 @@ export class Prospect extends AggregateRootBase {
   private _email: string | null;
   private _phone: string | null;
   private _company: string | null;
+  private _identificationNumber: string | null;
+  private _address: string | null;
+  private _contactPerson: string | null;
   private _source: ProspectSource | null;
   private _status: ProspectStatus;
   private _notes: string | null;
@@ -20,6 +23,9 @@ export class Prospect extends AggregateRootBase {
     this._email = props.email;
     this._phone = props.phone;
     this._company = props.company;
+    this._identificationNumber = props.identificationNumber;
+    this._address = props.address;
+    this._contactPerson = props.contactPerson;
     this._source = props.source;
     this._status = props.status;
     this._notes = props.notes;
@@ -31,6 +37,9 @@ export class Prospect extends AggregateRootBase {
     email: string | null,
     phone: string | null,
     company: string | null,
+    identificationNumber: string | null,
+    address: string | null,
+    contactPerson: string | null,
     source: ProspectSource | null,
     notes: string | null,
   ): Prospect {
@@ -41,6 +50,9 @@ export class Prospect extends AggregateRootBase {
       email,
       phone,
       company,
+      identificationNumber,
+      address,
+      contactPerson,
       source,
       status: ProspectStatus.NEW,
       notes,
@@ -53,31 +65,43 @@ export class Prospect extends AggregateRootBase {
     return new Prospect(props);
   }
 
-  get name(): string {
+  get name() {
     return this._name;
   }
 
-  get email(): string | null {
+  get email() {
     return this._email;
   }
 
-  get phone(): string | null {
+  get phone() {
     return this._phone;
   }
 
-  get company(): string | null {
+  get company() {
     return this._company;
   }
 
-  get source(): ProspectSource | null {
+  get identificationNumber() {
+    return this._identificationNumber;
+  }
+
+  get address() {
+    return this._address;
+  }
+
+  get contactPerson() {
+    return this._contactPerson;
+  }
+
+  get source() {
     return this._source;
   }
 
-  get status(): ProspectStatus {
+  get status() {
     return this._status;
   }
 
-  get notes(): string | null {
+  get notes() {
     return this._notes;
   }
 
@@ -86,6 +110,9 @@ export class Prospect extends AggregateRootBase {
     email: string | null,
     phone: string | null,
     company: string | null,
+    identificationNumber: string | null,
+    address: string | null,
+    contactPerson: string | null,
     source: ProspectSource | null,
     notes: string | null,
   ): void {
@@ -93,8 +120,12 @@ export class Prospect extends AggregateRootBase {
     this._email = email;
     this._phone = phone;
     this._company = company;
+    this._identificationNumber = identificationNumber;
+    this._address = address;
+    this._contactPerson = contactPerson;
     this._source = source;
     this._notes = notes;
+
     this.touch();
   }
 

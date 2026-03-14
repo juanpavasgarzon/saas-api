@@ -3,7 +3,7 @@ import { type PaginatedResult } from '@shared/domain/contracts/paginated-result.
 import { type Employee } from '../entities/employee.entity';
 import { type EmployeeFilters } from './employee-filters.contract';
 
-export interface EmployeeRepository {
+export interface IEmployeeRepository {
   findById(id: string, tenantId: string): Promise<Employee | null>;
   findByEmail(email: string, tenantId: string): Promise<Employee | null>;
   findAll(

@@ -7,6 +7,9 @@ export interface IProspectProps {
   email: string | null;
   phone: string | null;
   company: string | null;
+  identificationNumber: string | null;
+  address: string | null;
+  contactPerson: string | null;
   notes: string | null;
   status: VendorProspectStatus;
   createdAt: Date;

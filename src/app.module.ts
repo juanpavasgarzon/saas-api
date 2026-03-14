@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD, RouterModule } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
-
-import { EmailModule } from '@shared/infrastructure/email/email.module';
 
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
@@ -14,6 +12,7 @@ import { OrganizationModule } from './modules/organization/organization.module';
 import { ProcurementModule } from './modules/procurement/procurement.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { SalesModule } from './modules/sales/sales.module';
+import { EmailModule } from './shared/infrastructure/email/email.module';
 import { NotificationModule } from './shared/infrastructure/notifications/notification.module';
 import { OutboxModule } from './shared/infrastructure/outbox/outbox.module';
 import { JwtAuthGuard } from './shared/presentation/guards/jwt-auth.guard';
@@ -35,16 +34,6 @@ import { PermissionsGuard } from './shared/presentation/guards/permissions.guard
     SalesModule,
     ProcurementModule,
     InventoryModule,
-    RouterModule.register([
-      { path: 'identity', module: IdentityModule },
-      { path: 'organization', module: OrganizationModule },
-      { path: 'crm', module: CrmModule },
-      { path: 'projects', module: ProjectsModule },
-      { path: 'finance', module: FinanceModule },
-      { path: 'sales', module: SalesModule },
-      { path: 'procurement', module: ProcurementModule },
-      { path: 'inventory', module: InventoryModule },
-    ]),
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

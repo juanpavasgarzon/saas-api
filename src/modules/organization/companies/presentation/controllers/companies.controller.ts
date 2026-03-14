@@ -74,7 +74,7 @@ export class CompaniesController {
     @CurrentTenant() tenantId: string,
     @Body() dto: UpdateCompanyDto,
   ): Promise<void> {
-    const updateCompanyCommand = new UpdateCompanyCommand(tenantId, dto.name, dto.logo ?? null);
+    const updateCompanyCommand = new UpdateCompanyCommand(tenantId, dto.name, null);
     await this.commandBus.execute(updateCompanyCommand);
   }
 

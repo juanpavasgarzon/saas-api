@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpStatus,
@@ -87,11 +88,11 @@ export class MovementsController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listMovements(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('productId') productId?: string,
     @Query('warehouseId') warehouseId?: string,
     @Query('type') type?: MovementType,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<MovementResponseDto>> {
     const query = new ListMovementsQuery(tenantId, { productId, warehouseId, type }, page, limit);
     const result = await this.queryBus.execute<ListMovementsQuery, PaginatedResult<Movement>>(

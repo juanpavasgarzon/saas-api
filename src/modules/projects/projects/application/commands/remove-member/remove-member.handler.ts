@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { type ProjectRepository } from '../../../domain/contracts/project-repository.contract';
+import { type IProjectRepository } from '../../../domain/contracts/project-repository.contract';
 import { ProjectNotFoundError } from '../../../domain/errors/project.errors';
 import { PROJECT_REPOSITORY } from '../../../domain/tokens/project-repository.token';
 import { RemoveMemberCommand } from './remove-member.command';
@@ -10,7 +10,7 @@ import { RemoveMemberCommand } from './remove-member.command';
 export class RemoveMemberHandler implements ICommandHandler<RemoveMemberCommand> {
   constructor(
     @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: ProjectRepository,
+    private readonly projectRepository: IProjectRepository,
   ) {}
 
   async execute(command: RemoveMemberCommand): Promise<void> {

@@ -11,6 +11,7 @@ export interface IProspectRepository {
     page: number,
     limit: number,
   ): Promise<PaginatedResult<Prospect>>;
+  search(tenantId: string, search: string, limit: number): Promise<Prospect[]>;
   save(prospect: Prospect): Promise<void>;
   delete(id: string, tenantId: string): Promise<void>;
 }

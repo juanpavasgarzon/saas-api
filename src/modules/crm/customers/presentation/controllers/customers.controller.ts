@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -39,7 +40,8 @@ import { DeactivateCustomerCommand } from '../../application/commands/update-cus
 import { UpdateCustomerCommand } from '../../application/commands/update-customer/update-customer.command';
 import { GetCustomerQuery } from '../../application/queries/get-customer/get-customer.query';
 import { ListCustomersQuery } from '../../application/queries/list-customers/list-customers.query';
-import { type Customer } from '../../domain/entities/customer.entity';
+import { SearchCustomersQuery } from '../../application/queries/search-customers/search-customers.query';
+import { Customer } from '../../domain/entities/customer.entity';
 import { CreateCustomerDto } from '../dtos/create-customer.dto';
 import { CustomerResponseDto } from '../dtos/customer-response.dto';
 import { UpdateCustomerDto } from '../dtos/update-customer.dto';
@@ -66,8 +68,10 @@ export class CustomersController {
       dto.name,
       dto.email,
       dto.phone,
+      dto.company ?? null,
+      dto.identificationNumber,
       dto.address,
-      dto.contactPerson,
+      dto.contactPerson ?? null,
     );
     const id = await this.commandBus.execute<CreateCustomerCommand, string>(createCustomerCommand);
     return new CreatedResponseDto(id);
@@ -82,9 +86,9 @@ export class CustomersController {
   @ApiQuery({ name: 'limit', required: false, example: 20 })
   async listCustomers(
     @CurrentTenant() tenantId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('search') search?: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 20,
   ): Promise<PaginatedResult<CustomerResponseDto>> {
     const listCustomersQuery = new ListCustomersQuery(tenantId, { search }, page, limit);
     const result = await this.queryBus.execute<ListCustomersQuery, PaginatedResult<Customer>>(
@@ -94,6 +98,30 @@ export class CustomersController {
       ...result,
       items: result.items.map((c) => new CustomerResponseDto(c)),
     };
+  }
+
+  @Get('search')
+  @RequirePermission(Permission.CrmCustomersRead)
+  @ApiOperation({
+    summary: 'Search customers',
+    description: 'Searches customers by name, identification number, contact person, or company.',
+  })
+  @ApiQuery({ name: 'search', required: true })
+  @ApiQuery({ name: 'limit', required: false, example: 20 })
+  @ApiOkResponse({
+    description: 'List of customers matching the search criteria',
+    type: [CustomerResponseDto],
+  })
+  async searchCustomers(
+    @CurrentTenant() tenantId: string,
+    @Query('search') search: string,
+    @Query('limit', ParseIntPipe) limit = 20,
+  ): Promise<CustomerResponseDto[]> {
+    const searchCustomersQuery = new SearchCustomersQuery(tenantId, search, limit);
+    const customers = await this.queryBus.execute<SearchCustomersQuery, Customer[]>(
+      searchCustomersQuery,
+    );
+    return customers.map((c) => new CustomerResponseDto(c));
   }
 
   @Get(':id')
@@ -129,8 +157,10 @@ export class CustomersController {
       dto.name,
       dto.email,
       dto.phone,
+      dto.company ?? null,
+      dto.identificationNumber,
       dto.address,
-      dto.contactPerson,
+      dto.contactPerson ?? null,
     );
     await this.commandBus.execute(updateCustomerCommand);
   }

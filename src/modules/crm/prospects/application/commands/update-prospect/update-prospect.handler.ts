@@ -24,6 +24,9 @@ export class UpdateProspectHandler implements ICommandHandler<UpdateProspectComm
       command.email,
       command.phone,
       command.company,
+      command.identificationNumber,
+      command.address,
+      command.contactPerson,
       command.source,
       command.notes,
     );

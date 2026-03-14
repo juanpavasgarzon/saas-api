@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { type ProjectRepository } from '../../../domain/contracts/project-repository.contract';
+import { type IProjectRepository } from '../../../domain/contracts/project-repository.contract';
 import { ProjectNotFoundError } from '../../../domain/errors/project.errors';
 import { PROJECT_REPOSITORY } from '../../../domain/tokens/project-repository.token';
 import { ChangeProjectStatusCommand } from './change-project-status.command';
@@ -10,7 +10,7 @@ import { ChangeProjectStatusCommand } from './change-project-status.command';
 export class ChangeProjectStatusHandler implements ICommandHandler<ChangeProjectStatusCommand> {
   constructor(
     @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: ProjectRepository,
+    private readonly projectRepository: IProjectRepository,
   ) {}
 
   async execute(command: ChangeProjectStatusCommand): Promise<void> {

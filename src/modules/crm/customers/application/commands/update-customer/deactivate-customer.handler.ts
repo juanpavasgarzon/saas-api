@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { CustomerRepository } from '../../../domain/contracts/customer-repository.contract';
+import { ICustomerRepository } from '../../../domain/contracts/customer-repository.contract';
 import { CustomerNotFoundError } from '../../../domain/errors/customer-not-found.error';
 import { CUSTOMER_REPOSITORY } from '../../../domain/tokens/customer-repository.token';
 import { DeactivateCustomerCommand } from './deactivate-customer.command';
@@ -10,7 +10,7 @@ import { DeactivateCustomerCommand } from './deactivate-customer.command';
 export class DeactivateCustomerHandler implements ICommandHandler<DeactivateCustomerCommand> {
   constructor(
     @Inject(CUSTOMER_REPOSITORY)
-    private readonly customerRepository: CustomerRepository,
+    private readonly customerRepository: ICustomerRepository,
   ) {}
 
   async execute(command: DeactivateCustomerCommand): Promise<void> {

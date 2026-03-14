@@ -61,6 +61,8 @@ export class VendorTypeOrmRepository implements IVendorRepository {
       name: orm.name,
       email: orm.email,
       phone: orm.phone,
+      company: orm.company,
+      identificationNumber: orm.identificationNumber,
       address: orm.address,
       contactPerson: orm.contactPerson,
       isActive: orm.isActive,
@@ -77,6 +79,8 @@ export class VendorTypeOrmRepository implements IVendorRepository {
     orm.name = vendor.name;
     orm.email = vendor.email;
     orm.phone = vendor.phone;
+    orm.company = vendor.company;
+    orm.identificationNumber = vendor.identificationNumber;
     orm.address = vendor.address;
     orm.contactPerson = vendor.contactPerson;
     orm.isActive = vendor.isActive;

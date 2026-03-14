@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { type ProjectRepository } from '../../../domain/contracts/project-repository.contract';
+import { type IProjectRepository } from '../../../domain/contracts/project-repository.contract';
 import { Project } from '../../../domain/entities/project.entity';
 import { PROJECT_REPOSITORY } from '../../../domain/tokens/project-repository.token';
 import { CreateProjectCommand } from './create-project.command';
@@ -10,7 +10,7 @@ import { CreateProjectCommand } from './create-project.command';
 export class CreateProjectHandler implements ICommandHandler<CreateProjectCommand, string> {
   constructor(
     @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: ProjectRepository,
+    private readonly projectRepository: IProjectRepository,
   ) {}
 
   async execute(command: CreateProjectCommand): Promise<string> {

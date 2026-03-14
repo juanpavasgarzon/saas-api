@@ -20,6 +20,9 @@ export class CreateProspectHandler implements ICommandHandler<CreateProspectComm
       command.email,
       command.phone,
       command.company,
+      command.identificationNumber,
+      command.address,
+      command.contactPerson,
       command.source,
       command.notes,
     );

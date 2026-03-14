@@ -19,6 +19,14 @@ export class UpdateCustomerDto {
   @IsString()
   phone!: string;
 
+  @ApiProperty({ example: 'Acme Technologies Inc.', description: 'Customer company name' })
+  @IsString()
+  company!: string;
+
+  @ApiProperty({ example: '123456789', description: 'Customer identification number' })
+  @IsString()
+  identificationNumber!: string;
+
   @ApiProperty({ example: '100 Main St, New York, NY', description: 'Customer address' })
   @IsString()
   address!: string;

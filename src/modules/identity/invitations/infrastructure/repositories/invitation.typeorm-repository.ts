@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { PaginatedResult } from '@shared/domain/contracts/paginated-result.contract';
+
 import { IInvitationRepository } from '../../domain/contracts/invitation-repository.contract';
 import { Invitation } from '../../domain/entities/invitation.entity';
 import { InvitationOrmEntity } from '../entities/invitation.orm-entity';
@@ -23,6 +25,21 @@ export class InvitationTypeOrmRepository implements IInvitationRepository {
       where: { tenantId, email: email.toLowerCase().trim() },
     });
     return orm ? this.toDomain(orm) : null;
+  }
+
+  async findAll(
+    tenantId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedResult<Invitation>> {
+    const [items, total] = await this.repo.findAndCount({
+      where: { tenantId },
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return { items: items.map((orm) => this.toDomain(orm)), total, page, limit };
   }
 
   async save(invitation: Invitation): Promise<void> {
