@@ -11,11 +11,11 @@ export class DealItemOrmEntity {
   id!: string;
 
   @Column({ type: 'uuid' })
-  @Index('IDX_deal_items_sale')
+  @Index('IDX_deal_items_deal')
   dealId!: string;
 
-  @ManyToOne(() => DealOrmEntity, (s) => s.items, { onDelete: 'CASCADE' })
-  sale!: DealOrmEntity;
+  @ManyToOne(() => DealOrmEntity, (d) => d.items, { onDelete: 'CASCADE' })
+  deal!: DealOrmEntity;
 
   @Column({ type: 'enum', enum: LineItemType })
   itemType!: LineItemType;

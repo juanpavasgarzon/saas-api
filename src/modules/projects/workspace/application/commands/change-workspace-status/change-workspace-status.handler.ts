@@ -1,22 +1,22 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
-import { type IProjectRepository } from '../../../domain/contracts/workspace-repository.contract';
-import { ProjectNotFoundError } from '../../../domain/errors/workspace.errors';
-import { PROJECT_REPOSITORY } from '../../../domain/tokens/workspace-repository.token';
-import { ChangeProjectStatusCommand } from './change-workspace-status.command';
+import { type IWorkspaceRepository } from '../../../domain/contracts/workspace-repository.contract';
+import { WorkspaceNotFoundError } from '../../../domain/errors/workspace.errors';
+import { WORKSPACE_REPOSITORY } from '../../../domain/tokens/workspace-repository.token';
+import { ChangeWorkspaceStatusCommand } from './change-workspace-status.command';
 
-@CommandHandler(ChangeProjectStatusCommand)
-export class ChangeProjectStatusHandler implements ICommandHandler<ChangeProjectStatusCommand> {
+@CommandHandler(ChangeWorkspaceStatusCommand)
+export class ChangeWorkspaceStatusHandler implements ICommandHandler<ChangeWorkspaceStatusCommand> {
   constructor(
-    @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: IProjectRepository,
+    @Inject(WORKSPACE_REPOSITORY)
+    private readonly projectRepository: IWorkspaceRepository,
   ) {}
 
-  async execute(command: ChangeProjectStatusCommand): Promise<void> {
+  async execute(command: ChangeWorkspaceStatusCommand): Promise<void> {
     const project = await this.projectRepository.findById(command.projectId, command.tenantId);
     if (!project) {
-      throw new ProjectNotFoundError(command.projectId);
+      throw new WorkspaceNotFoundError(command.projectId);
     }
 
     switch (command.action) {

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
-import { type SaleFilters } from '../../domain/contracts/deal-filters.contract';
+import { type DealFilters } from '../../domain/contracts/deal-filters.contract';
 import { type DealItemProps } from '../../domain/contracts/deal-item-props.contract';
 import { type DealProps } from '../../domain/contracts/deal-props.contract';
 import { type IDealRepository } from '../../domain/contracts/deal-repository.contract';
@@ -26,7 +26,7 @@ export class DealTypeOrmRepository implements IDealRepository {
 
   async findAll(
     tenantId: string,
-    filters: SaleFilters,
+    filters: DealFilters,
     page: number,
     limit: number,
   ): Promise<PaginatedResult<Deal>> {

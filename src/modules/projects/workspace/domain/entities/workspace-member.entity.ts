@@ -1,19 +1,19 @@
 import { generateId } from '@utils/uuid.util';
 
-import { type ProjectMemberProps } from '../contracts/workspace-member-props.contract';
-import { ProjectMemberRole } from '../enums/workspace-member-role.enum';
+import { type WorkspaceMemberProps } from '../contracts/workspace-member-props.contract';
+import { WorkspaceMemberRole } from '../enums/workspace-member-role.enum';
 
-export class ProjectMember {
+export class WorkspaceMember {
   private readonly _id: string;
-  private readonly _projectId: string;
+  private readonly _workspaceId: string;
   private readonly _tenantId: string;
   private readonly _employeeId: string;
-  private _role: ProjectMemberRole;
+  private _role: WorkspaceMemberRole;
   private readonly _joinedAt: Date;
 
-  private constructor(props: ProjectMemberProps) {
+  private constructor(props: WorkspaceMemberProps) {
     this._id = props.id;
-    this._projectId = props.projectId;
+    this._workspaceId = props.workspaceId;
     this._tenantId = props.tenantId;
     this._employeeId = props.employeeId;
     this._role = props.role;
@@ -21,14 +21,14 @@ export class ProjectMember {
   }
 
   static create(
-    projectId: string,
+    workspaceId: string,
     tenantId: string,
     employeeId: string,
-    role: ProjectMemberRole = ProjectMemberRole.MEMBER,
-  ): ProjectMember {
-    return new ProjectMember({
+    role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER,
+  ): WorkspaceMember {
+    return new WorkspaceMember({
       id: generateId(),
-      projectId,
+      workspaceId,
       tenantId,
       employeeId,
       role,
@@ -36,16 +36,16 @@ export class ProjectMember {
     });
   }
 
-  static reconstitute(props: ProjectMemberProps): ProjectMember {
-    return new ProjectMember(props);
+  static reconstitute(props: WorkspaceMemberProps): WorkspaceMember {
+    return new WorkspaceMember(props);
   }
 
   get id(): string {
     return this._id;
   }
 
-  get projectId(): string {
-    return this._projectId;
+  get workspaceId(): string {
+    return this._workspaceId;
   }
 
   get tenantId(): string {
@@ -56,7 +56,7 @@ export class ProjectMember {
     return this._employeeId;
   }
 
-  get role(): ProjectMemberRole {
+  get role(): WorkspaceMemberRole {
     return this._role;
   }
 
@@ -64,7 +64,7 @@ export class ProjectMember {
     return this._joinedAt;
   }
 
-  changeRole(role: ProjectMemberRole): void {
+  changeRole(role: WorkspaceMemberRole): void {
     this._role = role;
   }
 }

@@ -9,13 +9,13 @@ import { DEAL_REPOSITORY } from '../../../domain/tokens/deal-repository.token';
 import { ListDealsQuery } from './list-deals.query';
 
 @QueryHandler(ListDealsQuery)
-export class ListSalesHandler implements IQueryHandler<ListDealsQuery, PaginatedResult<Deal>> {
+export class ListDealsHandler implements IQueryHandler<ListDealsQuery, PaginatedResult<Deal>> {
   constructor(
     @Inject(DEAL_REPOSITORY)
-    private readonly saleRepository: IDealRepository,
+    private readonly dealRepository: IDealRepository,
   ) {}
 
   async execute(query: ListDealsQuery): Promise<PaginatedResult<Deal>> {
-    return this.saleRepository.findAll(query.tenantId, query.filters, query.page, query.limit);
+    return this.dealRepository.findAll(query.tenantId, query.filters, query.page, query.limit);
   }
 }

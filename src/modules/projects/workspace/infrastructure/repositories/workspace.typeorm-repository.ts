@@ -4,21 +4,21 @@ import { ILike, Repository } from 'typeorm';
 
 import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
-import { type ProjectFilters } from '../../domain/contracts/workspace-filters.contract';
-import { type IProjectRepository } from '../../domain/contracts/workspace-repository.contract';
-import { Project } from '../../domain/entities/workspace.entity';
-import { ProjectMember } from '../../domain/entities/workspace-member.entity';
-import { ProjectOrmEntity } from '../entities/workspace.orm-entity';
-import { ProjectMemberOrmEntity } from '../entities/workspace-member.orm-entity';
+import { type WorkspaceFilters } from '../../domain/contracts/workspace-filters.contract';
+import { type IWorkspaceRepository } from '../../domain/contracts/workspace-repository.contract';
+import { Workspace } from '../../domain/entities/workspace.entity';
+import { WorkspaceMember } from '../../domain/entities/workspace-member.entity';
+import { WorkspaceOrmEntity } from '../entities/workspace.orm-entity';
+import { WorkspaceMemberOrmEntity } from '../entities/workspace-member.orm-entity';
 
 @Injectable()
-export class ProjectTypeOrmRepository implements IProjectRepository {
+export class WorkspaceTypeOrmRepository implements IWorkspaceRepository {
   constructor(
-    @InjectRepository(ProjectOrmEntity)
-    private readonly repository: Repository<ProjectOrmEntity>,
+    @InjectRepository(WorkspaceOrmEntity)
+    private readonly repository: Repository<WorkspaceOrmEntity>,
   ) {}
 
-  async findById(id: string, tenantId: string): Promise<Project | null> {
+  async findById(id: string, tenantId: string): Promise<Workspace | null> {
     const orm = await this.repository.findOne({
       where: { id, tenantId },
       relations: ['members'],
@@ -29,10 +29,10 @@ export class ProjectTypeOrmRepository implements IProjectRepository {
 
   async findAll(
     tenantId: string,
-    filters: ProjectFilters,
+    filters: WorkspaceFilters,
     page: number,
     limit: number,
-  ): Promise<PaginatedResult<Project>> {
+  ): Promise<PaginatedResult<Workspace>> {
     const where: Record<string, unknown> = { tenantId };
     if (filters.customerId) {
       where.customerId = filters.customerId;
@@ -61,7 +61,7 @@ export class ProjectTypeOrmRepository implements IProjectRepository {
     };
   }
 
-  async save(project: Project): Promise<void> {
+  async save(project: Workspace): Promise<void> {
     await this.repository.save(this.toOrm(project));
   }
 
@@ -69,10 +69,10 @@ export class ProjectTypeOrmRepository implements IProjectRepository {
     await this.repository.delete({ id, tenantId });
   }
 
-  private toDomain(orm: ProjectOrmEntity): Project {
+  private toDomain(orm: WorkspaceOrmEntity): Workspace {
     const members = (orm.members ?? []).map((m) => this.memberToDomain(m));
 
-    return Project.reconstitute({
+    return Workspace.reconstitute({
       id: orm.id,
       tenantId: orm.tenantId,
       name: orm.name,
@@ -88,10 +88,10 @@ export class ProjectTypeOrmRepository implements IProjectRepository {
     });
   }
 
-  private memberToDomain(orm: ProjectMemberOrmEntity): ProjectMember {
-    return ProjectMember.reconstitute({
+  private memberToDomain(orm: WorkspaceMemberOrmEntity): WorkspaceMember {
+    return WorkspaceMember.reconstitute({
       id: orm.id,
-      projectId: orm.projectId,
+      workspaceId: orm.workspaceId,
       tenantId: orm.tenantId,
       employeeId: orm.employeeId,
       role: orm.role,
@@ -99,8 +99,8 @@ export class ProjectTypeOrmRepository implements IProjectRepository {
     });
   }
 
-  private toOrm(project: Project): ProjectOrmEntity {
-    const orm = new ProjectOrmEntity();
+  private toOrm(project: Workspace): WorkspaceOrmEntity {
+    const orm = new WorkspaceOrmEntity();
     orm.id = project.id;
     orm.tenantId = project.tenantId;
     orm.name = project.name;
@@ -115,10 +115,10 @@ export class ProjectTypeOrmRepository implements IProjectRepository {
     return orm;
   }
 
-  private memberToOrm(member: ProjectMember): ProjectMemberOrmEntity {
-    const orm = new ProjectMemberOrmEntity();
+  private memberToOrm(member: WorkspaceMember): WorkspaceMemberOrmEntity {
+    const orm = new WorkspaceMemberOrmEntity();
     orm.id = member.id;
-    orm.projectId = member.projectId;
+    orm.workspaceId = member.workspaceId;
     orm.tenantId = member.tenantId;
     orm.employeeId = member.employeeId;
     orm.role = member.role;

@@ -33,22 +33,22 @@ import { CurrentTenant } from '@core/presentation/decorators/current-tenant.deco
 import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
 import { CreatedResponseDto } from '@core/presentation/dtos/created-response.dto';
 
-import { ChangeProjectStatusCommand } from '../../application/commands/change-workspace-status/change-workspace-status.command';
-import { CreateProjectCommand } from '../../application/commands/create-workspace/create-workspace.command';
-import { DeleteProjectCommand } from '../../application/commands/delete-workspace/delete-workspace.command';
-import { UpdateProjectCommand } from '../../application/commands/update-workspace/update-workspace.command';
-import { GetProjectQuery } from '../../application/queries/get-workspace/get-workspace.query';
-import { ListProjectsQuery } from '../../application/queries/list-workspaces/list-workspaces.query';
-import { type Project } from '../../domain/entities/workspace.entity';
-import { ChangeProjectStatusDto } from '../dtos/change-workspace-status.dto';
-import { CreateProjectDto } from '../dtos/create-workspace.dto';
-import { UpdateProjectDto } from '../dtos/update-workspace.dto';
-import { ProjectResponseDto } from '../dtos/workspace-response.dto';
+import { ChangeWorkspaceStatusCommand } from '../../application/commands/change-workspace-status/change-workspace-status.command';
+import { CreateWorkspaceCommand } from '../../application/commands/create-workspace/create-workspace.command';
+import { DeleteWorkspaceCommand } from '../../application/commands/delete-workspace/delete-workspace.command';
+import { UpdateWorkspaceCommand } from '../../application/commands/update-workspace/update-workspace.command';
+import { GetWorkspaceQuery } from '../../application/queries/get-workspace/get-workspace.query';
+import { ListWorkspacesQuery } from '../../application/queries/list-workspaces/list-workspaces.query';
+import { type Workspace } from '../../domain/entities/workspace.entity';
+import { ChangeWorkspaceStatusDto } from '../dtos/change-workspace-status.dto';
+import { CreateWorkspaceDto } from '../dtos/create-workspace.dto';
+import { UpdateWorkspaceDto } from '../dtos/update-workspace.dto';
+import { WorkspaceResponseDto } from '../dtos/workspace-response.dto';
 
-@ApiTags('Projects')
+@ApiTags('Workspaces')
 @ApiBearerAuth('JWT')
-@Controller('projects')
-export class ProjectsController {
+@Controller('workspaces')
+export class WorkspacesController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
@@ -56,13 +56,13 @@ export class ProjectsController {
 
   @Post()
   @RequirePermission(Permission.ProjectsCreate)
-  @ApiOperation({ summary: 'Create project', description: 'Creates a project within the tenant.' })
+  @ApiOperation({ summary: 'Create workspace', description: 'Creates a workspace within the tenant.' })
   @ApiCreatedResponse({ type: CreatedResponseDto })
-  async createProject(
+  async createWorkspace(
     @CurrentTenant() tenantId: string,
-    @Body() dto: CreateProjectDto,
+    @Body() dto: CreateWorkspaceDto,
   ): Promise<CreatedResponseDto> {
-    const createProjectCommand = new CreateProjectCommand(
+    const createWorkspaceCommand = new CreateWorkspaceCommand(
       tenantId,
       dto.name,
       dto.description,
@@ -72,14 +72,14 @@ export class ProjectsController {
       dto.endDate ? new Date(dto.endDate) : null,
       dto.members?.map((m) => ({ employeeId: m.employeeId, role: m.role })) ?? [],
     );
-    const id = await this.commandBus.execute<CreateProjectCommand, string>(createProjectCommand);
+    const id = await this.commandBus.execute<CreateWorkspaceCommand, string>(createWorkspaceCommand);
     return new CreatedResponseDto(id);
   }
 
   @Get()
   @RequirePermission(Permission.ProjectsRead)
-  @ApiOperation({ summary: 'List projects', description: 'Returns projects with pagination.' })
-  @ApiOkResponse({ description: 'Paginated list of projects' })
+  @ApiOperation({ summary: 'List workspaces', description: 'Returns workspaces with pagination.' })
+  @ApiOkResponse({ description: 'Paginated list of workspaces' })
   @ApiQuery({ name: 'customerId', required: false })
   @ApiQuery({
     name: 'status',
@@ -89,53 +89,53 @@ export class ProjectsController {
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
-  async listProjects(
+  async listWorkspaces(
     @CurrentTenant() tenantId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('customerId') customerId?: string,
     @Query('status') status?: string,
     @Query('search') search?: string,
-  ): Promise<PaginatedResult<ProjectResponseDto>> {
+  ): Promise<PaginatedResult<WorkspaceResponseDto>> {
     const filters = { customerId, status, search };
-    const listProjectsQuery = new ListProjectsQuery(tenantId, filters, page, limit);
-    const result = await this.queryBus.execute<ListProjectsQuery, PaginatedResult<Project>>(
-      listProjectsQuery,
+    const listWorkspacesQuery = new ListWorkspacesQuery(tenantId, filters, page, limit);
+    const result = await this.queryBus.execute<ListWorkspacesQuery, PaginatedResult<Workspace>>(
+      listWorkspacesQuery,
     );
     return {
       ...result,
-      items: result.items.map((p) => new ProjectResponseDto(p)),
+      items: result.items.map((w) => new WorkspaceResponseDto(w)),
     };
   }
 
   @Get(':id')
   @RequirePermission(Permission.ProjectsRead)
-  @ApiOperation({ summary: 'Get project', description: 'Returns a project with its members.' })
-  @ApiParam({ name: 'id', description: 'Project UUID' })
-  @ApiOkResponse({ type: ProjectResponseDto })
-  @ApiNotFoundResponse({ description: 'Project not found' })
-  async getProject(
+  @ApiOperation({ summary: 'Get workspace', description: 'Returns a workspace with its members.' })
+  @ApiParam({ name: 'id', description: 'Workspace UUID' })
+  @ApiOkResponse({ type: WorkspaceResponseDto })
+  @ApiNotFoundResponse({ description: 'Workspace not found' })
+  async getWorkspace(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<ProjectResponseDto> {
-    const getProjectQuery = new GetProjectQuery(id, tenantId);
-    const project = await this.queryBus.execute<GetProjectQuery, Project>(getProjectQuery);
-    return new ProjectResponseDto(project);
+  ): Promise<WorkspaceResponseDto> {
+    const getWorkspaceQuery = new GetWorkspaceQuery(id, tenantId);
+    const workspace = await this.queryBus.execute<GetWorkspaceQuery, Workspace>(getWorkspaceQuery);
+    return new WorkspaceResponseDto(workspace);
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermission(Permission.ProjectsModify)
-  @ApiOperation({ summary: 'Update project', description: 'Updates project details.' })
-  @ApiParam({ name: 'id', description: 'Project UUID' })
-  @ApiNoContentResponse({ description: 'Project updated' })
-  @ApiNotFoundResponse({ description: 'Project not found' })
-  async updateProject(
+  @ApiOperation({ summary: 'Update workspace', description: 'Updates workspace details.' })
+  @ApiParam({ name: 'id', description: 'Workspace UUID' })
+  @ApiNoContentResponse({ description: 'Workspace updated' })
+  @ApiNotFoundResponse({ description: 'Workspace not found' })
+  async updateWorkspace(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateProjectDto,
+    @Body() dto: UpdateWorkspaceDto,
   ): Promise<void> {
-    const updateProjectCommand = new UpdateProjectCommand(
+    const updateWorkspaceCommand = new UpdateWorkspaceCommand(
       tenantId,
       id,
       dto.name,
@@ -145,37 +145,37 @@ export class ProjectsController {
       dto.endDate ? new Date(dto.endDate) : null,
       dto.members?.map((m) => ({ employeeId: m.employeeId, role: m.role })) ?? null,
     );
-    await this.commandBus.execute<UpdateProjectCommand, void>(updateProjectCommand);
+    await this.commandBus.execute<UpdateWorkspaceCommand, void>(updateWorkspaceCommand);
   }
 
   @Patch(':id/status')
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermission(Permission.ProjectsModify)
-  @ApiOperation({ summary: 'Change status', description: 'Transitions project status.' })
-  @ApiParam({ name: 'id', description: 'Project UUID' })
+  @ApiOperation({ summary: 'Change status', description: 'Transitions workspace status.' })
+  @ApiParam({ name: 'id', description: 'Workspace UUID' })
   @ApiNoContentResponse({ description: 'Status changed' })
-  @ApiNotFoundResponse({ description: 'Project not found' })
+  @ApiNotFoundResponse({ description: 'Workspace not found' })
   async changeStatus(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: ChangeProjectStatusDto,
+    @Body() dto: ChangeWorkspaceStatusDto,
   ): Promise<void> {
-    const changeProjectStatusCommand = new ChangeProjectStatusCommand(tenantId, id, dto.action);
-    await this.commandBus.execute<ChangeProjectStatusCommand, void>(changeProjectStatusCommand);
+    const changeWorkspaceStatusCommand = new ChangeWorkspaceStatusCommand(tenantId, id, dto.action);
+    await this.commandBus.execute<ChangeWorkspaceStatusCommand, void>(changeWorkspaceStatusCommand);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermission(Permission.ProjectsRemove)
-  @ApiOperation({ summary: 'Delete project', description: 'Removes a project from the tenant.' })
-  @ApiParam({ name: 'id', description: 'Project UUID' })
-  @ApiNoContentResponse({ description: 'Project deleted' })
-  @ApiNotFoundResponse({ description: 'Project not found' })
-  async deleteProject(
+  @ApiOperation({ summary: 'Delete workspace', description: 'Removes a workspace from the tenant.' })
+  @ApiParam({ name: 'id', description: 'Workspace UUID' })
+  @ApiNoContentResponse({ description: 'Workspace deleted' })
+  @ApiNotFoundResponse({ description: 'Workspace not found' })
+  async deleteWorkspace(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    const deleteProjectCommand = new DeleteProjectCommand(tenantId, id);
-    await this.commandBus.execute<DeleteProjectCommand, void>(deleteProjectCommand);
+    const deleteWorkspaceCommand = new DeleteWorkspaceCommand(tenantId, id);
+    await this.commandBus.execute<DeleteWorkspaceCommand, void>(deleteWorkspaceCommand);
   }
 }

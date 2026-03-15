@@ -1,4 +1,4 @@
-export interface SaleFilters {
+export interface DealFilters {
   customerId?: string;
   status?: string;
 }

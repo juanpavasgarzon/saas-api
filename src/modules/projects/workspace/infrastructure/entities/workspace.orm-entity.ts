@@ -8,18 +8,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ProjectStatus } from '../../domain/enums/workspace-status.enum';
-import { ProjectMemberOrmEntity } from './workspace-member.orm-entity';
+import { WorkspaceStatus } from '../../domain/enums/workspace-status.enum';
+import { WorkspaceMemberOrmEntity } from './workspace-member.orm-entity';
 
-@Entity('projects')
-@Index('IDX_projects_tenant_status', ['tenantId', 'status'])
-@Index('IDX_projects_tenant_customer', ['tenantId', 'customerId'])
-export class ProjectOrmEntity {
+@Entity('workspaces')
+@Index('IDX_workspaces_tenant_status', ['tenantId', 'status'])
+@Index('IDX_workspaces_tenant_customer', ['tenantId', 'customerId'])
+export class WorkspaceOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
   @Column({ type: 'uuid' })
-  @Index('IDX_projects_tenant')
+  @Index('IDX_workspaces_tenant')
   tenantId!: string;
 
   @Column()
@@ -33,10 +33,10 @@ export class ProjectOrmEntity {
 
   @Column({
     type: 'enum',
-    enum: ProjectStatus,
-    default: ProjectStatus.PLANNING,
+    enum: WorkspaceStatus,
+    default: WorkspaceStatus.PLANNING,
   })
-  status!: ProjectStatus;
+  status!: WorkspaceStatus;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   budget!: number | null;
@@ -53,8 +53,8 @@ export class ProjectOrmEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(() => ProjectMemberOrmEntity, (member) => member.project, {
+  @OneToMany(() => WorkspaceMemberOrmEntity, (member) => member.project, {
     cascade: true,
   })
-  members!: ProjectMemberOrmEntity[];
+  members!: WorkspaceMemberOrmEntity[];
 }

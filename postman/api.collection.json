@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "a1b2c3d4-0000-0000-0000-000000000001",
-    "name": "SaaS API",
-    "description": "Complete NestJS multi-tenant SaaS API.\n\nSetup:\n1. Import `api.environment.json` as environment\n2. Select 'SaaS API - Local' as active environment\n3. Run **Register** or **Login** — tokens are saved automatically\n4. All protected endpoints use `{{access_token}}` from the environment",
+    "name": "API",
+    "description": "Complete NestJS multi-tenant API.\n\nSetup:\n1. Import `api.environment.json` as environment\n2. Select 'API - Local' as active environment\n3. Run **Register** or **Login** — tokens are saved automatically\n4. All protected endpoints use `{{access_token}}` from the environment",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -277,7 +277,7 @@
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"email\": \"employee@acme.com\",\n  \"role\": \"EMPLOYEE\"\n}",
+                  "raw": "{\n  \"email\": \"admin@acme.com\",\n  \"role\": \"ADMIN\"\n}",
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
@@ -296,7 +296,7 @@
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"password\": \"NewPassword123!\"\n}",
+                  "raw": "{\n  \"password\": \"Password123!\"\n}",
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
@@ -1016,10 +1016,10 @@
       "name": "Sales",
       "item": [
         {
-          "name": "Sales Orders",
+          "name": "Deals",
           "item": [
             {
-              "name": "Create Sale",
+              "name": "Create Deal",
               "request": {
                 "method": "POST",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -1029,22 +1029,22 @@
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
-                  "raw": "{{base_url}}/sales/orders",
+                  "raw": "{{base_url}}/deals",
                   "host": ["{{base_url}}"],
-                  "path": ["sales", "orders"]
+                  "path": ["deals"]
                 },
-                "description": "Creates a new sale manually."
+                "description": "Creates a new deal manually."
               }
             },
             {
-              "name": "List Sales",
+              "name": "List Deals",
               "request": {
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/sales/orders?page=1&limit=20",
+                  "raw": "{{base_url}}/deals?page=1&limit=20",
                   "host": ["{{base_url}}"],
-                  "path": ["sales", "orders"],
+                  "path": ["deals"],
                   "query": [
                     { "key": "page", "value": "1" },
                     { "key": "limit", "value": "20" },
@@ -1052,63 +1052,63 @@
                     { "key": "status", "value": "", "disabled": true }
                   ]
                 },
-                "description": "Returns sales with pagination. Excludes line items."
+                "description": "Returns deals with pagination. Excludes line items."
               }
             },
             {
-              "name": "Get Sale",
+              "name": "Get Deal",
               "request": {
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/sales/orders/:id",
+                  "raw": "{{base_url}}/deals/:id",
                   "host": ["{{base_url}}"],
-                  "path": ["sales", "orders", ":id"],
-                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
+                  "path": ["deals", ":id"],
+                  "variable": [{ "key": "id", "value": "", "description": "Deal UUID" }]
                 },
-                "description": "Returns sale by ID with line items."
+                "description": "Returns deal by ID with line items."
               }
             },
             {
-              "name": "Download Sale PDF",
+              "name": "Download Deal PDF",
               "request": {
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/sales/orders/:id/pdf",
+                  "raw": "{{base_url}}/deals/:id/pdf",
                   "host": ["{{base_url}}"],
-                  "path": ["sales", "orders", ":id", "pdf"],
-                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
+                  "path": ["deals", ":id", "pdf"],
+                  "variable": [{ "key": "id", "value": "", "description": "Deal UUID" }]
                 },
-                "description": "Generates and downloads the sale order as a PDF."
+                "description": "Generates and downloads the deal order as a PDF."
               }
             },
             {
-              "name": "Approve Sale",
+              "name": "Approve Deal",
               "request": {
                 "method": "PATCH",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/sales/orders/:id/approve",
+                  "raw": "{{base_url}}/deals/:id/approve",
                   "host": ["{{base_url}}"],
-                  "path": ["sales", "orders", ":id", "approve"],
-                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
+                  "path": ["deals", ":id", "approve"],
+                  "variable": [{ "key": "id", "value": "", "description": "Deal UUID" }]
                 },
-                "description": "Transitions sale from PENDING to APPROVED. Auto-creates invoice."
+                "description": "Transitions deal from PENDING to APPROVED. Auto-creates invoice."
               }
             },
             {
-              "name": "Cancel Sale",
+              "name": "Cancel Deal",
               "request": {
                 "method": "PATCH",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/sales/orders/:id/cancel",
+                  "raw": "{{base_url}}/deals/:id/cancel",
                   "host": ["{{base_url}}"],
-                  "path": ["sales", "orders", ":id", "cancel"],
-                  "variable": [{ "key": "id", "value": "", "description": "Sale UUID" }]
+                  "path": ["deals", ":id", "cancel"],
+                  "variable": [{ "key": "id", "value": "", "description": "Deal UUID" }]
                 },
-                "description": "Cancels a PENDING sale."
+                "description": "Cancels a PENDING deal."
               }
             }
           ]
@@ -1214,10 +1214,10 @@
       "name": "Projects",
       "item": [
         {
-          "name": "Projects",
+          "name": "Workspaces",
           "item": [
             {
-              "name": "Create Project",
+              "name": "Create Workspace",
               "request": {
                 "method": "POST",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -1227,22 +1227,22 @@
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
-                  "raw": "{{base_url}}/projects",
+                  "raw": "{{base_url}}/workspaces",
                   "host": ["{{base_url}}"],
-                  "path": ["projects"]
+                  "path": ["workspaces"]
                 },
-                "description": "Creates a project within the tenant."
+                "description": "Creates a workspace within the tenant."
               }
             },
             {
-              "name": "List Projects",
+              "name": "List Workspaces",
               "request": {
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/projects?page=1&limit=20",
+                  "raw": "{{base_url}}/workspaces?page=1&limit=20",
                   "host": ["{{base_url}}"],
-                  "path": ["projects"],
+                  "path": ["workspaces"],
                   "query": [
                     { "key": "page", "value": "1" },
                     { "key": "limit", "value": "20" },
@@ -1251,25 +1251,25 @@
                     { "key": "search", "value": "", "disabled": true }
                   ]
                 },
-                "description": "Returns projects with pagination."
+                "description": "Returns workspaces with pagination."
               }
             },
             {
-              "name": "Get Project",
+              "name": "Get Workspace",
               "request": {
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/projects/:id",
+                  "raw": "{{base_url}}/workspaces/:id",
                   "host": ["{{base_url}}"],
-                  "path": ["projects", ":id"],
-                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
+                  "path": ["workspaces", ":id"],
+                  "variable": [{ "key": "id", "value": "", "description": "Workspace UUID" }]
                 },
-                "description": "Returns a project with its members."
+                "description": "Returns a workspace with its members."
               }
             },
             {
-              "name": "Update Project",
+              "name": "Update Workspace",
               "request": {
                 "method": "PUT",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -1279,16 +1279,16 @@
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
-                  "raw": "{{base_url}}/projects/:id",
+                  "raw": "{{base_url}}/workspaces/:id",
                   "host": ["{{base_url}}"],
-                  "path": ["projects", ":id"],
-                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
+                  "path": ["workspaces", ":id"],
+                  "variable": [{ "key": "id", "value": "", "description": "Workspace UUID" }]
                 },
-                "description": "Updates project details. Replaces members array entirely."
+                "description": "Updates workspace details. Replaces members array entirely."
               }
             },
             {
-              "name": "Change Project Status",
+              "name": "Change Workspace Status",
               "request": {
                 "method": "PATCH",
                 "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -1298,26 +1298,26 @@
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
-                  "raw": "{{base_url}}/projects/:id/status",
+                  "raw": "{{base_url}}/workspaces/:id/status",
                   "host": ["{{base_url}}"],
-                  "path": ["projects", ":id", "status"],
-                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
+                  "path": ["workspaces", ":id", "status"],
+                  "variable": [{ "key": "id", "value": "", "description": "Workspace UUID" }]
                 },
-                "description": "Transitions project status."
+                "description": "Transitions workspace status."
               }
             },
             {
-              "name": "Delete Project",
+              "name": "Delete Workspace",
               "request": {
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/projects/:id",
+                  "raw": "{{base_url}}/workspaces/:id",
                   "host": ["{{base_url}}"],
-                  "path": ["projects", ":id"],
-                  "variable": [{ "key": "id", "value": "", "description": "Project UUID" }]
+                  "path": ["workspaces", ":id"],
+                  "variable": [{ "key": "id", "value": "", "description": "Workspace UUID" }]
                 },
-                "description": "Removes a project from the tenant."
+                "description": "Removes a workspace from the tenant."
               }
             }
           ]

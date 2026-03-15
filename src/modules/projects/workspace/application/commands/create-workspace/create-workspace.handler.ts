@@ -1,20 +1,20 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { type IProjectRepository } from '../../../domain/contracts/workspace-repository.contract';
-import { Project } from '../../../domain/entities/workspace.entity';
-import { PROJECT_REPOSITORY } from '../../../domain/tokens/workspace-repository.token';
-import { CreateProjectCommand } from './create-workspace.command';
+import { type IWorkspaceRepository } from '../../../domain/contracts/workspace-repository.contract';
+import { Workspace } from '../../../domain/entities/workspace.entity';
+import { WORKSPACE_REPOSITORY } from '../../../domain/tokens/workspace-repository.token';
+import { CreateWorkspaceCommand } from './create-workspace.command';
 
-@CommandHandler(CreateProjectCommand)
-export class CreateProjectHandler implements ICommandHandler<CreateProjectCommand, string> {
+@CommandHandler(CreateWorkspaceCommand)
+export class CreateWorkspaceHandler implements ICommandHandler<CreateWorkspaceCommand, string> {
   constructor(
-    @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepository: IProjectRepository,
+    @Inject(WORKSPACE_REPOSITORY)
+    private readonly projectRepository: IWorkspaceRepository,
   ) {}
 
-  async execute(command: CreateProjectCommand): Promise<string> {
-    const project = Project.create(
+  async execute(command: CreateWorkspaceCommand): Promise<string> {
+    const project = Workspace.create(
       command.tenantId,
       command.name,
       command.description,
@@ -29,7 +29,6 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectComman
     }
 
     await this.projectRepository.save(project);
-
     return project.id;
   }
 }

@@ -16,11 +16,11 @@ export class CreateDealItems1748000011000 implements MigrationInterface {
         "unitPrice"   numeric(12,2) NOT NULL,
         "lineTotal"   numeric(12,2) NOT NULL,
         CONSTRAINT "PK_deal_items"      PRIMARY KEY ("id"),
-        CONSTRAINT "FK_deal_items_sale" FOREIGN KEY ("dealId")
+        CONSTRAINT "FK_deal_items_deal" FOREIGN KEY ("dealId")
           REFERENCES "deals"("id") ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_deal_items_sale" ON "deal_items" ("dealId")`);
+    await queryRunner.query(`CREATE INDEX "IDX_deal_items_deal" ON "deal_items" ("dealId")`);
     await queryRunner.query(
       `CREATE INDEX "IDX_deal_items_item" ON "deal_items" ("itemType", "itemId")`,
     );

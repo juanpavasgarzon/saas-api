@@ -5,32 +5,32 @@ export class CreateProjectMembers1748000007000 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "public"."project_members_role_enum" AS ENUM('LEAD', 'MEMBER')`,
+      `CREATE TYPE "public"."workspace_members_role_enum" AS ENUM('LEAD', 'MEMBER')`,
     );
 
     await queryRunner.query(`
-      CREATE TABLE "project_members" (
-        "id"         uuid      NOT NULL,
-        "projectId"  uuid      NOT NULL,
-        "tenantId"   uuid      NOT NULL,
-        "employeeId" uuid      NOT NULL,
-        "role"       "public"."project_members_role_enum" NOT NULL DEFAULT 'MEMBER',
-        "joinedAt"   TIMESTAMP NOT NULL DEFAULT now(),
-        CONSTRAINT "UQ_project_member"  UNIQUE ("projectId", "employeeId"),
-        CONSTRAINT "PK_project_members" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_pm_project"      FOREIGN KEY ("projectId")
-          REFERENCES "projects"("id")  ON DELETE CASCADE,
-        CONSTRAINT "FK_pm_employee"     FOREIGN KEY ("employeeId")
-          REFERENCES "employees"("id") ON DELETE CASCADE
+      CREATE TABLE "workspace_members" (
+        "id"          uuid      NOT NULL,
+        "workspaceId" uuid      NOT NULL,
+        "tenantId"    uuid      NOT NULL,
+        "employeeId"  uuid      NOT NULL,
+        "role"        "public"."workspace_members_role_enum" NOT NULL DEFAULT 'MEMBER',
+        "joinedAt"    TIMESTAMP NOT NULL DEFAULT now(),
+        CONSTRAINT "UQ_workspace_member"  UNIQUE ("workspaceId", "employeeId"),
+        CONSTRAINT "PK_workspace_members" PRIMARY KEY ("id"),
+        CONSTRAINT "FK_wm_workspace"      FOREIGN KEY ("workspaceId")
+          REFERENCES "workspaces"("id")  ON DELETE CASCADE,
+        CONSTRAINT "FK_wm_employee"       FOREIGN KEY ("employeeId")
+          REFERENCES "employees"("id")   ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_pm_tenant"   ON "project_members" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_pm_project"  ON "project_members" ("projectId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_pm_employee" ON "project_members" ("employeeId")`);
+    await queryRunner.query(`CREATE INDEX "IDX_wm_tenant"      ON "workspace_members" ("tenantId")`);
+    await queryRunner.query(`CREATE INDEX "IDX_wm_workspace"   ON "workspace_members" ("workspaceId")`);
+    await queryRunner.query(`CREATE INDEX "IDX_wm_employee"    ON "workspace_members" ("employeeId")`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE IF EXISTS "project_members"`);
-    await queryRunner.query(`DROP TYPE IF EXISTS "public"."project_members_role_enum"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "workspace_members"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."workspace_members_role_enum"`);
   }
 }

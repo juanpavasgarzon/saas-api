@@ -7,18 +7,18 @@ import { DEAL_REPOSITORY } from '../../../domain/tokens/deal-repository.token';
 import { CreateDealFromQuotationCommand } from './create-deal-from-quotation.command';
 
 @CommandHandler(CreateDealFromQuotationCommand)
-export class CreateSaleFromQuotationHandler implements ICommandHandler<
+export class CreateDealFromQuotationHandler implements ICommandHandler<
   CreateDealFromQuotationCommand,
   string
 > {
   constructor(
     @Inject(DEAL_REPOSITORY)
-    private readonly saleRepository: IDealRepository,
+    private readonly dealRepository: IDealRepository,
   ) {}
 
   async execute(command: CreateDealFromQuotationCommand): Promise<string> {
-    const number = await this.saleRepository.nextNumber(command.tenantId);
-    const sale = Deal.create(
+    const number = await this.dealRepository.nextNumber(command.tenantId);
+    const deal = Deal.create(
       command.tenantId,
       number,
       command.customerId,
@@ -33,7 +33,7 @@ export class CreateSaleFromQuotationHandler implements ICommandHandler<
         unitPrice: i.unitPrice,
       })),
     );
-    await this.saleRepository.save(sale);
-    return sale.id;
+    await this.dealRepository.save(deal);
+    return deal.id;
   }
 }

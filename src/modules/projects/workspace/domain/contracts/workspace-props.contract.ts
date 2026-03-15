@@ -1,17 +1,17 @@
-import { type ProjectMember } from '../entities/workspace-member.entity';
-import { type ProjectStatus } from '../enums/workspace-status.enum';
+import { type WorkspaceMember } from '../entities/workspace-member.entity';
+import { type WorkspaceStatus } from '../enums/workspace-status.enum';
 
-export interface ProjectProps {
+export interface WorkspaceProps {
   id: string;
   tenantId: string;
   name: string;
   description: string;
   customerId: string;
-  status: ProjectStatus;
+  status: WorkspaceStatus;
   budget: number | null;
   startDate: Date | null;
   endDate: Date | null;
-  members: ProjectMember[];
+  members: WorkspaceMember[];
   createdAt: Date;
   updatedAt: Date;
 }

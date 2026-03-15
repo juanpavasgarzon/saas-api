@@ -1,15 +1,15 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { ProjectMemberRole } from '../../domain/enums/workspace-member-role.enum';
-import { ProjectOrmEntity } from './workspace.orm-entity';
+import { WorkspaceMemberRole } from '../../domain/enums/workspace-member-role.enum';
+import { WorkspaceOrmEntity } from './workspace.orm-entity';
 
-@Entity('project_members')
-export class ProjectMemberOrmEntity {
+@Entity('workspace_members')
+export class WorkspaceMemberOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
   @Column({ type: 'uuid' })
-  projectId!: string;
+  workspaceId!: string;
 
   @Column({ type: 'uuid' })
   tenantId!: string;
@@ -19,17 +19,17 @@ export class ProjectMemberOrmEntity {
 
   @Column({
     type: 'enum',
-    enum: ProjectMemberRole,
-    default: ProjectMemberRole.MEMBER,
+    enum: WorkspaceMemberRole,
+    default: WorkspaceMemberRole.MEMBER,
   })
-  role!: ProjectMemberRole;
+  role!: WorkspaceMemberRole;
 
   @CreateDateColumn()
   joinedAt!: Date;
 
-  @ManyToOne(() => ProjectOrmEntity, (project) => project.members, {
+  @ManyToOne(() => WorkspaceOrmEntity, (workspace) => workspace.members, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'projectId' })
-  project!: ProjectOrmEntity;
+  @JoinColumn({ name: 'workspaceId' })
+  workspace!: WorkspaceOrmEntity;
 }

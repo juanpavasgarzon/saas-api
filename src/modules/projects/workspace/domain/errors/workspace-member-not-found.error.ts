@@ -1,7 +1,7 @@
 import { NotFoundError } from '@core/domain/errors/not-found.error';
 
-export class ProjectMemberNotFoundError extends NotFoundError {
+export class WorkspaceMemberNotFoundError extends NotFoundError {
   constructor(id: string) {
-    super('ProjectMember', id);
+    super('WorkspaceMember', id);
   }
 }

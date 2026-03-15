@@ -12,13 +12,13 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { ProjectMemberInputDto } from './workspace-member-input.dto';
+import { WorkspaceMemberInputDto } from './workspace-member-input.dto';
 
-export class CreateProjectDto {
+export class CreateWorkspaceDto {
   @ApiProperty({
     example: 'Corporate Web Portal',
     minLength: 2,
-    description: 'Project name',
+    description: 'Workspace name',
   })
   @IsString()
   @MinLength(2)
@@ -41,7 +41,7 @@ export class CreateProjectDto {
   @ApiPropertyOptional({
     example: 15000,
     minimum: 0,
-    description: 'Project budget',
+    description: 'Workspace budget',
   })
   @IsOptional()
   @IsNumber()
@@ -65,12 +65,12 @@ export class CreateProjectDto {
   endDate?: string;
 
   @ApiPropertyOptional({
-    type: [ProjectMemberInputDto],
+    type: [WorkspaceMemberInputDto],
     description: 'Initial project members',
   })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ProjectMemberInputDto)
-  members?: ProjectMemberInputDto[];
+  @Type(() => WorkspaceMemberInputDto)
+  members?: WorkspaceMemberInputDto[];
 }

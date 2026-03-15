@@ -8,17 +8,17 @@ import { DEAL_REPOSITORY } from '../../../domain/tokens/deal-repository.token';
 import { GetDealQuery } from './get-deal.query';
 
 @QueryHandler(GetDealQuery)
-export class GetSaleHandler implements IQueryHandler<GetDealQuery, Deal> {
+export class GetDealHandler implements IQueryHandler<GetDealQuery, Deal> {
   constructor(
     @Inject(DEAL_REPOSITORY)
-    private readonly saleRepository: IDealRepository,
+    private readonly dealRepository: IDealRepository,
   ) {}
 
   async execute(query: GetDealQuery): Promise<Deal> {
-    const sale = await this.saleRepository.findById(query.id, query.tenantId);
-    if (!sale) {
+    const deal = await this.dealRepository.findById(query.id, query.tenantId);
+    if (!deal) {
       throw new DealNotFoundError(query.id);
     }
-    return sale;
+    return deal;
   }
 }

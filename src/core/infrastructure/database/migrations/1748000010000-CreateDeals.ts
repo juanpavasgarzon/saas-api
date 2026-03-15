@@ -5,7 +5,7 @@ export class CreateDeals1748000010000 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "public"."sale_status_enum" AS ENUM('PENDING', 'APPROVED', 'INVOICED', 'CANCELLED')`,
+      `CREATE TYPE "public"."deal_status_enum" AS ENUM('PENDING', 'APPROVED', 'INVOICED', 'CANCELLED')`,
     );
 
     await queryRunner.query(`
@@ -15,14 +15,14 @@ export class CreateDeals1748000010000 implements MigrationInterface {
         "number"      integer       NOT NULL,
         "customerId"  uuid          NOT NULL,
         "quotationId" uuid          NULL DEFAULT NULL,
-        "status"      "public"."sale_status_enum" NOT NULL DEFAULT 'PENDING',
+        "status"      "public"."deal_status_enum" NOT NULL DEFAULT 'PENDING',
         "notes"       text          NULL DEFAULT NULL,
         "subtotal"    numeric(12,2) NOT NULL DEFAULT 0,
         "total"       numeric(12,2) NOT NULL DEFAULT 0,
         "createdAt"   TIMESTAMP     NOT NULL DEFAULT now(),
         "updatedAt"   TIMESTAMP     NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_sales"        PRIMARY KEY ("id"),
-        CONSTRAINT "FK_sales_tenant" FOREIGN KEY ("tenantId")
+        CONSTRAINT "PK_deals"        PRIMARY KEY ("id"),
+        CONSTRAINT "FK_deals_tenant" FOREIGN KEY ("tenantId")
           REFERENCES "companies"("id") ON DELETE CASCADE
       )
     `);
@@ -34,6 +34,6 @@ export class CreateDeals1748000010000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS "deals"`);
-    await queryRunner.query(`DROP TYPE IF EXISTS "public"."sale_status_enum"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."deal_status_enum"`);
   }
 }

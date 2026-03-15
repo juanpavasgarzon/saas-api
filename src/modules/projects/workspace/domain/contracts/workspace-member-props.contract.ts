@@ -1,10 +1,10 @@
-import { type ProjectMemberRole } from '../enums/workspace-member-role.enum';
+import { type WorkspaceMemberRole } from '../enums/workspace-member-role.enum';
 
-export interface ProjectMemberProps {
+export interface WorkspaceMemberProps {
   id: string;
-  projectId: string;
+  workspaceId: string;
   tenantId: string;
   employeeId: string;
-  role: ProjectMemberRole;
+  role: WorkspaceMemberRole;
   joinedAt: Date;
 }

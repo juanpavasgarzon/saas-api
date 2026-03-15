@@ -1,16 +1,10 @@
 {
   "id": "a1b2c3d4-0001-0001-0001-000000000001",
-  "name": "SaaS API - Local",
+  "name": "API - Local",
   "values": [
     {
       "key": "base_url",
       "value": "http://localhost:3000/api",
-      "type": "default",
-      "enabled": true
-    },
-    {
-      "key": "ws_url",
-      "value": "http://localhost:3000",
       "type": "default",
       "enabled": true
     },

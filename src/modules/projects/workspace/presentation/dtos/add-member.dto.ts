@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
-import { ProjectMemberRole } from '../../domain/enums/workspace-member-role.enum';
+import { WorkspaceMemberRole } from '../../domain/enums/workspace-member-role.enum';
 
 export class AddMemberDto {
   @ApiProperty({ description: 'Employee UUID to add to the project' })
@@ -9,11 +9,11 @@ export class AddMemberDto {
   employeeId!: string;
 
   @ApiPropertyOptional({
-    enum: ProjectMemberRole,
-    default: ProjectMemberRole.MEMBER,
+    enum: WorkspaceMemberRole,
+    default: WorkspaceMemberRole.MEMBER,
     description: 'Role of the employee in the project',
   })
-  @IsEnum(ProjectMemberRole)
+  @IsEnum(WorkspaceMemberRole)
   @IsOptional()
-  role: ProjectMemberRole = ProjectMemberRole.MEMBER;
+  role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER;
 }

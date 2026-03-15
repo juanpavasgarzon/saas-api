@@ -7,18 +7,18 @@ import { DEAL_REPOSITORY } from '../../../domain/tokens/deal-repository.token';
 import { CancelDealCommand } from './cancel-deal.command';
 
 @CommandHandler(CancelDealCommand)
-export class CancelSaleHandler implements ICommandHandler<CancelDealCommand, void> {
+export class CancelDealHandler implements ICommandHandler<CancelDealCommand, void> {
   constructor(
     @Inject(DEAL_REPOSITORY)
-    private readonly saleRepository: IDealRepository,
+    private readonly dealRepository: IDealRepository,
   ) {}
 
   async execute(command: CancelDealCommand): Promise<void> {
-    const sale = await this.saleRepository.findById(command.id, command.tenantId);
-    if (!sale) {
+    const deal = await this.dealRepository.findById(command.id, command.tenantId);
+    if (!deal) {
       throw new DealNotFoundError(command.id);
     }
-    sale.cancel();
-    await this.saleRepository.save(sale);
+    deal.cancel();
+    await this.dealRepository.save(deal);
   }
 }

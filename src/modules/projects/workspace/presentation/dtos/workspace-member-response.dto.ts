@@ -1,22 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { type ProjectMember } from '../../domain/entities/workspace-member.entity';
-import { ProjectMemberRole } from '../../domain/enums/workspace-member-role.enum';
+import { type WorkspaceMember } from '../../domain/entities/workspace-member.entity';
+import { WorkspaceMemberRole } from '../../domain/enums/workspace-member-role.enum';
 
-export class ProjectMemberResponseDto {
+export class WorkspaceMemberResponseDto {
   @ApiProperty({ example: '019542ab-1234-7abc-8def-000000000001' })
   id: string;
 
   @ApiProperty({ example: '019542ab-1234-7abc-8def-000000000002' })
   employeeId: string;
 
-  @ApiProperty({ enum: ProjectMemberRole, example: ProjectMemberRole.MEMBER })
-  role: ProjectMemberRole;
+  @ApiProperty({ enum: WorkspaceMemberRole, example: WorkspaceMemberRole.MEMBER })
+  role: WorkspaceMemberRole;
 
   @ApiProperty({ example: '2025-01-01T00:00:00.000Z' })
   joinedAt: Date;
 
-  constructor(member: ProjectMember) {
+  constructor(member: WorkspaceMember) {
     this.id = member.id;
     this.employeeId = member.employeeId;
     this.role = member.role;

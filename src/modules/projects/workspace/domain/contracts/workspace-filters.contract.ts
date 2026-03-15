@@ -1,4 +1,4 @@
-export interface ProjectFilters {
+export interface WorkspaceFilters {
   customerId?: string;
   status?: string;
   search?: string;

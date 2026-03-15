@@ -1,16 +1,16 @@
 import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
-import { type Project } from '../entities/workspace.entity';
-import { type ProjectFilters } from './workspace-filters.contract';
+import { type Workspace } from '../entities/workspace.entity';
+import { type WorkspaceFilters } from './workspace-filters.contract';
 
-export interface IProjectRepository {
-  findById(id: string, tenantId: string): Promise<Project | null>;
+export interface IWorkspaceRepository {
+  findById(id: string, tenantId: string): Promise<Workspace | null>;
   findAll(
     tenantId: string,
-    filters: ProjectFilters,
+    filters: WorkspaceFilters,
     page: number,
     limit: number,
-  ): Promise<PaginatedResult<Project>>;
-  save(project: Project): Promise<void>;
+  ): Promise<PaginatedResult<Workspace>>;
+  save(project: Workspace): Promise<void>;
   delete(id: string, tenantId: string): Promise<void>;
 }

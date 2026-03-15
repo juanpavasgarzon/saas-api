@@ -1,27 +1,27 @@
 import { AggregateRootBase } from '@core/domain/aggregate-root.base';
 import { generateId } from '@utils/uuid.util';
 
-import { type ProjectProps } from '../contracts/workspace-props.contract';
-import { ProjectMemberRole } from '../enums/workspace-member-role.enum';
-import { ProjectStatus } from '../enums/workspace-status.enum';
+import { type WorkspaceProps } from '../contracts/workspace-props.contract';
+import { WorkspaceMemberRole } from '../enums/workspace-member-role.enum';
+import { WorkspaceStatus } from '../enums/workspace-status.enum';
 import {
-  InvalidProjectStatusTransitionError,
-  ProjectMemberAlreadyExistsError,
-  ProjectMemberNotFoundError,
+  InvalidWorkspaceStatusTransitionError,
+  WorkspaceMemberAlreadyExistsError,
+  WorkspaceMemberNotFoundError,
 } from '../errors/workspace.errors';
-import { ProjectMember } from './workspace-member.entity';
+import { WorkspaceMember } from './workspace-member.entity';
 
-export class Project extends AggregateRootBase {
+export class Workspace extends AggregateRootBase {
   private _name: string;
   private _description: string;
   private _customerId: string;
-  private _status: ProjectStatus;
+  private _status: WorkspaceStatus;
   private _budget: number | null;
   private _startDate: Date | null;
   private _endDate: Date | null;
-  private _members: ProjectMember[];
+  private _members: WorkspaceMember[];
 
-  private constructor(props: ProjectProps) {
+  private constructor(props: WorkspaceProps) {
     super(props.id, props.tenantId);
     this._name = props.name;
     this._description = props.description;
@@ -41,14 +41,14 @@ export class Project extends AggregateRootBase {
     budget?: number,
     startDate?: Date,
     endDate?: Date,
-  ): Project {
-    return new Project({
+  ): Workspace {
+    return new Workspace({
       id: generateId(),
       tenantId,
       name,
       description,
       customerId,
-      status: ProjectStatus.PLANNING,
+      status: WorkspaceStatus.PLANNING,
       budget: budget ?? null,
       startDate: startDate ?? null,
       endDate: endDate ?? null,
@@ -58,8 +58,8 @@ export class Project extends AggregateRootBase {
     });
   }
 
-  static reconstitute(props: ProjectProps): Project {
-    return new Project(props);
+  static reconstitute(props: WorkspaceProps): Workspace {
+    return new Workspace(props);
   }
 
   get name(): string {
@@ -74,7 +74,7 @@ export class Project extends AggregateRootBase {
     return this._customerId;
   }
 
-  get status(): ProjectStatus {
+  get status(): WorkspaceStatus {
     return this._status;
   }
 
@@ -90,7 +90,7 @@ export class Project extends AggregateRootBase {
     return this._endDate;
   }
 
-  get members(): ProjectMember[] {
+  get members(): WorkspaceMember[] {
     return [...this._members];
   }
 
@@ -110,48 +110,48 @@ export class Project extends AggregateRootBase {
   }
 
   activate(): void {
-    if (this._status !== ProjectStatus.PLANNING && this._status !== ProjectStatus.ON_HOLD) {
-      throw new InvalidProjectStatusTransitionError(this._status, ProjectStatus.ACTIVE);
+    if (this._status !== WorkspaceStatus.PLANNING && this._status !== WorkspaceStatus.ON_HOLD) {
+      throw new InvalidWorkspaceStatusTransitionError(this._status, WorkspaceStatus.ACTIVE);
     }
 
-    this._status = ProjectStatus.ACTIVE;
+    this._status = WorkspaceStatus.ACTIVE;
     this.touch();
   }
 
   putOnHold(): void {
-    if (this._status !== ProjectStatus.ACTIVE) {
-      throw new InvalidProjectStatusTransitionError(this._status, ProjectStatus.ON_HOLD);
+    if (this._status !== WorkspaceStatus.ACTIVE) {
+      throw new InvalidWorkspaceStatusTransitionError(this._status, WorkspaceStatus.ON_HOLD);
     }
 
-    this._status = ProjectStatus.ON_HOLD;
+    this._status = WorkspaceStatus.ON_HOLD;
     this.touch();
   }
 
   complete(): void {
-    if (this._status !== ProjectStatus.ACTIVE) {
-      throw new InvalidProjectStatusTransitionError(this._status, ProjectStatus.COMPLETED);
+    if (this._status !== WorkspaceStatus.ACTIVE) {
+      throw new InvalidWorkspaceStatusTransitionError(this._status, WorkspaceStatus.COMPLETED);
     }
 
-    this._status = ProjectStatus.COMPLETED;
+    this._status = WorkspaceStatus.COMPLETED;
     this.touch();
   }
 
   cancel(): void {
-    if (this._status === ProjectStatus.COMPLETED) {
-      throw new InvalidProjectStatusTransitionError(this._status, ProjectStatus.CANCELLED);
+    if (this._status === WorkspaceStatus.COMPLETED) {
+      throw new InvalidWorkspaceStatusTransitionError(this._status, WorkspaceStatus.CANCELLED);
     }
 
-    this._status = ProjectStatus.CANCELLED;
+    this._status = WorkspaceStatus.CANCELLED;
     this.touch();
   }
 
-  addMember(employeeId: string, role: ProjectMemberRole = ProjectMemberRole.MEMBER): ProjectMember {
+  addMember(employeeId: string, role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER): WorkspaceMember {
     const exists = this._members.some((m) => m.employeeId === employeeId);
     if (exists) {
-      throw new ProjectMemberAlreadyExistsError(employeeId, this._id);
+      throw new WorkspaceMemberAlreadyExistsError(employeeId, this._id);
     }
 
-    const member = ProjectMember.create(this._id, this._tenantId, employeeId, role);
+    const member = WorkspaceMember.create(this._id, this._tenantId, employeeId, role);
     this._members.push(member);
     this.touch();
 
@@ -161,7 +161,7 @@ export class Project extends AggregateRootBase {
   removeMember(employeeId: string): void {
     const index = this._members.findIndex((m) => m.employeeId === employeeId);
     if (index === -1) {
-      throw new ProjectMemberNotFoundError(employeeId);
+      throw new WorkspaceMemberNotFoundError(employeeId);
     }
 
     this._members.splice(index, 1);

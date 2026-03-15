@@ -7,22 +7,22 @@ import { DEAL_REPOSITORY } from '../../../domain/tokens/deal-repository.token';
 import { ApproveDealCommand } from './approve-deal.command';
 
 @CommandHandler(ApproveDealCommand)
-export class ApproveSaleHandler implements ICommandHandler<ApproveDealCommand, void> {
+export class ApproveDealHandler implements ICommandHandler<ApproveDealCommand, void> {
   constructor(
     @Inject(DEAL_REPOSITORY)
-    private readonly saleRepository: IDealRepository,
+    private readonly dealRepository: IDealRepository,
     private readonly publisher: EventPublisher,
   ) {}
 
   async execute(command: ApproveDealCommand): Promise<void> {
-    const sale = await this.saleRepository.findById(command.id, command.tenantId);
-    if (!sale) {
+    const deal = await this.dealRepository.findById(command.id, command.tenantId);
+    if (!deal) {
       throw new DealNotFoundError(command.id);
     }
 
-    this.publisher.mergeObjectContext(sale);
-    sale.approve();
-    await this.saleRepository.save(sale);
-    sale.commit();
+    this.publisher.mergeObjectContext(deal);
+    deal.approve();
+    await this.dealRepository.save(deal);
+    deal.commit();
   }
 }

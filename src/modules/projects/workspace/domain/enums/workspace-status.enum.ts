@@ -1,4 +1,4 @@
-export enum ProjectStatus {
+export enum WorkspaceStatus {
   PLANNING = 'PLANNING',
   ACTIVE = 'ACTIVE',
   ON_HOLD = 'ON_HOLD',

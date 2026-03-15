@@ -1,4 +1,4 @@
-export enum ProjectMemberRole {
+export enum WorkspaceMemberRole {
   LEAD = 'LEAD',
   MEMBER = 'MEMBER',
 }

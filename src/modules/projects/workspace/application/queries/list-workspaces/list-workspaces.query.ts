@@ -1,11 +1,11 @@
 import { type IQuery } from '@nestjs/cqrs';
 
-import { type ProjectFilters } from '../../../domain/contracts/workspace-filters.contract';
+import { type WorkspaceFilters } from '../../../domain/contracts/workspace-filters.contract';
 
-export class ListProjectsQuery implements IQuery {
+export class ListWorkspacesQuery implements IQuery {
   constructor(
     public readonly tenantId: string,
-    public readonly filters: ProjectFilters,
+    public readonly filters: WorkspaceFilters,
     public readonly page: number,
     public readonly limit: number,
   ) {}

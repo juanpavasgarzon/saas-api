@@ -9,12 +9,12 @@ export class QuotationAcceptedIntegrationEventHandler implements IEventHandler<Q
   constructor(private readonly commandBus: CommandBus) {}
 
   async handle(event: QuotationAcceptedIntegrationEvent): Promise<void> {
-    const createSaleCommand = new CreateDealFromQuotationCommand(
+    const createDealCommand = new CreateDealFromQuotationCommand(
       event.tenantId,
       event.quotationId,
       event.customerId,
       event.items,
     );
-    await this.commandBus.execute(createSaleCommand);
+    await this.commandBus.execute(createDealCommand);
   }
 }

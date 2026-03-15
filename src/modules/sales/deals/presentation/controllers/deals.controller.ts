@@ -50,46 +50,46 @@ import { CreateDealDto } from '../dtos/create-deal.dto';
 import { DealListResponseDto } from '../dtos/deal-list-response.dto';
 import { DealResponseDto } from '../dtos/deal-response.dto';
 
-@ApiTags('Sales')
+@ApiTags('Deals')
 @ApiBearerAuth('JWT')
-@Controller('sales/orders')
-export class SalesController {
+@Controller('deals')
+export class DealsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     @Inject(DEAL_PDF_SERVICE)
-    private readonly salePdfService: IDealPdfService,
+    private readonly dealPdfService: IDealPdfService,
     @Inject(COMPANY_PROFILE_SERVICE)
     private readonly companyProfileService: ICompanyProfileService,
   ) {}
 
   @Post()
   @RequirePermission(Permission.SalesDealsCreate)
-  @ApiOperation({ summary: 'Create sale', description: 'Creates a new sale manually.' })
+  @ApiOperation({ summary: 'Create deal', description: 'Creates a new deal manually.' })
   @ApiCreatedResponse({ type: CreatedResponseDto })
-  async createSale(
+  async createDeal(
     @CurrentTenant() tenantId: string,
     @Body() dto: CreateDealDto,
   ): Promise<CreatedResponseDto> {
-    const createSaleCommand = new CreateDealCommand(
+    const createDealCommand = new CreateDealCommand(
       tenantId,
       dto.customerId,
       dto.notes ?? null,
       dto.items,
     );
-    const id = await this.commandBus.execute<CreateDealCommand, string>(createSaleCommand);
+    const id = await this.commandBus.execute<CreateDealCommand, string>(createDealCommand);
     return new CreatedResponseDto(id);
   }
 
   @Get()
   @RequirePermission(Permission.SalesDealsRead)
-  @ApiOperation({ summary: 'List sales', description: 'Returns sales with pagination.' })
-  @ApiOkResponse({ description: 'Paginated list of sales' })
+  @ApiOperation({ summary: 'List deals', description: 'Returns deals with pagination.' })
+  @ApiOkResponse({ description: 'Paginated list of deals' })
   @ApiQuery({ name: 'customerId', required: false })
   @ApiQuery({ name: 'status', required: false, enum: DealStatus })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
-  async listSales(
+  async listDeals(
     @CurrentTenant() tenantId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
@@ -106,42 +106,42 @@ export class SalesController {
 
   @Get(':id')
   @RequirePermission(Permission.SalesDealsRead)
-  @ApiOperation({ summary: 'Get sale', description: 'Returns sale by ID.' })
-  @ApiParam({ name: 'id', description: 'Sale UUID' })
+  @ApiOperation({ summary: 'Get deal', description: 'Returns deal by ID.' })
+  @ApiParam({ name: 'id', description: 'Deal UUID' })
   @ApiOkResponse({ type: DealResponseDto })
-  @ApiNotFoundResponse({ description: 'Sale not found' })
-  async getSale(
+  @ApiNotFoundResponse({ description: 'Deal not found' })
+  async getDeal(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<DealResponseDto> {
-    const getSaleQuery = new GetDealQuery(id, tenantId);
-    const deal = await this.queryBus.execute<GetDealQuery, Deal>(getSaleQuery);
+    const getDealQuery = new GetDealQuery(id, tenantId);
+    const deal = await this.queryBus.execute<GetDealQuery, Deal>(getDealQuery);
     return new DealResponseDto(deal);
   }
 
   @Get(':id/pdf')
   @RequirePermission(Permission.SalesDealsDownload)
   @ApiOperation({
-    summary: 'Download sale PDF',
-    description: 'Generates and downloads the sale order as a PDF.',
+    summary: 'Download deal PDF',
+    description: 'Generates and downloads the deal order as a PDF.',
   })
-  @ApiParam({ name: 'id', description: 'Sale UUID' })
+  @ApiParam({ name: 'id', description: 'Deal UUID' })
   @ApiProduces('application/pdf')
   @ApiOkResponse({ description: 'PDF file' })
-  @ApiNotFoundResponse({ description: 'Sale not found' })
+  @ApiNotFoundResponse({ description: 'Deal not found' })
   async downloadPdf(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
   ): Promise<void> {
-    const getSalePdfQuery = new GetDealQuery(id, tenantId);
-    const [sale, company] = await Promise.all([
-      this.queryBus.execute<GetDealQuery, Deal>(getSalePdfQuery),
+    const getDealPdfQuery = new GetDealQuery(id, tenantId);
+    const [deal, company] = await Promise.all([
+      this.queryBus.execute<GetDealQuery, Deal>(getDealPdfQuery),
       this.companyProfileService.getProfile(tenantId),
     ]);
 
-    const pdf = await this.salePdfService.generate(sale, company.name, company.logo);
-    const filename = `sale-${String(sale.number).padStart(4, '0')}.pdf`;
+    const pdf = await this.dealPdfService.generate(deal, company.name, company.logo);
+    const filename = `deal-${String(deal.number).padStart(4, '0')}.pdf`;
 
     res.set({
       'Content-Type': 'application/pdf',
@@ -155,13 +155,13 @@ export class SalesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermission(Permission.SalesDealsApprove)
   @ApiOperation({
-    summary: 'Approve sale',
-    description: 'Transitions sale from PENDING to APPROVED.',
+    summary: 'Approve deal',
+    description: 'Transitions deal from PENDING to APPROVED.',
   })
-  @ApiParam({ name: 'id', description: 'Sale UUID' })
-  @ApiNoContentResponse({ description: 'Sale approved' })
-  @ApiNotFoundResponse({ description: 'Sale not found' })
-  async approveSale(
+  @ApiParam({ name: 'id', description: 'Deal UUID' })
+  @ApiNoContentResponse({ description: 'Deal approved' })
+  @ApiNotFoundResponse({ description: 'Deal not found' })
+  async approveDeal(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
@@ -172,11 +172,11 @@ export class SalesController {
   @Patch(':id/cancel')
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermission(Permission.SalesDealsModify)
-  @ApiOperation({ summary: 'Cancel sale', description: 'Cancels a PENDING sale.' })
-  @ApiParam({ name: 'id', description: 'Sale UUID' })
-  @ApiNoContentResponse({ description: 'Sale cancelled' })
-  @ApiNotFoundResponse({ description: 'Sale not found' })
-  async cancelSale(
+  @ApiOperation({ summary: 'Cancel deal', description: 'Cancels a PENDING deal.' })
+  @ApiParam({ name: 'id', description: 'Deal UUID' })
+  @ApiNoContentResponse({ description: 'Deal cancelled' })
+  @ApiNotFoundResponse({ description: 'Deal not found' })
+  async cancelDeal(
     @CurrentTenant() tenantId: string,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
