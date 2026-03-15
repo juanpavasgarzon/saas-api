@@ -16,6 +16,9 @@ Este archivo proporciona orientación a Claude Code (claude.ai/code) al trabajar
 
 > Úsalas proactivamente cuando la tarea encaje con su especialidad.
 
+- **architecture-auditor**: Auditoría manual de la estructura y arquitectura del proyecto. Analiza el código real, detecta violaciones de los patrones DDD+CQRS (capas, naming, multi-tenancy, Outbox, CQRS, repositorios, errores de dominio, autorización) y emite un informe estructurado con severidad y solución por hallazgo. Úsala cuando quieras revisar el estado arquitectónico del proyecto.
+  Invócala con: `/architecture-auditor`
+
 - **nestjs-expert**: Arquitectura de módulos NestJS, dependency injection, guards, interceptors, pipes, middleware, testing con Jest/Supertest, integración TypeORM, autenticación con Passport/JWT. Úsala para cualquier problema de NestJS: decisiones de arquitectura, testing, performance o debugging de DI.
   Invócala con: `/nestjs-expert`
 
