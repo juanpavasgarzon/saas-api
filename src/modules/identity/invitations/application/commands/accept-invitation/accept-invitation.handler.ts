@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandBus, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IAuthUserService } from '@modules/identity/users/application/contracts/auth-user-service.contract';
-import { AUTH_USER_SERVICE } from '@modules/identity/users/application/tokens/auth-user-service.token';
+import { UserRole } from '@core/domain/enums/user-role.enum';
+import { CreateUserCommand } from '@modules/identity/users/application/commands/create-user/create-user.command';
 
 import { IInvitationRepository } from '../../../domain/contracts/invitation-repository.contract';
 import { InvitationExpiredError } from '../../../domain/errors/invitation-expired.error';
@@ -13,10 +13,9 @@ import { AcceptInvitationCommand } from './accept-invitation.command';
 @CommandHandler(AcceptInvitationCommand)
 export class AcceptInvitationHandler implements ICommandHandler<AcceptInvitationCommand, string> {
   constructor(
+    private readonly commandBus: CommandBus,
     @Inject(INVITATION_REPOSITORY)
     private readonly invitationRepository: IInvitationRepository,
-    @Inject(AUTH_USER_SERVICE)
-    private readonly userService: IAuthUserService,
   ) {}
 
   async execute(command: AcceptInvitationCommand): Promise<string> {
@@ -31,11 +30,13 @@ export class AcceptInvitationHandler implements ICommandHandler<AcceptInvitation
       throw new InvitationExpiredError();
     }
 
-    const userId = await this.userService.createUser(
-      invitation.tenantId,
-      invitation.email,
-      command.password,
-      invitation.role,
+    const userId = await this.commandBus.execute<CreateUserCommand, string>(
+      new CreateUserCommand(
+        invitation.tenantId,
+        invitation.email,
+        command.password,
+        invitation.role as UserRole,
+      ),
     );
 
     invitation.accept();

@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CreateCustomerHandler } from './application/commands/create-customer/create-customer.handler';
 import { ReactivateCustomerHandler } from './application/commands/reactivate-customer/reactivate-customer.handler';
-import { DeactivateCustomerHandler } from './application/commands/update-customer/deactivate-customer.handler';
+import { DeactivateCustomerHandler } from './application/commands/deactivate-customer/deactivate-customer.handler';
 import { UpdateCustomerHandler } from './application/commands/update-customer/update-customer.handler';
 import { GetCustomerHandler } from './application/queries/get-customer/get-customer.handler';
 import { ListCustomersHandler } from './application/queries/list-customers/list-customers.handler';
