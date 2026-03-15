@@ -23,6 +23,11 @@ export class ProspectTypeOrmRepository implements IProspectRepository {
     return orm ? this.toDomain(orm) : null;
   }
 
+  async findByEmail(email: string, tenantId: string): Promise<Prospect | null> {
+    const orm = await this.repository.findOne({ where: { email, tenantId } });
+    return orm ? this.toDomain(orm) : null;
+  }
+
   async findAll(
     tenantId: string,
     filters: ProspectFilters,

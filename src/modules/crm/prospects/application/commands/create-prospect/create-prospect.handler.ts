@@ -3,6 +3,7 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
 import { type IProspectRepository } from '../../../domain/contracts/prospect-repository.contract';
 import { Prospect } from '../../../domain/entities/prospect.entity';
+import { ProspectEmailAlreadyExistsError } from '../../../domain/errors/prospect-email-already-exists.error';
 import { PROSPECT_REPOSITORY } from '../../../domain/tokens/prospect-repository.token';
 import { CreateProspectCommand } from './create-prospect.command';
 
@@ -14,6 +15,11 @@ export class CreateProspectHandler implements ICommandHandler<CreateProspectComm
   ) {}
 
   async execute(command: CreateProspectCommand): Promise<string> {
+    const exists = await this.prospectRepository.findByEmail(command.email, command.tenantId);
+    if (exists) {
+      throw new ProspectEmailAlreadyExistsError(command.email);
+    }
+
     const prospect = Prospect.create(
       command.tenantId,
       command.name,

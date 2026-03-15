@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventPublisher, type ICommandHandler } from '@nestjs/cqrs';
 
 import { type IProspectRepository } from '../../../domain/contracts/prospect-repository.contract';
 import { ProspectNotFoundError } from '../../../domain/errors/prospect-not-found.error';
@@ -14,6 +14,7 @@ export class UpdateProspectStatusHandler implements ICommandHandler<
   constructor(
     @Inject(PROSPECT_REPOSITORY)
     private readonly prospectRepository: IProspectRepository,
+    private readonly publisher: EventPublisher,
   ) {}
 
   async execute(command: UpdateProspectStatusCommand): Promise<void> {
@@ -22,7 +23,10 @@ export class UpdateProspectStatusHandler implements ICommandHandler<
       throw new ProspectNotFoundError(command.id);
     }
 
+    this.publisher.mergeObjectContext(prospect);
     prospect.updateStatus(command.status);
+
     await this.prospectRepository.save(prospect);
+    prospect.commit();
   }
 }

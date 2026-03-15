@@ -67,7 +67,7 @@ export class ProspectsController {
     const createProspectCommand = new CreateProspectCommand(
       tenantId,
       dto.name,
-      dto.email ?? null,
+      dto.email,
       dto.phone ?? null,
       dto.company ?? null,
       dto.identificationNumber ?? null,

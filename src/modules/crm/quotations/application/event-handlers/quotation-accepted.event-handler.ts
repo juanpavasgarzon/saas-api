@@ -35,8 +35,8 @@ export class QuotationAcceptedEventHandler implements IEventHandler<QuotationAcc
       const prospect = await this.prospectRepository.findById(event.prospectId, event.tenantId);
       let convertedCustomerId = '';
       if (prospect) {
-        const email =
-          prospect.email ?? `${prospect.name.toLowerCase().replace(/\s+/g, '.')}@unknown.com`;
+        const name = prospect.name.toLowerCase().replace(/\s+/g, '.');
+        const email = prospect.email ?? `${name}@unknown.com`;
         const existing = await this.customerRepository.findByEmail(email, event.tenantId);
         if (existing) {
           prospect.updateStatus(ProspectStatus.CONVERTED);

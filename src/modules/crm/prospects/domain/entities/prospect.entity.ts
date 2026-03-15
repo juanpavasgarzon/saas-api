@@ -4,6 +4,7 @@ import { generateId } from '@utils/uuid.util';
 import { type ProspectProps } from '../contracts/prospect-props.contract';
 import { type ProspectSource } from '../enums/prospect-source.enum';
 import { ProspectStatus } from '../enums/prospect-status.enum';
+import { ProspectConvertedEvent } from '../events/prospect.converted';
 
 export class Prospect extends AggregateRootBase {
   private _name: string;
@@ -131,6 +132,21 @@ export class Prospect extends AggregateRootBase {
 
   updateStatus(status: ProspectStatus): void {
     this._status = status;
+    if (status === ProspectStatus.CONVERTED) {
+      this.apply(
+        new ProspectConvertedEvent(
+          this.id,
+          this.tenantId,
+          this.name,
+          this.email,
+          this.phone,
+          this.identificationNumber,
+          this.address,
+          this.company,
+          this.contactPerson,
+        ),
+      );
+    }
     this.touch();
   }
 }

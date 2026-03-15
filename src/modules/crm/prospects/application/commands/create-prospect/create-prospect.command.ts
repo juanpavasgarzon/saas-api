@@ -4,7 +4,7 @@ export class CreateProspectCommand {
   constructor(
     public readonly tenantId: string,
     public readonly name: string,
-    public readonly email: string | null,
+    public readonly email: string,
     public readonly phone: string | null,
     public readonly company: string | null,
     public readonly identificationNumber: string | null,

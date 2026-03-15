@@ -5,6 +5,7 @@ import { type ProspectFilters } from './prospect-filters.contract';
 
 export interface IProspectRepository {
   findById(id: string, tenantId: string): Promise<Prospect | null>;
+  findByEmail(email: string, tenantId: string): Promise<Prospect | null>;
   findAll(
     tenantId: string,
     filters: ProspectFilters,

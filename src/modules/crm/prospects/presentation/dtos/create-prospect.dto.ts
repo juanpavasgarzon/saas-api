@@ -8,10 +8,9 @@ export class CreateProspectDto {
   @IsString()
   name!: string;
 
-  @ApiPropertyOptional({ example: 'jane@example.com' })
-  @IsOptional()
+  @ApiProperty({ example: 'jane@example.com' })
   @IsString()
-  email?: string | null;
+  email!: string;
 
   @ApiPropertyOptional({ example: '+1 555 000 0000' })
   @IsOptional()
