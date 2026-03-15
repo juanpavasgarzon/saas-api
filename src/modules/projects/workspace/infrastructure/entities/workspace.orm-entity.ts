@@ -53,7 +53,7 @@ export class WorkspaceOrmEntity {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(() => WorkspaceMemberOrmEntity, (member) => member.project, {
+  @OneToMany(() => WorkspaceMemberOrmEntity, (member) => member.workspace, {
     cascade: true,
   })
   members!: WorkspaceMemberOrmEntity[];
