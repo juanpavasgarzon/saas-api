@@ -10,9 +10,10 @@ export class Invitation {
   private readonly _tenantId: string;
   private readonly _email: string;
   private readonly _role: string;
-  private readonly _token: string;
+  private _token: string;
+  private readonly _url: string;
   private _status: InvitationStatus;
-  private readonly _expiresAt: Date;
+  private _expiresAt: Date;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
@@ -22,13 +23,14 @@ export class Invitation {
     this._email = props.email;
     this._role = props.role;
     this._token = props.token;
+    this._url = props.url;
     this._status = props.status;
     this._expiresAt = props.expiresAt;
     this._createdAt = props.createdAt;
     this._updatedAt = props.updatedAt;
   }
 
-  static create(tenantId: string, email: string, role: string): Invitation {
+  static create(tenantId: string, email: string, role: string, url: string): Invitation {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + EXPIRATION_DAYS);
 
@@ -38,6 +40,7 @@ export class Invitation {
       email: email.toLowerCase().trim(),
       role,
       token: generateId(),
+      url,
       status: InvitationStatus.PENDING,
       expiresAt,
       createdAt: new Date(),
@@ -69,6 +72,10 @@ export class Invitation {
     return this._token;
   }
 
+  get url(): string {
+    return this._url;
+  }
+
   get status(): InvitationStatus {
     return this._status;
   }
@@ -96,6 +103,16 @@ export class Invitation {
 
   expire(): void {
     this._status = InvitationStatus.EXPIRED;
+    this._updatedAt = new Date();
+  }
+
+  resend(): void {
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + EXPIRATION_DAYS);
+
+    this._token = generateId();
+    this._expiresAt = expiresAt;
+    this._status = InvitationStatus.PENDING;
     this._updatedAt = new Date();
   }
 }

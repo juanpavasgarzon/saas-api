@@ -6,6 +6,7 @@ import { EmailModule } from '@core/infrastructure/email/email.module';
 import { UsersModule } from '@modules/identity/users/users.module';
 
 import { AcceptInvitationHandler } from './application/commands/accept-invitation/accept-invitation.handler';
+import { ResendInvitationHandler } from './application/commands/resend-invitation/resend-invitation.handler';
 import { SendInvitationHandler } from './application/commands/send-invitation/send-invitation.handler';
 import { ListInvitationsHandler } from './application/queries/list-invitations/list-invitations.handler';
 import { INVITATION_REPOSITORY } from './domain/tokens/invitation-repository.token';
@@ -18,6 +19,7 @@ import { InvitationsController } from './presentation/controllers/invitations.co
   controllers: [InvitationsController],
   providers: [
     SendInvitationHandler,
+    ResendInvitationHandler,
     AcceptInvitationHandler,
     ListInvitationsHandler,
     { provide: INVITATION_REPOSITORY, useClass: InvitationTypeOrmRepository },

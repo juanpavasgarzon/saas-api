@@ -15,6 +15,7 @@ export class CreateInvitations1748000003000 implements MigrationInterface {
         "email"     varchar   NOT NULL,
         "role"      varchar   NOT NULL,
         "token"     varchar   NOT NULL,
+        "url"       varchar   NOT NULL,
         "status"    "public"."invitations_status_enum" NOT NULL DEFAULT 'PENDING',
         "expiresAt" TIMESTAMP NOT NULL,
         "createdAt" TIMESTAMP NOT NULL DEFAULT now(),

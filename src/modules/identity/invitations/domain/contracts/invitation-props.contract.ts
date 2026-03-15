@@ -6,6 +6,7 @@ export interface InvitationProps {
   email: string;
   role: string;
   token: string;
+  url: string;
   status: InvitationStatus;
   expiresAt: Date;
   createdAt: Date;

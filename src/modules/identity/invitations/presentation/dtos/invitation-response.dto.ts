@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '@core/domain/enums/user-role.enum';
 
 import { Invitation } from '../../domain/entities/invitation.entity';
+import { InvitationStatus } from '../../domain/enums/invitation-status.enum';
 
 export class InvitationResponseDto {
   @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
@@ -14,6 +15,9 @@ export class InvitationResponseDto {
   @ApiProperty({ example: 'Admin' })
   role: UserRole;
 
+  @ApiProperty({ example: 'PENDING' })
+  status: InvitationStatus;
+
   @ApiProperty({ example: '2024-12-31T23:59:59Z' })
   expiresAt: Date;
 
@@ -21,6 +25,7 @@ export class InvitationResponseDto {
     this.id = invitation.id;
     this.email = invitation.email;
     this.role = invitation.role as UserRole;
+    this.status = invitation.status;
     this.expiresAt = invitation.expiresAt;
   }
 }

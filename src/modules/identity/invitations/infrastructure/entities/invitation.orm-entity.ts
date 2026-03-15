@@ -20,6 +20,9 @@ export class InvitationOrmEntity {
   @Column({ unique: true })
   token!: string;
 
+  @Column()
+  url!: string;
+
   @Column({
     type: 'enum',
     enum: InvitationStatus,

@@ -27,6 +27,7 @@ import { Public } from '@core/presentation/decorators/public.decorator';
 import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';
 
 import { AcceptInvitationCommand } from '../../application/commands/accept-invitation/accept-invitation.command';
+import { ResendInvitationCommand } from '../../application/commands/resend-invitation/resend-invitation.command';
 import { SendInvitationCommand } from '../../application/commands/send-invitation/send-invitation.command';
 import { ListInvitationsQuery } from '../../application/queries/list-invitations/list-invitations.query';
 import { Invitation } from '../../domain/entities/invitation.entity';
@@ -77,9 +78,24 @@ export class InvitationsController {
     @CurrentTenant() tenantId: string,
     @Body() dto: SendInvitationDto,
   ): Promise<InvitationTokenResponseDto> {
-    const sendInvitationCommand = new SendInvitationCommand(tenantId, dto.email, dto.role);
+    const sendInvitationCommand = new SendInvitationCommand(tenantId, dto.email, dto.role, dto.url);
     const token = await this.commandBus.execute<SendInvitationCommand, string>(
       sendInvitationCommand,
+    );
+    return new InvitationTokenResponseDto(token);
+  }
+
+  @Post(':id/resend')
+  @RequirePermission(Permission.IdentityAccountsCreate)
+  @ApiOperation({ summary: 'Resend invitation', description: 'Resend an invitation.' })
+  @ApiCreatedResponse({ type: InvitationTokenResponseDto })
+  async resendInvitation(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+  ): Promise<InvitationTokenResponseDto> {
+    const resendInvitationCommand = new ResendInvitationCommand(tenantId, id);
+    const token = await this.commandBus.execute<ResendInvitationCommand, string>(
+      resendInvitationCommand,
     );
     return new InvitationTokenResponseDto(token);
   }

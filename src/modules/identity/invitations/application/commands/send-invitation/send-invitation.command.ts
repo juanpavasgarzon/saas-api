@@ -5,5 +5,6 @@ export class SendInvitationCommand implements ICommand {
     public readonly tenantId: string,
     public readonly email: string,
     public readonly role: string,
+    public readonly url: string,
   ) {}
 }

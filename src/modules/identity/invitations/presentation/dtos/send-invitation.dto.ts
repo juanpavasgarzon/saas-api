@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum } from 'class-validator';
+import { IsEmail, IsEnum, IsUrl } from 'class-validator';
 
 import { UserRole } from '@core/domain/enums/user-role.enum';
 
@@ -18,4 +18,11 @@ export class SendInvitationDto {
   })
   @IsEnum(UserRole)
   role!: UserRole;
+
+  @ApiProperty({
+    example: 'https://app.example.com/accept-invitation',
+    description: 'Base URL for the invitation acceptance link',
+  })
+  @IsUrl()
+  url!: string;
 }

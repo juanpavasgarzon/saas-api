@@ -15,6 +15,11 @@ export class InvitationTypeOrmRepository implements IInvitationRepository {
     private readonly repo: Repository<InvitationOrmEntity>,
   ) {}
 
+  async findById(id: string, tenantId: string): Promise<Invitation | null> {
+    const orm = await this.repo.findOne({ where: { id, tenantId } });
+    return orm ? this.toDomain(orm) : null;
+  }
+
   async findByToken(token: string): Promise<Invitation | null> {
     const orm = await this.repo.findOne({ where: { token } });
     return orm ? this.toDomain(orm) : null;
@@ -53,6 +58,7 @@ export class InvitationTypeOrmRepository implements IInvitationRepository {
       email: orm.email,
       role: orm.role,
       token: orm.token,
+      url: orm.url,
       status: orm.status,
       expiresAt: orm.expiresAt,
       createdAt: orm.createdAt,
@@ -67,6 +73,7 @@ export class InvitationTypeOrmRepository implements IInvitationRepository {
     orm.email = invitation.email;
     orm.role = invitation.role;
     orm.token = invitation.token;
+    orm.url = invitation.url;
     orm.status = invitation.status;
     orm.expiresAt = invitation.expiresAt;
     orm.createdAt = invitation.createdAt;
