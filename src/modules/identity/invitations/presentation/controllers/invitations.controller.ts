@@ -20,8 +20,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 import { Permission } from '@core/domain/enums/permission.enum';
-import { PaginatedResult } from '@core/index';
 import { CurrentTenant } from '@core/presentation/decorators/current-tenant.decorator';
 import { Public } from '@core/presentation/decorators/public.decorator';
 import { RequirePermission } from '@core/presentation/decorators/require-permission.decorator';

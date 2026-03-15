@@ -1,4 +1,4 @@
-import { type PaginatedResult } from '@core/index';
+import { type PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
 import { type Invitation } from '../entities/invitation.entity';
 
