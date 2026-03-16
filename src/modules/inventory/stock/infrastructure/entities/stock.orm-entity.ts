@@ -8,9 +8,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('inventory_stock')
-@Index('IDX_inventory_stock_tenant', ['tenantId'])
-@Unique('UQ_inventory_stock_tenant_product_warehouse', ['tenantId', 'productId', 'warehouseId'])
+@Entity('stock')
+@Index('IDX_stock_tenant', ['tenantId'])
+@Unique('UQ_stock_tenant_product_warehouse', ['tenantId', 'productId', 'warehouseId'])
 export class StockOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;

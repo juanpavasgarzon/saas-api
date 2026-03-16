@@ -56,7 +56,10 @@ export class WorkspacesController {
 
   @Post()
   @RequirePermission(Permission.ProjectsCreate)
-  @ApiOperation({ summary: 'Create workspace', description: 'Creates a workspace within the tenant.' })
+  @ApiOperation({
+    summary: 'Create workspace',
+    description: 'Creates a workspace within the tenant.',
+  })
   @ApiCreatedResponse({ type: CreatedResponseDto })
   async createWorkspace(
     @CurrentTenant() tenantId: string,
@@ -72,7 +75,9 @@ export class WorkspacesController {
       dto.endDate ? new Date(dto.endDate) : null,
       dto.members?.map((m) => ({ employeeId: m.employeeId, role: m.role })) ?? [],
     );
-    const id = await this.commandBus.execute<CreateWorkspaceCommand, string>(createWorkspaceCommand);
+    const id = await this.commandBus.execute<CreateWorkspaceCommand, string>(
+      createWorkspaceCommand,
+    );
     return new CreatedResponseDto(id);
   }
 
@@ -167,7 +172,10 @@ export class WorkspacesController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @RequirePermission(Permission.ProjectsRemove)
-  @ApiOperation({ summary: 'Delete workspace', description: 'Removes a workspace from the tenant.' })
+  @ApiOperation({
+    summary: 'Delete workspace',
+    description: 'Removes a workspace from the tenant.',
+  })
   @ApiParam({ name: 'id', description: 'Workspace UUID' })
   @ApiNoContentResponse({ description: 'Workspace deleted' })
   @ApiNotFoundResponse({ description: 'Workspace not found' })

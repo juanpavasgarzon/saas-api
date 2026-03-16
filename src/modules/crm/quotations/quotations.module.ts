@@ -2,8 +2,13 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { LineItemValidatorService } from '@core/application/services/line-item-validator.service';
+import { LINE_ITEM_VALIDATOR } from '@core/application/tokens/line-item-validator.token';
 import { OutboxModule } from '@core/infrastructure/outbox/outbox.module';
-import { OrganizationModule } from '@modules/organization/organization.module';
+import { ProductsModule } from '@modules/catalog/products/products.module';
+import { ServicesModule } from '@modules/catalog/services/services.module';
+import { AssetsModule } from '@modules/organization/assets/assets.module';
+import { CompaniesModule } from '@modules/organization/companies/companies.module';
 
 import { CustomersModule } from '../customers/customers.module';
 import { ProspectsModule } from '../prospects/prospects.module';
@@ -32,9 +37,12 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
     CqrsModule,
     OutboxModule,
     TypeOrmModule.forFeature([QuotationOrmEntity, QuotationItemOrmEntity]),
-    OrganizationModule,
+    CompaniesModule,
     CustomersModule,
     ProspectsModule,
+    ProductsModule,
+    ServicesModule,
+    AssetsModule,
   ],
   controllers: [QuotationsController],
   providers: [
@@ -52,6 +60,7 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
     QuotationExpiredEventHandler,
     { provide: QUOTATION_PDF_SERVICE, useClass: QuotationPdfService },
     { provide: QUOTATION_REPOSITORY, useClass: QuotationTypeOrmRepository },
+    { provide: LINE_ITEM_VALIDATOR, useClass: LineItemValidatorService },
   ],
 })
 export class QuotationsModule {}

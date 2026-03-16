@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProductsModule } from '@modules/inventory/products/products.module';
+import { ProductsModule } from '@modules/catalog/products/products.module';
 import { StockModule } from '@modules/inventory/stock/stock.module';
 import { WarehousesModule } from '@modules/inventory/warehouses/warehouses.module';
 

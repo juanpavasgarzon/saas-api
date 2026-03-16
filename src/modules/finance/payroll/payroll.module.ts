@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { OrganizationModule } from '@modules/organization/organization.module';
+import { CompaniesModule } from '@modules/organization/companies/companies.module';
 
 import { CreatePayrollEntryHandler } from './application/commands/create-payroll-entry/create-payroll-entry.handler';
 import { MarkAsPaidHandler } from './application/commands/mark-as-paid/mark-as-paid.handler';
@@ -16,7 +16,7 @@ import { PayrollPdfService } from './infrastructure/services/payroll-pdf.service
 import { PayrollController } from './presentation/controllers/payroll.controller';
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([PayrollEntryOrmEntity]), OrganizationModule],
+  imports: [CqrsModule, TypeOrmModule.forFeature([PayrollEntryOrmEntity]), CompaniesModule],
   controllers: [PayrollController],
   providers: [
     CreatePayrollEntryHandler,

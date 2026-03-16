@@ -145,7 +145,10 @@ export class Workspace extends AggregateRootBase {
     this.touch();
   }
 
-  addMember(employeeId: string, role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER): WorkspaceMember {
+  addMember(
+    employeeId: string,
+    role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER,
+  ): WorkspaceMember {
     const exists = this._members.some((m) => m.employeeId === employeeId);
     if (exists) {
       throw new WorkspaceMemberAlreadyExistsError(employeeId, this._id);

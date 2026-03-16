@@ -3,9 +3,9 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryColumn } from 'typeorm'
 import { MovementSource } from '../../domain/enums/movement-source.enum';
 import { MovementType } from '../../domain/enums/movement-type.enum';
 
-@Entity('inventory_movements')
-@Index('IDX_inventory_movements_tenant', ['tenantId'])
-@Index('IDX_inventory_movements_tenant_product', ['tenantId', 'productId'])
+@Entity('movements')
+@Index('IDX_movements_tenant', ['tenantId'])
+@Index('IDX_movements_tenant_product', ['tenantId', 'productId'])
 export class MovementOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
@@ -25,7 +25,7 @@ export class MovementOrmEntity {
   @Column({
     type: 'enum',
     enum: MovementType,
-    enumName: 'inventory_movement_type_enum',
+    enumName: 'movement_type_enum',
   })
   type!: MovementType;
 
@@ -35,7 +35,7 @@ export class MovementOrmEntity {
   @Column({
     type: 'enum',
     enum: MovementSource,
-    enumName: 'inventory_movement_source_enum',
+    enumName: 'movement_source_enum',
     default: MovementSource.MANUAL,
   })
   source!: MovementSource;

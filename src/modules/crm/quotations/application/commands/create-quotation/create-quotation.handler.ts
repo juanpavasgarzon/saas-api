@@ -1,6 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs';
 
+import { type ILineItemValidatorService } from '@core/application/contracts/line-item-validator.contract';
+import { LINE_ITEM_VALIDATOR } from '@core/application/tokens/line-item-validator.token';
 import { ConflictError } from '@core/domain/errors/conflict.error';
 import { NotFoundError } from '@core/domain/errors/not-found.error';
 import { type ICustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
@@ -23,6 +25,8 @@ export class CreateQuotationHandler implements ICommandHandler<CreateQuotationCo
     private readonly prospectRepository: IProspectRepository,
     @Inject(CUSTOMER_REPOSITORY)
     private readonly customerRepository: ICustomerRepository,
+    @Inject(LINE_ITEM_VALIDATOR)
+    private readonly lineItemValidator: ILineItemValidatorService,
   ) {}
 
   async execute(command: CreateQuotationCommand): Promise<string> {
@@ -46,6 +50,8 @@ export class CreateQuotationHandler implements ICommandHandler<CreateQuotationCo
         throw new ConflictError('Customer is inactive. Reactivate before creating a quotation.');
       }
     }
+
+    await this.lineItemValidator.validate(command.items, command.tenantId);
 
     const number = await this.quotationRepository.nextNumber(command.tenantId);
     const quotation = Quotation.create(

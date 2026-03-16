@@ -10,7 +10,6 @@ import { RemoveMemberHandler } from './application/commands/remove-member/remove
 import { UpdateWorkspaceHandler } from './application/commands/update-workspace/update-workspace.handler';
 import { GetWorkspaceHandler } from './application/queries/get-workspace/get-workspace.handler';
 import { ListWorkspacesHandler } from './application/queries/list-workspaces/list-workspaces.handler';
-import { WorkspaceService } from './application/services/workspace.service';
 import { WORKSPACE_REPOSITORY } from './domain/tokens/workspace-repository.token';
 import { WorkspaceOrmEntity } from './infrastructure/entities/workspace.orm-entity';
 import { WorkspaceMemberOrmEntity } from './infrastructure/entities/workspace-member.orm-entity';
@@ -29,9 +28,8 @@ import { WorkspacesController } from './presentation/controllers/workspaces.cont
     RemoveMemberHandler,
     GetWorkspaceHandler,
     ListWorkspacesHandler,
-    WorkspaceService,
     { provide: WORKSPACE_REPOSITORY, useClass: WorkspaceTypeOrmRepository },
   ],
-  exports: [WorkspaceService],
+  exports: [WORKSPACE_REPOSITORY],
 })
 export class WorkspaceModule {}

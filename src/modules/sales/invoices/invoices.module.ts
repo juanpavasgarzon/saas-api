@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { OrganizationModule } from '@modules/organization/organization.module';
+import { CompaniesModule } from '@modules/organization/companies/companies.module';
 
 import { CancelInvoiceHandler } from './application/commands/cancel-invoice/cancel-invoice.handler';
 import { CreateInvoiceFromSaleHandler } from './application/commands/create-invoice-from-sale/create-invoice-from-sale.handler';
@@ -23,7 +23,7 @@ import { InvoicesController } from './presentation/controllers/invoices.controll
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([InvoiceOrmEntity, InvoiceItemOrmEntity]),
-    OrganizationModule,
+    CompaniesModule,
   ],
   controllers: [InvoicesController],
   providers: [

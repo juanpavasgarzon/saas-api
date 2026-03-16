@@ -3,8 +3,8 @@ import { CommandHandler, EventPublisher, type ICommandHandler } from '@nestjs/cq
 
 import { NotFoundError } from '@core/domain/errors/not-found.error';
 import { ValidationError } from '@core/domain/errors/validation.error';
-import { type IProductRepository } from '@modules/inventory/products/domain/contracts/product-repository.contract';
-import { PRODUCT_REPOSITORY } from '@modules/inventory/products/domain/tokens/product-repository.token';
+import { type IProductRepository } from '@modules/catalog/products/domain/contracts/product-repository.contract';
+import { PRODUCT_REPOSITORY } from '@modules/catalog/products/domain/tokens/product-repository.token';
 import { type IWarehouseRepository } from '@modules/inventory/warehouses/domain/contracts/warehouse-repository.contract';
 import { WAREHOUSE_REPOSITORY } from '@modules/inventory/warehouses/domain/tokens/warehouse-repository.token';
 

@@ -79,10 +79,15 @@ export enum Permission {
   OrganizationAssetsRemove = 'organization:assets:remove',
   OrganizationAssetsAssign = 'organization:assets:assign',
 
-  InventoryProductsCreate = 'inventory:products:create',
-  InventoryProductsRead = 'inventory:products:read',
-  InventoryProductsModify = 'inventory:products:modify',
-  InventoryProductsRemove = 'inventory:products:remove',
+  CatalogProductsCreate = 'catalog:products:create',
+  CatalogProductsRead = 'catalog:products:read',
+  CatalogProductsModify = 'catalog:products:modify',
+  CatalogProductsRemove = 'catalog:products:remove',
+
+  CatalogServicesCreate = 'catalog:services:create',
+  CatalogServicesRead = 'catalog:services:read',
+  CatalogServicesModify = 'catalog:services:modify',
+  CatalogServicesRemove = 'catalog:services:remove',
 
   InventoryWarehousesCreate = 'inventory:warehouses:create',
   InventoryWarehousesRead = 'inventory:warehouses:read',

@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { UsersModule } from '@modules/identity/users/users.module';
-import { OrganizationModule } from '@modules/organization/organization.module';
+import { CompaniesModule } from '@modules/organization/companies/companies.module';
 
 import { LoginHandler } from './application/commands/login/login.handler';
 import { RefreshTokenHandler } from './application/commands/refresh-token/refresh-token.handler';
@@ -23,7 +23,7 @@ import { JwtRefreshGuard } from './presentation/guards/jwt-refresh.guard';
     PassportModule,
     JwtModule.register({}),
     UsersModule,
-    OrganizationModule,
+    CompaniesModule,
   ],
   controllers: [AuthController],
   providers: [

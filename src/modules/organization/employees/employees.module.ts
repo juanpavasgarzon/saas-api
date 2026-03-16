@@ -11,7 +11,6 @@ import { ReactivateEmployeeHandler } from './application/commands/reactivate-emp
 import { UpdateEmployeeHandler } from './application/commands/update-employee/update-employee.handler';
 import { GetEmployeeHandler } from './application/queries/get-employee/get-employee.handler';
 import { ListEmployeesHandler } from './application/queries/list-employees/list-employees.handler';
-import { EmployeeService } from './application/services/employee.service';
 import { EMPLOYEE_REPOSITORY } from './domain/tokens/employee-repository.token';
 import { EmployeeOrmEntity } from './infrastructure/entities/employee.orm-entity';
 import { EmployeeTypeOrmRepository } from './infrastructure/repositories/employee.typeorm-repository';
@@ -27,11 +26,10 @@ import { EmployeesController } from './presentation/controllers/employees.contro
     ReactivateEmployeeHandler,
     GetEmployeeHandler,
     ListEmployeesHandler,
-    EmployeeService,
     EmployeeSalaryAdapter,
     { provide: EMPLOYEE_REPOSITORY, useClass: EmployeeTypeOrmRepository },
     { provide: EMPLOYEE_SALARY_SERVICE, useClass: EmployeeSalaryAdapter },
   ],
-  exports: [EmployeeService, EMPLOYEE_REPOSITORY, EMPLOYEE_SALARY_SERVICE],
+  exports: [EMPLOYEE_REPOSITORY, EMPLOYEE_SALARY_SERVICE],
 })
 export class EmployeesModule {}

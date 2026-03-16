@@ -1,13 +1,13 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('inventory_warehouses')
-@Index('IDX_inventory_warehouses_tenant_isActive', ['tenantId', 'isActive'])
+@Entity('warehouses')
+@Index('IDX_warehouses_tenant_isActive', ['tenantId', 'isActive'])
 export class WarehouseOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
   @Column({ type: 'varchar' })
-  @Index('IDX_inventory_warehouses_tenant')
+  @Index('IDX_warehouses_tenant')
   tenantId!: string;
 
   @Column()

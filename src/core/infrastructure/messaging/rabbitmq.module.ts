@@ -12,6 +12,6 @@ import { RabbitMQMessageBusService } from './rabbitmq-message-bus.service';
     RabbitMQMessageBusService,
     { provide: MESSAGE_BUS, useClass: RabbitMQMessageBusService },
   ],
-  exports: [RABBITMQ_CHANNEL, MESSAGE_BUS, RabbitMQMessageBusService],
+  exports: [RABBITMQ_CHANNEL, MESSAGE_BUS],
 })
 export class RabbitMQModule {}

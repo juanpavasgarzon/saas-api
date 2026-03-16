@@ -1,0 +1,1 @@
+export const LINE_ITEM_VALIDATOR = Symbol('LINE_ITEM_VALIDATOR');

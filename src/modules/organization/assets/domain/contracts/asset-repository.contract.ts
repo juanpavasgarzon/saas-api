@@ -12,5 +12,6 @@ export interface IAssetRepository {
     limit: number,
   ): Promise<PaginatedResult<Asset>>;
   nextNumber(tenantId: string): Promise<number>;
+  findExistingIds(ids: string[], tenantId: string): Promise<string[]>;
   save(asset: Asset): Promise<void>;
 }

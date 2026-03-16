@@ -2,8 +2,13 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { LineItemValidatorService } from '@core/application/services/line-item-validator.service';
+import { LINE_ITEM_VALIDATOR } from '@core/application/tokens/line-item-validator.token';
 import { OutboxModule } from '@core/infrastructure/outbox/outbox.module';
-import { OrganizationModule } from '@modules/organization/organization.module';
+import { ProductsModule } from '@modules/catalog/products/products.module';
+import { ServicesModule } from '@modules/catalog/services/services.module';
+import { AssetsModule } from '@modules/organization/assets/assets.module';
+import { CompaniesModule } from '@modules/organization/companies/companies.module';
 
 import { ApproveDealHandler } from './application/commands/approve-deal/approve-deal.handler';
 import { CancelDealHandler } from './application/commands/cancel-deal/cancel-deal.handler';
@@ -26,7 +31,10 @@ import { DealsController } from './presentation/controllers/deals.controller';
     CqrsModule,
     OutboxModule,
     TypeOrmModule.forFeature([DealOrmEntity, DealItemOrmEntity]),
-    OrganizationModule,
+    CompaniesModule,
+    ProductsModule,
+    ServicesModule,
+    AssetsModule,
   ],
   controllers: [DealsController],
   providers: [
@@ -40,6 +48,7 @@ import { DealsController } from './presentation/controllers/deals.controller';
     QuotationAcceptedConsumer,
     { provide: DEAL_REPOSITORY, useClass: DealTypeOrmRepository },
     { provide: DEAL_PDF_SERVICE, useClass: DealPdfService },
+    { provide: LINE_ITEM_VALIDATOR, useClass: LineItemValidatorService },
   ],
 })
 export class DealsModule {}

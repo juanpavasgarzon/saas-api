@@ -10,6 +10,7 @@ import { RabbitMQModule } from './core/infrastructure/messaging/rabbitmq.module'
 import { OutboxModule } from './core/infrastructure/outbox/outbox.module';
 import { JwtAuthGuard } from './core/presentation/guards/jwt-auth.guard';
 import { PermissionsGuard } from './core/presentation/guards/permissions.guard';
+import { CatalogModule } from './modules/catalog/catalog.module';
 import { CrmModule } from './modules/crm/crm.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { IdentityModule } from './modules/identity/identity.module';
@@ -35,6 +36,7 @@ import { SalesModule } from './modules/sales/sales.module';
     FinanceModule,
     SalesModule,
     ProcurementModule,
+    CatalogModule,
     InventoryModule,
   ],
   providers: [

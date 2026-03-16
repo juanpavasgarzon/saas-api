@@ -35,8 +35,8 @@ import { RequirePermission } from '@core/presentation/decorators/require-permiss
 import { CreatedResponseDto } from '@core/presentation/dtos/created-response.dto';
 
 import { CreateCustomerCommand } from '../../application/commands/create-customer/create-customer.command';
-import { ReactivateCustomerCommand } from '../../application/commands/reactivate-customer/reactivate-customer.command';
 import { DeactivateCustomerCommand } from '../../application/commands/deactivate-customer/deactivate-customer.command';
+import { ReactivateCustomerCommand } from '../../application/commands/reactivate-customer/reactivate-customer.command';
 import { UpdateCustomerCommand } from '../../application/commands/update-customer/update-customer.command';
 import { GetCustomerQuery } from '../../application/queries/get-customer/get-customer.query';
 import { ListCustomersQuery } from '../../application/queries/list-customers/list-customers.query';

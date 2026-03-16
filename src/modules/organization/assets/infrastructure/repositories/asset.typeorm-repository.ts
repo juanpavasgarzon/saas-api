@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 
 import { PaginatedResult } from '@core/domain/contracts/paginated-result.contract';
 
@@ -58,6 +58,17 @@ export class AssetTypeOrmRepository implements IAssetRepository {
       .getRawOne<{ max: number | null }>();
 
     return (result?.max ?? 0) + 1;
+  }
+
+  async findExistingIds(ids: string[], tenantId: string): Promise<string[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+    const rows = await this.repository.find({
+      select: ['id'],
+      where: { id: In(ids), tenantId },
+    });
+    return rows.map((r) => r.id);
   }
 
   async save(asset: Asset): Promise<void> {

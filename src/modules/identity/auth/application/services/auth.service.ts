@@ -4,7 +4,6 @@ import { QueryBus } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
 
 import { type AuthUserData } from '@core/application/contracts/auth-user-data.contract';
-
 import { type HashService } from '@modules/identity/users/application/contracts/hash-service.contract';
 import { GetUserQuery } from '@modules/identity/users/application/queries/get-user/get-user.query';
 import { HASH_SERVICE } from '@modules/identity/users/application/tokens/hash-service.token';

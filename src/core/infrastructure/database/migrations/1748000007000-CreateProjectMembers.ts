@@ -24,9 +24,15 @@ export class CreateProjectMembers1748000007000 implements MigrationInterface {
           REFERENCES "employees"("id")   ON DELETE CASCADE
       )
     `);
-    await queryRunner.query(`CREATE INDEX "IDX_wm_tenant"      ON "workspace_members" ("tenantId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_wm_workspace"   ON "workspace_members" ("workspaceId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_wm_employee"    ON "workspace_members" ("employeeId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_wm_tenant"      ON "workspace_members" ("tenantId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_wm_workspace"   ON "workspace_members" ("workspaceId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_wm_employee"    ON "workspace_members" ("employeeId")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
