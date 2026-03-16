@@ -4,18 +4,17 @@ import { QuotationAcceptedIntegrationEvent } from '../../application/events/quot
 import { QuotationExpiredIntegrationEvent } from '../../application/events/quotation-expired.integration-event';
 import { QuotationRejectedIntegrationEvent } from '../../application/events/quotation-rejected.integration-event';
 
+// One dedicated queue per consumer → no round-robin, no silent acks on wrong routing key.
 export const QUEUE_BINDINGS: Record<string, string[]> = {
-  'sales.queue': [
-    QuotationAcceptedIntegrationEvent.eventName,
-    DealApprovedIntegrationEvent.eventName,
-  ],
-  'inventory.queue': [
-    QuotationAcceptedIntegrationEvent.eventName,
-    QuotationRejectedIntegrationEvent.eventName,
-    QuotationExpiredIntegrationEvent.eventName,
-    DealApprovedIntegrationEvent.eventName,
-    OrderReceivedIntegrationEvent.eventName,
-  ],
-  'crm.queue': [],
-  'procurement.queue': [OrderReceivedIntegrationEvent.eventName],
+  // inventory consumers
+  'inventory.quotation-accepted.queue': [QuotationAcceptedIntegrationEvent.eventName],
+  'inventory.quotation-rejected.queue': [QuotationRejectedIntegrationEvent.eventName],
+  'inventory.quotation-expired.queue': [QuotationExpiredIntegrationEvent.eventName],
+  'inventory.deal-approved.queue': [DealApprovedIntegrationEvent.eventName],
+  'inventory.order-received.queue': [OrderReceivedIntegrationEvent.eventName],
+  // sales consumers
+  'sales.quotation-accepted.queue': [QuotationAcceptedIntegrationEvent.eventName],
+  'sales.deal-approved.queue': [DealApprovedIntegrationEvent.eventName],
+  // procurement consumers
+  'procurement.order-received.queue': [OrderReceivedIntegrationEvent.eventName],
 };

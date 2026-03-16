@@ -1,3 +1,3 @@
 export interface IMessageBus {
-  publish(routingKey: string, payload: Record<string, unknown>): Promise<void>;
+  publish(routingKey: string, payload: Record<string, unknown>, messageId?: string): Promise<void>;
 }

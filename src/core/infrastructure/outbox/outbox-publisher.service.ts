@@ -21,7 +21,7 @@ export class OutboxPublisherService {
     const messages = await this.outboxRepo.findPending();
     for (const msg of messages) {
       try {
-        await this.messageBus.publish(msg.eventName, msg.payload);
+        await this.messageBus.publish(msg.eventName, msg.payload, msg.id);
         await this.outboxRepo.markSent(msg.id);
       } catch (error) {
         this.logger.warn(`Failed to publish outbox message ${msg.id}: ${(error as Error).message}`);

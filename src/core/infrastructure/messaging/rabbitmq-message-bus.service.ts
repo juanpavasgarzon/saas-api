@@ -17,12 +17,17 @@ export class RabbitMQMessageBusService implements IMessageBus {
     this.exchange = this.config.get<string>('rabbitmq.exchange', 'integration.events');
   }
 
-  async publish(routingKey: string, payload: Record<string, unknown>): Promise<void> {
+  async publish(
+    routingKey: string,
+    payload: Record<string, unknown>,
+    messageId?: string,
+  ): Promise<void> {
     try {
       await this.channel.publish(this.exchange, routingKey, payload, {
         persistent: true,
         contentType: 'application/json',
         timestamp: Date.now(),
+        messageId,
       });
       this.logger.debug(`Published [${routingKey}]`);
     } catch (error) {
