@@ -115,6 +115,8 @@ export class DealTypeOrmRepository implements IDealRepository {
       itemOrm.unit = item.unit;
       itemOrm.unitPrice = item.unitPrice;
       itemOrm.lineTotal = item.lineTotal;
+      itemOrm.itemType = item.itemType;
+      itemOrm.itemId = item.itemId;
       return itemOrm;
     });
     return orm;

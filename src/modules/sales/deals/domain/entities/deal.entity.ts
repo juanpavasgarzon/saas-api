@@ -69,24 +69,31 @@ export class Deal extends AggregateRootBase {
   get number(): number {
     return this._number;
   }
+
   get customerId(): string {
     return this._customerId;
   }
+
   get quotationId(): string | null {
     return this._quotationId;
   }
+
   get status(): DealStatus {
     return this._status;
   }
+
   get notes(): string | null {
     return this._notes;
   }
+
   get items(): DealItem[] {
     return this._items;
   }
+
   get subtotal(): number {
     return Math.round(this._items.reduce((acc, i) => acc + i.lineTotal, 0) * 100) / 100;
   }
+
   get total(): number {
     return this.subtotal;
   }
