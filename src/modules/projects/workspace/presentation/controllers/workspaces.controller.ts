@@ -55,7 +55,7 @@ export class WorkspacesController {
   ) {}
 
   @Post()
-  @RequirePermission(Permission.ProjectsCreate)
+  @RequirePermission(Permission.WorkspaceCreate)
   @ApiOperation({
     summary: 'Create workspace',
     description: 'Creates a workspace within the tenant.',
@@ -82,7 +82,7 @@ export class WorkspacesController {
   }
 
   @Get()
-  @RequirePermission(Permission.ProjectsRead)
+  @RequirePermission(Permission.WorkspaceRead)
   @ApiOperation({ summary: 'List workspaces', description: 'Returns workspaces with pagination.' })
   @ApiOkResponse({ description: 'Paginated list of workspaces' })
   @ApiQuery({ name: 'customerId', required: false })
@@ -114,7 +114,7 @@ export class WorkspacesController {
   }
 
   @Get(':id')
-  @RequirePermission(Permission.ProjectsRead)
+  @RequirePermission(Permission.WorkspaceRead)
   @ApiOperation({ summary: 'Get workspace', description: 'Returns a workspace with its members.' })
   @ApiParam({ name: 'id', description: 'Workspace UUID' })
   @ApiOkResponse({ type: WorkspaceResponseDto })
@@ -130,7 +130,7 @@ export class WorkspacesController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.ProjectsModify)
+  @RequirePermission(Permission.WorkspaceModify)
   @ApiOperation({ summary: 'Update workspace', description: 'Updates workspace details.' })
   @ApiParam({ name: 'id', description: 'Workspace UUID' })
   @ApiNoContentResponse({ description: 'Workspace updated' })
@@ -155,7 +155,7 @@ export class WorkspacesController {
 
   @Patch(':id/status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.ProjectsModify)
+  @RequirePermission(Permission.WorkspaceModify)
   @ApiOperation({ summary: 'Change status', description: 'Transitions workspace status.' })
   @ApiParam({ name: 'id', description: 'Workspace UUID' })
   @ApiNoContentResponse({ description: 'Status changed' })
@@ -171,7 +171,7 @@ export class WorkspacesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @RequirePermission(Permission.ProjectsRemove)
+  @RequirePermission(Permission.WorkspaceRemove)
   @ApiOperation({
     summary: 'Delete workspace',
     description: 'Removes a workspace from the tenant.',

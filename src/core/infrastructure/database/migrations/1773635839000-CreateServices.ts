@@ -18,9 +18,7 @@ export class CreateServices1773635839000 implements MigrationInterface {
         CONSTRAINT "PK_services" PRIMARY KEY ("id")
       )
     `);
-    await queryRunner.query(
-      `CREATE INDEX "IDX_services_tenant" ON "services" ("tenantId")`,
-    );
+    await queryRunner.query(`CREATE INDEX "IDX_services_tenant" ON "services" ("tenantId")`);
     await queryRunner.query(
       `CREATE INDEX "IDX_services_tenant_isActive" ON "services" ("tenantId", "isActive")`,
     );

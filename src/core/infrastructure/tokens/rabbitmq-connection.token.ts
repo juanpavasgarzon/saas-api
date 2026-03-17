@@ -1,1 +1,0 @@
-export const RABBITMQ_CONNECTION = Symbol('RABBITMQ_CONNECTION');

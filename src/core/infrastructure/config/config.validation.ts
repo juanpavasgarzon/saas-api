@@ -3,7 +3,7 @@ import * as Joi from 'joi';
 export const configValidationSchema = Joi.object({
   // Application
   NODE_ENV: Joi.string().valid('development', 'production', 'test').required(),
-  APP_PORT: Joi.number().integer().positive().required(),
+  APP_PORT: Joi.number().integer().positive().default(3000),
   API_PREFIX: Joi.string().required(),
 
   // Database
@@ -28,7 +28,4 @@ export const configValidationSchema = Joi.object({
   SMTP_PASS: Joi.string().required(),
   SMTP_SECURE: Joi.string().valid('true', 'false').required(),
   SMTP_FROM: Joi.string().required(),
-
-  // RabbitMQ
-  RABBITMQ_URL: Joi.string().uri().optional().default('amqp://guest:guest@localhost:5672'),
 });

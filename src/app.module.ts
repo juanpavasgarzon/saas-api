@@ -6,9 +6,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from './core/infrastructure/config/config.module';
 import { DatabaseModule } from './core/infrastructure/database/database.module';
 import { EmailModule } from './core/infrastructure/email/email.module';
-import { InboxModule } from './core/infrastructure/inbox/inbox.module';
-import { RabbitMQModule } from './core/infrastructure/messaging/rabbitmq.module';
-import { OutboxModule } from './core/infrastructure/outbox/outbox.module';
 import { JwtAuthGuard } from './core/presentation/guards/jwt-auth.guard';
 import { PermissionsGuard } from './core/presentation/guards/permissions.guard';
 import { CatalogModule } from './modules/catalog/catalog.module';
@@ -27,9 +24,6 @@ import { SalesModule } from './modules/sales/sales.module';
     ScheduleModule.forRoot(),
     ConfigModule,
     DatabaseModule,
-    RabbitMQModule,
-    OutboxModule,
-    InboxModule,
     EmailModule,
     IdentityModule,
     OrganizationModule,

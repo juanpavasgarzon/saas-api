@@ -28,14 +28,10 @@ export enum Permission {
   CrmQuotationsRemove = 'crm:quotations:remove',
   CrmQuotationsDownload = 'crm:quotations:download',
 
-  ProjectsCreate = 'projects:create',
-  ProjectsRead = 'projects:read',
-  ProjectsModify = 'projects:modify',
-  ProjectsRemove = 'projects:remove',
-
-  ProjectMembersCreate = 'projects:members:create',
-  ProjectMembersRead = 'projects:members:read',
-  ProjectMembersRemove = 'projects:members:remove',
+  WorkspaceCreate = 'workspace:create',
+  WorkspaceRead = 'workspace:read',
+  WorkspaceModify = 'workspace:modify',
+  WorkspaceRemove = 'workspace:remove',
 
   FinancePayrollCreate = 'finance:payroll:create',
   FinancePayrollRead = 'finance:payroll:read',

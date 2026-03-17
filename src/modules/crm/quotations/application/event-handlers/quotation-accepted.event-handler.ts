@@ -1,15 +1,15 @@
 import { Inject } from '@nestjs/common';
-import { EventsHandler, type IEventHandler } from '@nestjs/cqrs';
+import { CommandBus, EventsHandler, type IEventHandler } from '@nestjs/cqrs';
 
-import { type IOutboxMessageRepository } from '@core/application/contracts/outbox-repository.contract';
-import { QuotationAcceptedIntegrationEvent } from '@core/application/events/quotation-accepted.integration-event';
-import { OUTBOX_REPOSITORY } from '@core/application/tokens/outbox-repository.token';
+import { LineItemType } from '@core/domain/enums/line-item-type.enum';
 import { type ICustomerRepository } from '@modules/crm/customers/domain/contracts/customer-repository.contract';
 import { Customer } from '@modules/crm/customers/domain/entities/customer.entity';
 import { CUSTOMER_REPOSITORY } from '@modules/crm/customers/domain/tokens/customer-repository.token';
 import { type IProspectRepository } from '@modules/crm/prospects/domain/contracts/prospect-repository.contract';
 import { ProspectStatus } from '@modules/crm/prospects/domain/enums/prospect-status.enum';
 import { PROSPECT_REPOSITORY } from '@modules/crm/prospects/domain/tokens/prospect-repository.token';
+import { ReserveStockCommand } from '@modules/inventory/stock/application/commands/reserve-stock/reserve-stock.command';
+import { CreateDealFromQuotationCommand } from '@modules/sales/deals/application/commands/create-deal-from-quotation/create-deal-from-quotation.command';
 
 import { type IQuotationRepository } from '../../domain/contracts/quotation-repository.contract';
 import { QuotationAcceptedEvent } from '../../domain/events/quotation-accepted.event';
@@ -18,8 +18,7 @@ import { QUOTATION_REPOSITORY } from '../../domain/tokens/quotation-repository.t
 @EventsHandler(QuotationAcceptedEvent)
 export class QuotationAcceptedEventHandler implements IEventHandler<QuotationAcceptedEvent> {
   constructor(
-    @Inject(OUTBOX_REPOSITORY)
-    private readonly outbox: IOutboxMessageRepository,
+    private readonly commandBus: CommandBus,
     @Inject(PROSPECT_REPOSITORY)
     private readonly prospectRepository: IProspectRepository,
     @Inject(CUSTOMER_REPOSITORY)
@@ -77,20 +76,25 @@ export class QuotationAcceptedEventHandler implements IEventHandler<QuotationAcc
       return;
     }
 
-    const integrationEvent = new QuotationAcceptedIntegrationEvent(
-      event.quotationId,
+    const createDealCommand = new CreateDealFromQuotationCommand(
       event.tenantId,
+      event.quotationId,
       customerId,
-      event.items.map((i) => ({
-        itemType: i.itemType,
-        itemId: i.itemId,
-        description: i.description,
-        quantity: i.quantity,
-        unit: i.unit,
-        unitPrice: i.unitPrice,
-        lineTotal: i.lineTotal,
-      })),
+      event.items,
     );
-    await this.outbox.save(integrationEvent);
+    await this.commandBus.execute(createDealCommand);
+
+    for (const item of event.items) {
+      if (item.itemType !== LineItemType.PRODUCT) {
+        continue;
+      }
+      const reserveStock = new ReserveStockCommand(
+        event.tenantId,
+        item.itemId,
+        item.quantity,
+        event.quotationId,
+      );
+      await this.commandBus.execute(reserveStock);
+    }
   }
 }

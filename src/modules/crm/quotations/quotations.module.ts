@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LineItemValidatorService } from '@core/application/services/line-item-validator.service';
 import { LINE_ITEM_VALIDATOR } from '@core/application/tokens/line-item-validator.token';
-import { OutboxModule } from '@core/infrastructure/outbox/outbox.module';
 import { ProductsModule } from '@modules/catalog/products/products.module';
 import { ServicesModule } from '@modules/catalog/services/services.module';
 import { AssetsModule } from '@modules/organization/assets/assets.module';
@@ -20,8 +19,6 @@ import { RejectQuotationHandler } from './application/commands/reject-quotation/
 import { SendQuotationHandler } from './application/commands/send-quotation/send-quotation.handler';
 import { UpdateQuotationHandler } from './application/commands/update-quotation/update-quotation.handler';
 import { QuotationAcceptedEventHandler } from './application/event-handlers/quotation-accepted.event-handler';
-import { QuotationExpiredEventHandler } from './application/event-handlers/quotation-expired.event-handler';
-import { QuotationRejectedEventHandler } from './application/event-handlers/quotation-rejected.event-handler';
 import { GetQuotationHandler } from './application/queries/get-quotation/get-quotation.handler';
 import { ListQuotationsHandler } from './application/queries/list-quotations/list-quotations.handler';
 import { QUOTATION_PDF_SERVICE } from './application/tokens/quotation-pdf-service.token';
@@ -35,7 +32,6 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
 @Module({
   imports: [
     CqrsModule,
-    OutboxModule,
     TypeOrmModule.forFeature([QuotationOrmEntity, QuotationItemOrmEntity]),
     CompaniesModule,
     CustomersModule,
@@ -56,8 +52,6 @@ import { QuotationsController } from './presentation/controllers/quotations.cont
     GetQuotationHandler,
     ListQuotationsHandler,
     QuotationAcceptedEventHandler,
-    QuotationRejectedEventHandler,
-    QuotationExpiredEventHandler,
     { provide: QUOTATION_PDF_SERVICE, useClass: QuotationPdfService },
     { provide: QUOTATION_REPOSITORY, useClass: QuotationTypeOrmRepository },
     { provide: LINE_ITEM_VALIDATOR, useClass: LineItemValidatorService },

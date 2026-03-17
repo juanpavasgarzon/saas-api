@@ -8,11 +8,11 @@ import { CancelInvoiceHandler } from './application/commands/cancel-invoice/canc
 import { CreateInvoiceFromSaleHandler } from './application/commands/create-invoice-from-sale/create-invoice-from-sale.handler';
 import { PayInvoiceHandler } from './application/commands/pay-invoice/pay-invoice.handler';
 import { SendInvoiceHandler } from './application/commands/send-invoice/send-invoice.handler';
+import { DealApprovedEventHandler } from './application/event-handlers/deal-approved.event-handler';
 import { GetInvoiceHandler } from './application/queries/get-invoice/get-invoice.handler';
 import { ListInvoicesHandler } from './application/queries/list-invoices/list-invoices.handler';
 import { INVOICE_PDF_SERVICE } from './application/tokens/invoice-pdf-service.token';
 import { INVOICE_REPOSITORY } from './domain/tokens/invoice-repository.token';
-import { DealApprovedBillingConsumer } from './infrastructure/consumers/deal-approved-billing.consumer';
 import { InvoiceOrmEntity } from './infrastructure/entities/invoice.orm-entity';
 import { InvoiceItemOrmEntity } from './infrastructure/entities/invoice-item.orm-entity';
 import { InvoiceTypeOrmRepository } from './infrastructure/repositories/invoice.typeorm-repository';
@@ -33,7 +33,7 @@ import { InvoicesController } from './presentation/controllers/invoices.controll
     CancelInvoiceHandler,
     GetInvoiceHandler,
     ListInvoicesHandler,
-    DealApprovedBillingConsumer,
+    DealApprovedEventHandler,
     { provide: INVOICE_REPOSITORY, useClass: InvoiceTypeOrmRepository },
     { provide: INVOICE_PDF_SERVICE, useClass: InvoicePdfService },
   ],

@@ -7,15 +7,14 @@ import { StockModule } from '@modules/inventory/stock/stock.module';
 import { WarehousesModule } from '@modules/inventory/warehouses/warehouses.module';
 
 import { RegisterMovementHandler } from './application/commands/register-movement/register-movement.handler';
+import { DealApprovedEventHandler } from './application/event-handlers/deal-approved.event-handler';
 import { MovementRegisteredEventHandler } from './application/event-handlers/movement-registered.event-handler';
+import { OrderReceivedEventHandler } from './application/event-handlers/order-received.event-handler';
+import { QuotationExpiredEventHandler } from './application/event-handlers/quotation-expired.event-handler';
+import { QuotationRejectedEventHandler } from './application/event-handlers/quotation-rejected.event-handler';
 import { GetMovementHandler } from './application/queries/get-movement/get-movement.handler';
 import { ListMovementsHandler } from './application/queries/list-movements/list-movements.handler';
 import { MOVEMENT_REPOSITORY } from './domain/tokens/movement-repository.token';
-import { DealApprovedConsumer } from './infrastructure/consumers/deal-approved.consumer';
-import { OrderReceivedConsumer } from './infrastructure/consumers/order-received.consumer';
-import { QuotationAcceptedReservationConsumer } from './infrastructure/consumers/quotation-accepted-reservation.consumer';
-import { QuotationExpiredReservationConsumer } from './infrastructure/consumers/quotation-expired-reservation.consumer';
-import { QuotationRejectedReservationConsumer } from './infrastructure/consumers/quotation-rejected-reservation.consumer';
 import { MovementOrmEntity } from './infrastructure/entities/movement.orm-entity';
 import { MovementTypeOrmRepository } from './infrastructure/repositories/movement.typeorm-repository';
 import { MovementsController } from './presentation/controllers/movements.controller';
@@ -31,14 +30,13 @@ import { MovementsController } from './presentation/controllers/movements.contro
   controllers: [MovementsController],
   providers: [
     RegisterMovementHandler,
-    MovementRegisteredEventHandler,
     GetMovementHandler,
     ListMovementsHandler,
-    QuotationAcceptedReservationConsumer,
-    QuotationExpiredReservationConsumer,
-    QuotationRejectedReservationConsumer,
-    DealApprovedConsumer,
-    OrderReceivedConsumer,
+    MovementRegisteredEventHandler,
+    QuotationRejectedEventHandler,
+    QuotationExpiredEventHandler,
+    DealApprovedEventHandler,
+    OrderReceivedEventHandler,
     { provide: MOVEMENT_REPOSITORY, useClass: MovementTypeOrmRepository },
   ],
 })

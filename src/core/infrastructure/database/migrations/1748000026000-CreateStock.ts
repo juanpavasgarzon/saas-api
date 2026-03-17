@@ -24,9 +24,7 @@ export class CreateStock1748000026000 implements MigrationInterface {
     await queryRunner.query(
       `CREATE UNIQUE INDEX "UQ_stock_tenant_product_warehouse" ON "stock" ("tenantId", "productId", "warehouseId")`,
     );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_stock_tenant" ON "stock" ("tenantId")`,
-    );
+    await queryRunner.query(`CREATE INDEX "IDX_stock_tenant" ON "stock" ("tenantId")`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

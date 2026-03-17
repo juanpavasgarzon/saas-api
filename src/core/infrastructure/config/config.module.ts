@@ -6,13 +6,12 @@ import { configValidationSchema } from './config.validation';
 import { databaseConfig } from './database.config';
 import { emailConfig } from './email.config';
 import { jwtConfig } from './jwt.config';
-import { rabbitmqConfig } from './rabbitmq.config';
 
 @Module({
   imports: [
     NestConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig, emailConfig, rabbitmqConfig],
+      load: [appConfig, databaseConfig, jwtConfig, emailConfig],
       validationSchema: configValidationSchema,
       validationOptions: {
         abortEarly: true,

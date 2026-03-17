@@ -5,10 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateInvoiceHandler } from './application/commands/create-invoice/create-invoice.handler';
 import { MarkInvoiceOverdueHandler } from './application/commands/mark-invoice-overdue/mark-invoice-overdue.handler';
 import { MarkInvoicePaidHandler } from './application/commands/mark-invoice-paid/mark-invoice-paid.handler';
+import { OrderReceivedEventHandler } from './application/event-handlers/order-received.event-handler';
 import { GetInvoiceHandler } from './application/queries/get-invoice/get-invoice.handler';
 import { ListInvoicesHandler } from './application/queries/list-invoices/list-invoices.handler';
 import { INVOICE_REPOSITORY } from './domain/tokens/invoice-repository.token';
-import { OrderReceivedInvoiceConsumer } from './infrastructure/consumers/order-received.consumer';
 import { InvoiceOrmEntity } from './infrastructure/entities/invoice.orm-entity';
 import { InvoiceTypeOrmRepository } from './infrastructure/repositories/invoice.typeorm-repository';
 import { InvoicesController } from './presentation/controllers/invoices.controller';
@@ -22,7 +22,7 @@ import { InvoicesController } from './presentation/controllers/invoices.controll
     MarkInvoiceOverdueHandler,
     GetInvoiceHandler,
     ListInvoicesHandler,
-    OrderReceivedInvoiceConsumer,
+    OrderReceivedEventHandler,
     { provide: INVOICE_REPOSITORY, useClass: InvoiceTypeOrmRepository },
   ],
 })

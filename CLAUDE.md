@@ -39,7 +39,7 @@ Este archivo proporciona orientación a Claude Code (claude.ai/code) al trabajar
 ```bash
 # Desarrollo
 npm run start:dev          # Modo watch con hot reload
-npm run docker:dev         # Stack completo (app + postgres + rabbitmq) via Docker
+npm run docker:dev         # Stack completo (app + postgres) via Docker
 
 # Build y lint
 npm run build              # Compilar TypeScript
@@ -109,10 +109,9 @@ Cada módulo de negocio sigue una estructura estricta de cuatro capas:
 - La implementación TypeORM vive en `infrastructure/repositories/` y se vincula al token en el módulo.
 - Todos los métodos de repositorio reciben `tenantId` como parámetro obligatorio — nunca consultar sin él.
 
-#### Patrón Outbox para integración entre módulos
+#### Patrón Events para integración entre módulos
 
-- Los event handlers de dominio escriben eventos de integración en la tabla `outbox_messages` via `IOutboxMessageRepository`.
-- `OutboxPublisherService` hace polling cada 5 segundos y publica los mensajes pendientes a RabbitMQ.
+- Los event handlers de dominio procesan eventos de otros modulos
 - Usar este patrón siempre que un cambio de estado en un módulo deba disparar efectos secundarios en otro.
 
 #### Manejo de errores
@@ -154,7 +153,6 @@ Variables requeridas (validadas al inicio via Joi en `src/core/infrastructure/co
 | `JWT_SECRET` / `JWT_EXPIRES_IN` | Token de acceso |
 | `JWT_REFRESH_SECRET` / `JWT_REFRESH_EXPIRES_IN` | Token de refresco |
 | `SMTP_HOST/PORT/USER/PASS/SECURE/FROM` | SMTP con Nodemailer |
-| `RABBITMQ_URL` | Opcional, por defecto `amqp://guest:guest@localhost:5672` |
 
 ### Base de datos
 

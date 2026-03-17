@@ -115,7 +115,7 @@ export class CustomersController {
   async searchCustomers(
     @CurrentTenant() tenantId: string,
     @Query('search') search: string,
-    @Query('limit', ParseIntPipe) limit = 20,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ): Promise<CustomerResponseDto[]> {
     const searchCustomersQuery = new SearchCustomersQuery(tenantId, search, limit);
     const customers = await this.queryBus.execute<SearchCustomersQuery, Customer[]>(
