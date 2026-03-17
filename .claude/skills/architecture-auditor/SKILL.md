@@ -229,9 +229,12 @@ async execute(command: ApproveDealCommand): Promise<void> {
 export class DealApprovedEventHandler implements IEventHandler<DealApprovedEvent> {
   constructor(private readonly commandBus: CommandBus) {}
   async handle(event: DealApprovedEvent): Promise<void> {
-    await this.commandBus.execute(
-      new CreateInvoiceCommand(event.dealId, event.tenantId, event.totalAmount),
+    const createInvoiceCommand = new CreateInvoiceCommand(
+      event.dealId,
+      event.tenantId,
+      event.totalAmount,
     );
+    await this.commandBus.execute(createInvoiceCommand);
   }
 }
 ```
